@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hungry Bird: Energy Feast</title>
+  <meta property="og:image" content="https://raw.githubusercontent.com/Desi-Wizard/hungrybird/main/bird.jpeg">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/Desi-Wizard/hungrybird/main/bird.jpeg">
   <style>
     * {
       box-sizing: border-box;
@@ -45,7 +47,7 @@
       position: absolute;
       top: 10px;
       left: 12px;
-      right: 56px; /* Jagah chhori taake fullscreen icon se overlap na ho */
+      right: 56px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -94,8 +96,6 @@
       font-size: 12px;
       cursor: pointer;
     }
-    
-    /* FULLSCREEN BUTTON KO SCREEN KE SABSE UPAR RIGHT CORNER PAR LOCK KAR DIYA */
     #fs-btn {
       position: absolute;
       top: 10px;
@@ -119,7 +119,6 @@
       transform: scale(0.92);
       background: #333;
     }
-
     .overlay {
       position: absolute;
       inset: 0;
@@ -160,7 +159,6 @@
       box-shadow: 0 4px #2e7d32;
     }
     .btn:active { transform: translateY(2px); box-shadow: 0 2px #2e7d32; }
-
     #rotate-prompt {
       display: none;
       position: fixed;
@@ -191,7 +189,6 @@
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
 
-  <!-- SEPARATE FULLSCREEN BUTTON (SAFE & UNBLOCKED) -->
   <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
   <div class="hud">
@@ -242,11 +239,9 @@
 </div>
 
 <script>
-// --- AUDIO SYSTEM (CLEAN & DIRECT) ---
 let audioCtx = null;
 let musicEnabled = true;
 let sfxEnabled = true;
-
 const SOUND_PATHS = {
   stretch: 'stretch.mp3',
   launch: 'launch.mp3',
@@ -256,13 +251,10 @@ const SOUND_PATHS = {
   win: 'win.mp3',
   bgm: 'bgm.mp3'
 };
-
 const bgmAudio = new Audio(SOUND_PATHS.bgm);
 bgmAudio.loop = true;
-
 const stretchAudio = new Audio(SOUND_PATHS.stretch);
 let isStretchPlaying = false;
-
 function initAudioSystem() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -271,7 +263,6 @@ function initAudioSystem() {
     audioCtx.resume();
   }
 }
-
 function playRubberStretch(pressureRatio) {
   if (!sfxEnabled || !isAiming || gameState !== 'PLAY') return;
   stretchAudio.volume = Math.min(0.65, 0.2 + pressureRatio * 0.45);
@@ -282,7 +273,6 @@ function playRubberStretch(pressureRatio) {
     stretchAudio.play().catch(() => {});
   }
 }
-
 function stopRubberStretch() {
   isStretchPlaying = false;
   try {
@@ -290,14 +280,12 @@ function stopRubberStretch() {
     stretchAudio.currentTime = 0;
   } catch(e) {}
 }
-
 function playLaunchAudio() {
   if (!sfxEnabled) return;
   const snd = new Audio(SOUND_PATHS.launch);
   snd.volume = 0.95;
   snd.play().catch(() => {});
 }
-
 function playSmashAudio() {
   if (!sfxEnabled) return;
   initAudioSystem();
@@ -305,7 +293,6 @@ function playSmashAudio() {
   snd.volume = 0.85;
   snd.play().catch(() => {});
 }
-
 let lastCrunchPlayTime = 0;
 function playBigBirdCrunch() {
   if (!sfxEnabled) return;
@@ -317,7 +304,6 @@ function playBigBirdCrunch() {
   crunchAudio.volume = 1.0;
   crunchAudio.play().catch(() => {});
 }
-
 function playRoundWinSound() {
   if (!sfxEnabled) return;
   bgmAudio.pause();
@@ -325,7 +311,6 @@ function playRoundWinSound() {
   winSnd.volume = 1.0;
   winSnd.play().catch(() => {});
 }
-
 function playLoseSound() {
   if (!sfxEnabled) return;
   bgmAudio.pause();
@@ -333,13 +318,11 @@ function playLoseSound() {
   snd.volume = 0.8;
   snd.play().catch(() => {});
 }
-
 function startBackgroundMusic() {
   if (!musicEnabled) return;
   bgmAudio.volume = 0.45;
   bgmAudio.play().catch(() => {});
 }
-
 document.getElementById('music-btn').addEventListener('click', (e) => {
   e.preventDefault(); e.stopPropagation(); initAudioSystem();
   musicEnabled = !musicEnabled;
@@ -347,14 +330,12 @@ document.getElementById('music-btn').addEventListener('click', (e) => {
   if (!musicEnabled) bgmAudio.pause();
   else if (gameState === 'PLAY') startBackgroundMusic();
 });
-
 document.getElementById('sfx-btn').addEventListener('click', (e) => {
   e.preventDefault(); e.stopPropagation(); initAudioSystem();
   sfxEnabled = !sfxEnabled;
   document.getElementById('sfx-btn').innerText = sfxEnabled ? '🔊' : '🔈';
   if (!sfxEnabled) stopRubberStretch();
 });
-
 function toggleFullscreen() {
   const elem = document.documentElement;
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -365,26 +346,20 @@ function toggleFullscreen() {
     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
   }
 }
-
 document.getElementById('fs-btn').addEventListener('click', (e) => {
   e.preventDefault(); e.stopPropagation();
   toggleFullscreen();
 });
-
-// --- GAME LOGIC ---
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-
 let level = 1;
 let score = 0;
 let energy = 60;
 let isAiming = false;
 let hasFirstFired = false;
 let gameState = 'START';
-
 const MAX_BIRDS_PER_ROUND = 10;
 let birdsLeft = MAX_BIRDS_PER_ROUND;
-
 const EVOLUTIONS = [
   { name: "Rookie (Reddy)", color: "#E53935", scale: 1.0, power: 0.27 },
   { name: "Glutton (Bubbles)", color: "#42A5F5", scale: 1.15, power: 0.29 },
@@ -392,18 +367,15 @@ const EVOLUTIONS = [
   { name: "Heavy (Boomer)", color: "#37474F", scale: 1.35, power: 0.34 },
   { name: "King Titan", color: "#FFB300", scale: 1.5, power: 0.37 }
 ];
-
 function getCurrentTier() {
   const index = Math.min(Math.floor((level - 1) / 20), EVOLUTIONS.length - 1);
   return EVOLUTIONS[index];
 }
-
 const SLING_X = 220;
 const SLING_Y = 400;
 const MAX_DRAG = 85;
 const GROUND_Y = 470;
 let dragPos = { x: SLING_X, y: SLING_Y };
-
 let bird = {
   x: SLING_X,
   y: SLING_Y,
@@ -415,23 +387,19 @@ let bird = {
   stoppedFrames: 0,
   hitBlocksCooldown: {}
 };
-
 const CLIFF_SURFACE_Y = 320;
 const BIG_BIRD_X = 75;
 const BIG_BIRD_Y = 288;
 let chompTimer = 0;
-
 let blocks = [];
 let foods = [];
 let foodFlights = [];
-
 const FOOD_CONFIGS = [
   { name: 'Burger', color: '#ff9800', r: 18, pts: 250 },
   { name: 'Donut', color: '#e91e63', r: 17, pts: 200 },
   { name: 'Watermelon', color: '#4caf50', r: 19, pts: 300 },
   { name: 'Strawberry', color: '#f44336', r: 16, pts: 150 }
 ];
-
 function initLevel() {
   blocks = [];
   foods = [];
@@ -441,33 +409,26 @@ function initLevel() {
   dragPos = { x: SLING_X, y: SLING_Y };
   stopRubberStretch();
   resetBird();
-
   if (musicEnabled) startBackgroundMusic();
-
   const numTowers = Math.min(2 + Math.floor(level / 4), 4);
   const towerSpacing = (level >= 5) ? 135 : 105;
   const startX = (level >= 5) ? 530 : 550;
-
   for (let t = 0; t < numTowers; t++) {
     const tX = startX + t * towerSpacing;
     const floors = (level < 3) ? 1 : ((level < 6) ? 2 : Math.min(3, 2 + (t % 2)));
-
     for (let f = 0; f < floors; f++) {
       const bY = 440 - f * 85;
       let pType = 'wood', pColor = '#8D6E63', pHP = 40;
       let rColor = '#A1887F', rHP = 40;
-
       if (level >= 8 && f === 0) {
         pType = 'iron'; pColor = '#263238'; pHP = 120;
       } else if (level >= 4 && (f > 0 || Math.random() > 0.35)) {
         pType = 'stone'; pColor = '#78909C'; pHP = 80;
         rColor = '#607D8B'; rHP = 80;
       }
-
       blocks.push({ id: `p1_${t}_${f}`, type: pType, x: tX - 35, y: bY, w: 14, h: 60, vy: 0, hp: pHP, maxHP: pHP, color: pColor });
       blocks.push({ id: `p2_${t}_${f}`, type: pType, x: tX + 25, y: bY, w: 14, h: 60, vy: 0, hp: pHP, maxHP: pHP, color: pColor });
       blocks.push({ id: `rf_${t}_${f}`, type: pType, x: tX - 35, y: bY - 14, w: 74, h: 14, vy: 0, hp: rHP, maxHP: rHP, color: rColor, isRoof: true });
-
       if (level >= 4 && f === 0) {
         const isHard = (level >= 7);
         const bType = isHard ? 'iron' : 'stone';
@@ -475,17 +436,14 @@ function initLevel() {
         const bunkerHP = isHard ? 120 : 80;
         blocks.push({ id: `bk_${t}_${f}`, type: bType, x: tX - 52, y: bY + 8, w: 12, h: 52, vy: 0, hp: bunkerHP, maxHP: bunkerHP, color: bunkerColor });
       }
-
       const fConfig = FOOD_CONFIGS[(t + f) % FOOD_CONFIGS.length];
       foods.push({
         x: tX, y: bY + 25, vy: 0, r: fConfig.r, color: fConfig.color, name: fConfig.name, pts: fConfig.pts, alive: true
       });
     }
   }
-
   updateHUD();
 }
-
 function resetBird() {
   bird.x = SLING_X;
   bird.y = SLING_Y;
@@ -497,17 +455,14 @@ function resetBird() {
   bird.hitBlocksCooldown = {};
   dragPos = { x: SLING_X, y: SLING_Y };
 }
-
 function onBirdFinishFlight() {
   const remainingFoods = foods.filter(f => f.alive).length + foodFlights.length;
-
   if (birdsLeft <= 0 && remainingFoods > 0) {
     gameOver("No More Birds Left!", "Aapke 10 birds khatam ho gaye lekin khana baqi reh gaya!");
   } else {
     resetBird();
   }
 }
-
 function getCoords(e) {
   const rect = canvas.getBoundingClientRect();
   const cx = e.touches ? e.touches[0].clientX : e.clientX;
@@ -517,7 +472,6 @@ function getCoords(e) {
     y: (cy - rect.top) * (canvas.height / rect.height)
   };
 }
-
 function onDown(pos) {
   initAudioSystem();
   if (gameState !== 'PLAY' || bird.inFlight || birdsLeft <= 0) return;
@@ -526,13 +480,11 @@ function onDown(pos) {
     isAiming = true;
   }
 }
-
 function onMove(pos) {
   if (!isAiming || gameState !== 'PLAY' || bird.inFlight) return;
   const dx = pos.x - SLING_X;
   const dy = pos.y - SLING_Y;
   const dist = Math.hypot(dx, dy);
-
   if (dist > MAX_DRAG) {
     dragPos.x = SLING_X + (dx / dist) * MAX_DRAG;
     dragPos.y = SLING_Y + (dy / dist) * MAX_DRAG;
@@ -540,7 +492,6 @@ function onMove(pos) {
     dragPos.x = pos.x;
     dragPos.y = pos.y;
   }
-
   const pressureRatio = Math.min(1.0, Math.hypot(SLING_X - dragPos.x, SLING_Y - dragPos.y) / MAX_DRAG);
   if (pressureRatio > 0.12) {
     playRubberStretch(pressureRatio);
@@ -548,23 +499,19 @@ function onMove(pos) {
     stopRubberStretch();
   }
 }
-
 function onUp() {
   if (!isAiming) return;
   isAiming = false;
   stopRubberStretch();
-
   const pullX = SLING_X - dragPos.x;
   const pullY = SLING_Y - dragPos.y;
   const pullDist = Math.hypot(pullX, pullY);
-
   if (pullDist > 12) {
     const tier = getCurrentTier();
     bird.inFlight = true;
     hasFirstFired = true;
     birdsLeft--;
     updateHUD();
-
     bird.bounces = 0;
     bird.stoppedFrames = 0;
     bird.hitBlocksCooldown = {};
@@ -577,16 +524,12 @@ function onUp() {
     dragPos = { x: SLING_X, y: SLING_Y };
   }
 }
-
 canvas.addEventListener('mousedown', e => onDown(getCoords(e)));
 window.addEventListener('mousemove', e => onMove(getCoords(e)));
 window.addEventListener('mouseup', onUp);
-
 canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(getCoords(e)); }, { passive: false });
 window.addEventListener('touchmove', e => { if (isAiming) e.preventDefault(); onMove(getCoords(e)); }, { passive: false });
 window.addEventListener('touchend', onUp);
-
-// --- MAIN LOOP ---
 function loop() {
   if (gameState === 'PLAY') {
     if (hasFirstFired) {
@@ -597,15 +540,12 @@ function loop() {
         gameOver("Giant Bird Starved!", "Energy khatam ho gayi! Dobara koshish karein.");
       }
     }
-
     if (bird.inFlight) {
       bird.vy += 0.32;
       bird.x += bird.vx;
       bird.y += bird.vy;
-
       if (bird.y + bird.r >= GROUND_Y) {
         bird.y = GROUND_Y - bird.r;
-
         if (Math.abs(bird.vy) > 1.5 && bird.bounces < 3) {
           bird.vy = -Math.abs(bird.vy) * 0.58;
           bird.vx *= 0.76;
@@ -615,25 +555,21 @@ function loop() {
           bird.vy = 0;
           bird.vx *= 0.88;
           bird.stoppedFrames++;
-
           if (bird.stoppedFrames > 45 || Math.abs(bird.vx) < 0.15) {
             energy = Math.max(0, energy - 6);
             onBirdFinishFlight();
           }
         }
       }
-
       for (let i = blocks.length - 1; i >= 0; i--) {
         const b = blocks[i];
         if (bird.x + bird.r > b.x && bird.x - bird.r < b.x + b.w &&
             bird.y + bird.r > b.y && bird.y - bird.r < b.y + b.h) {
-
           if (!bird.hitBlocksCooldown[b.id]) {
             bird.hitBlocksCooldown[b.id] = true;
             b.hp -= 40;
             score += 25;
             playSmashAudio();
-
             if (b.type === 'iron') {
               bird.vx = -bird.vx * 0.5;
               bird.vy *= 0.6;
@@ -644,14 +580,12 @@ function loop() {
               bird.vx *= 0.75;
               bird.vy *= 0.75;
             }
-
             if (b.hp <= 0) {
               blocks.splice(i, 1);
             }
           }
         }
       }
-
       foods.forEach(f => {
         if (f.alive && Math.hypot(bird.x - f.x, bird.y - f.y) < bird.r + f.r) {
           f.alive = false;
@@ -661,13 +595,11 @@ function loop() {
           });
         }
       });
-
       if (bird.x > 970 || bird.x < -30) {
         energy = Math.max(0, energy - 6);
         onBirdFinishFlight();
       }
     }
-
     foods.forEach(f => {
       if (f.alive) {
         if (f.y + f.r < GROUND_Y) {
@@ -682,11 +614,9 @@ function loop() {
               break;
             }
           }
-
           if (!supported) {
             f.vy = (f.vy || 0) + 0.35;
             f.y += f.vy;
-
             if (f.y + f.r >= GROUND_Y) {
               f.y = GROUND_Y - f.r;
               f.vy = 0;
@@ -695,7 +625,6 @@ function loop() {
         }
       }
     });
-
     blocks.forEach(b => {
       if (b.isRoof && b.y + b.h < GROUND_Y) {
         let hasPillarsUnder = false;
@@ -709,7 +638,6 @@ function loop() {
             }
           }
         }
-
         if (!hasPillarsUnder) {
           b.vy = (b.vy || 0) + 0.35;
           b.y += b.vy;
@@ -720,23 +648,18 @@ function loop() {
         }
       }
     });
-
     for (let i = foodFlights.length - 1; i >= 0; i--) {
       const fl = foodFlights[i];
-
       if (fl.delayFrames > 0) {
         fl.delayFrames--;
         fl.y -= 1.2;
         continue;
       }
-
       fl.progress += 0.045;
       const targetX = BIG_BIRD_X + 22;
       const targetY = BIG_BIRD_Y - 10;
-
       fl.x += (targetX - fl.x) * 0.12;
       fl.y += (targetY - fl.y) * 0.12;
-
       if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 22) {
         energy = Math.min(120, energy + 25);
         chompTimer = 18;
@@ -745,21 +668,17 @@ function loop() {
         checkAllFoodFinished();
       }
     }
-
     if (chompTimer > 0) chompTimer--;
   }
-
   updateHUD();
   draw();
   requestAnimationFrame(loop);
 }
-
 function checkAllFoodFinished() {
   const left = foods.filter(f => f.alive).length;
   if (left === 0 && foodFlights.length === 0) {
     stopRubberStretch();
     playRoundWinSound();
-
     if (level % 20 === 0) {
       gameState = 'EVOLVE';
       score += 5000;
@@ -774,7 +693,6 @@ function checkAllFoodFinished() {
     }
   }
 }
-
 function gameOver(title = "Giant Bird Starved!", desc = "Energy khatam ho gayi! Dobara koshish karein.") {
   stopRubberStretch();
   playLoseSound();
@@ -783,7 +701,6 @@ function gameOver(title = "Giant Bird Starved!", desc = "Energy khatam ho gayi! 
   document.getElementById('lose-desc').innerText = desc;
   document.getElementById('lose-overlay').classList.remove('hidden');
 }
-
 document.getElementById('start-game-btn').onclick = () => {
   initAudioSystem();
   startBackgroundMusic();
@@ -791,7 +708,6 @@ document.getElementById('start-game-btn').onclick = () => {
   gameState = 'PLAY';
   initLevel();
 };
-
 document.getElementById('next-level-btn').onclick = () => {
   level++;
   document.getElementById('win-overlay').classList.add('hidden');
@@ -812,7 +728,6 @@ document.getElementById('restart-btn').onclick = () => {
   gameState = 'PLAY';
   initLevel();
 };
-
 function updateHUD() {
   const tier = getCurrentTier();
   document.getElementById('bird-tier').innerText = tier.name;
@@ -820,15 +735,11 @@ function updateHUD() {
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
   document.getElementById('food-left-display').innerText = foods.filter(f => f.alive).length;
-
   const pct = Math.min(100, (energy / 100) * 100);
   document.getElementById('energy-fill').style.width = pct + '%';
 }
-
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Cliff
   ctx.fillStyle = '#4E342E';
   ctx.beginPath();
   ctx.moveTo(0, CLIFF_SURFACE_Y);
@@ -837,7 +748,6 @@ function draw() {
   ctx.lineTo(0, GROUND_Y);
   ctx.closePath();
   ctx.fill();
-
   ctx.fillStyle = '#558B2F';
   ctx.beginPath();
   ctx.moveTo(0, CLIFF_SURFACE_Y);
@@ -847,19 +757,13 @@ function draw() {
   ctx.quadraticCurveTo(135, 325, 0, 325);
   ctx.closePath();
   ctx.fill();
-
   ctx.fillStyle = '#7CB342';
   ctx.fillRect(0, CLIFF_SURFACE_Y - 4, 135, 6);
-
-  // Ground
   ctx.fillStyle = '#7CB342';
   ctx.fillRect(0, GROUND_Y, canvas.width, 70);
   ctx.fillStyle = '#558B2F';
   ctx.fillRect(0, GROUND_Y, canvas.width, 10);
-
   drawBigBird();
-
-  // Slingshot
   ctx.strokeStyle = '#4E342E';
   ctx.lineWidth = 8;
   ctx.beginPath();
@@ -868,8 +772,6 @@ function draw() {
   ctx.lineTo(SLING_X + 14, SLING_Y);
   ctx.lineTo(SLING_X + 14, SLING_Y + 50);
   ctx.stroke();
-
-  // Queue Birds
   const tier = getCurrentTier();
   const queueCount = bird.inFlight ? birdsLeft : birdsLeft - 1;
   for (let q = 0; q < Math.min(queueCount, 8); q++) {
@@ -882,7 +784,6 @@ function draw() {
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 1.2;
     ctx.stroke();
-
     ctx.fillStyle = '#FF9800';
     ctx.beginPath();
     ctx.moveTo(qX + 5, qY - 2);
@@ -890,11 +791,8 @@ function draw() {
     ctx.lineTo(qX + 5, qY + 3);
     ctx.fill();
   }
-
-  // Active Bird & Rubber
   const bX = bird.inFlight ? bird.x : (isAiming ? dragPos.x : SLING_X);
   const bY = bird.inFlight ? bird.y : (isAiming ? dragPos.y : SLING_Y);
-
   if ((isAiming || !bird.inFlight) && (birdsLeft > 0 || bird.inFlight)) {
     ctx.strokeStyle = '#271711';
     ctx.lineWidth = 4;
@@ -903,7 +801,6 @@ function draw() {
     ctx.lineTo(bX, bY);
     ctx.lineTo(SLING_X + 12, SLING_Y);
     ctx.stroke();
-
     if (isAiming) {
       const pX = (SLING_X - dragPos.x) * tier.power;
       const pY = (SLING_Y - dragPos.y) * tier.power;
@@ -919,8 +816,6 @@ function draw() {
       }
     }
   }
-
-  // Active Sling Bird
   if (birdsLeft > 0 || bird.inFlight) {
     ctx.fillStyle = tier.color;
     ctx.beginPath();
@@ -929,7 +824,6 @@ function draw() {
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 2;
     ctx.stroke();
-
     ctx.fillStyle = '#FF9800';
     ctx.beginPath();
     ctx.moveTo(bX + 8, bY - 2);
@@ -937,15 +831,12 @@ function draw() {
     ctx.lineTo(bX + 8, bY + 6);
     ctx.fill();
   }
-
-  // Blocks
   blocks.forEach(b => {
     ctx.fillStyle = b.color;
     ctx.fillRect(b.x, b.y, b.w, b.h);
     ctx.strokeStyle = (b.type === 'iron') ? '#102027' : (b.type === 'stone' ? '#37474F' : '#3E2723');
     ctx.lineWidth = 2;
     ctx.strokeRect(b.x, b.y, b.w, b.h);
-
     if (b.hp < b.maxHP) {
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
       ctx.lineWidth = 1.5;
@@ -960,8 +851,6 @@ function draw() {
       ctx.stroke();
     }
   });
-
-  // Food
   foods.forEach(f => {
     if (f.alive) {
       ctx.fillStyle = f.color;
@@ -977,7 +866,6 @@ function draw() {
       ctx.fill();
     }
   });
-
   foodFlights.forEach(fl => {
     ctx.fillStyle = fl.color;
     ctx.beginPath();
@@ -985,15 +873,12 @@ function draw() {
     ctx.fill();
   });
 }
-
 function drawBigBird() {
   const tier = getCurrentTier();
   const bellyScale = 1.0 + (energy / 120) * 0.4;
-
   ctx.save();
   ctx.translate(BIG_BIRD_X, BIG_BIRD_Y);
   ctx.scale(tier.scale, tier.scale);
-
   ctx.fillStyle = tier.color;
   ctx.beginPath();
   ctx.ellipse(0, 0, 36 * bellyScale, 32, 0, 0, Math.PI * 2);
@@ -1001,12 +886,10 @@ function drawBigBird() {
   ctx.strokeStyle = '#000';
   ctx.lineWidth = 2.5;
   ctx.stroke();
-
   ctx.fillStyle = '#FFF8DC';
   ctx.beginPath();
   ctx.ellipse(10, 4, 20 * bellyScale, 18, 0, 0, Math.PI * 2);
   ctx.fill();
-
   ctx.fillStyle = '#fff';
   ctx.beginPath();
   ctx.arc(14, -14, 9, 0, Math.PI * 2);
@@ -1015,7 +898,6 @@ function drawBigBird() {
   ctx.beginPath();
   ctx.arc(17, -14, 4, 0, Math.PI * 2);
   ctx.fill();
-
   ctx.fillStyle = '#FF9800';
   ctx.beginPath();
   if (chompTimer > 0) {
@@ -1032,10 +914,8 @@ function drawBigBird() {
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
-
   ctx.restore();
 }
-
 initLevel();
 requestAnimationFrame(loop);
 </script>
