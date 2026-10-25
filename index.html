@@ -347,20 +347,15 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
   document.getElementById('help-overlay').classList.add('hidden');
 });
 
+// Black Exit Banner se bachne ke liye browser API call nahi hogi
 function toggleFullscreen() {
-  const elem = document.documentElement;
-  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-    if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
-    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-  } else {
-    if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
-    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-  }
+  window.scrollTo(0, 1);
 }
 document.getElementById('fs-btn').addEventListener('click', (e) => {
   e.preventDefault(); e.stopPropagation();
   toggleFullscreen();
 });
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let level = 1;
