@@ -175,6 +175,7 @@
       <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span>
       <button id="music-btn" class="sound-btn" title="Music">🎵</button>
       <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
+      <button id="help-btn" class="sound-btn" title="How to Play" style="font-weight: bold; font-size: 13px;">❓</button>
     </div>
     <div class="hud-box">
       <span style="color: #ffeb3b;">🎯 Shots: <span id="shots-left-display">10</span></span>
@@ -188,6 +189,7 @@
     </div>
   </div>
 
+  <!-- Start Screen -->
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="rules-card">
@@ -196,6 +198,18 @@
       🍔 <b>Objective:</b> Birds khatam hone se pehle saara food Giant Bird ko feed karein!
     </div>
     <button class="btn" id="start-game-btn">PLAY NOW</button>
+  </div>
+
+  <!-- How to Play Screen (Question Mark Popup) -->
+  <div id="help-overlay" class="overlay hidden">
+    <h1>HOW TO PLAY</h1>
+    <div class="rules-card">
+      🎯 <b>Aim & Shoot:</b> Bird ko peeche khenchein aur chhor dein slingshot chalane ke liye!<br><br>
+      🪵 <b>Towers & Hits:</b> Wood (1 hit), Stone (2 hits), Iron (2 hits).<br><br>
+      🍔 <b>Objective:</b> Khana girayein aur Giant Bird ko feed karein! Giant Bird bhooki na marne paye.<br><br>
+      🎯 <b>Ammo:</b> Har level mein sirf 10 birds milengi.
+    </div>
+    <button class="btn" id="close-help-btn">GOT IT!</button>
   </div>
 
   <div id="win-overlay" class="overlay hidden">
@@ -244,7 +258,7 @@ function initAudioSystem() {
   }
 }
 
-// Mobile touch par audio auto unlock
+// Mobile touch par audio unlock
 window.addEventListener('touchstart', function unlockAudio() {
   initAudioSystem();
   window.removeEventListener('touchstart', unlockAudio);
@@ -323,6 +337,16 @@ document.getElementById('sfx-btn').addEventListener('click', (e) => {
   document.getElementById('sfx-btn').innerText = sfxEnabled ? '🔊' : '🔈';
   if (!sfxEnabled) stopRubberStretch();
 });
+
+// Help Popup Events
+document.getElementById('help-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('help-overlay').classList.remove('hidden');
+});
+document.getElementById('close-help-btn').addEventListener('click', () => {
+  document.getElementById('help-overlay').classList.add('hidden');
+});
+
 function toggleFullscreen() {
   const elem = document.documentElement;
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -652,12 +676,12 @@ function loop() {
 
       const distToMouth = Math.hypot(fl.x - targetX, fl.y - targetY);
       if (distToMouth < 70) {
-        chompTimer = Math.max(chompTimer, 24); // Munh pehle hi khul jayega
+        chompTimer = Math.max(chompTimer, 24);
       }
 
       if (fl.progress >= 0.96 || distToMouth < 16) {
         energy = Math.min(120, energy + 25);
-        chompTimer = 28; // Khana khane ke baad bhi munh wazeh khula dikhega
+        chompTimer = 28;
         playBigBirdCrunch();
         foodFlights.splice(i, 1);
         checkAllFoodFinished();
@@ -900,14 +924,12 @@ function drawBigBird() {
   ctx.lineWidth = 2;
   ctx.beginPath();
   if (chompTimer > 0) {
-    // Wazeh bada khula hua munh
     ctx.moveTo(25, -16);
     ctx.lineTo(52, -26);
     ctx.lineTo(34, -4);
     ctx.lineTo(52, 14);
     ctx.lineTo(25, 4);
   } else {
-    // Normal Closed Beak
     ctx.moveTo(25, -10);
     ctx.lineTo(44, -4);
     ctx.lineTo(25, 3);
