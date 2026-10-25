@@ -5,9 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hungry Bird: Energy Feast</title>
   
-  <!-- Social Media Previews -->
-  <meta property="og:image" content="https://raw.githubusercontent.com/DesiWizard/hungrybirds/main/bird.jpeg">
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/DesiWizard/hungrybirds/main/bird.jpeg">
+  <!-- WhatsApp, Facebook & Social Media Preview Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hungry Bird: Energy Feast">
+  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+  <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Preview Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hungry Bird: Energy Feast">
+  <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
+  <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
 
   <!-- PWA & Mobile Web App Settings -->
   <link rel="manifest" href="manifest.json">
@@ -979,7 +991,7 @@ function drawSlingshotBack() {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  // Peeche wali branch (Back Prong)
+  // Back Prong (Peeche wali branch)
   ctx.lineWidth = 12;
   ctx.strokeStyle = '#2d1810';
   ctx.beginPath();
@@ -1008,7 +1020,7 @@ function drawSlingshotFront() {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  // Base Handle (Mitti se fork ke markaz tak)
+  // Base Handle (Mitti se fork tak)
   ctx.lineWidth = 16;
   ctx.strokeStyle = '#2d1810';
   ctx.beginPath();
@@ -1016,7 +1028,7 @@ function drawSlingshotFront() {
   ctx.lineTo(SLING_X + 2, GROUND_Y);
   ctx.stroke();
 
-  // Handle Inner Bark highlight (Real Wood feel)
+  // Handle Inner Bark highlight (Wood texture)
   ctx.lineWidth = 9;
   ctx.strokeStyle = '#633928';
   ctx.beginPath();
@@ -1036,7 +1048,7 @@ function drawSlingshotFront() {
   ctx.arc(SLING_X - 1, SLING_Y + 16, 7, 0, Math.PI * 2);
   ctx.fill();
 
-  // Aagay wali branch (Front Prong)
+  // Front Prong (Aagay wali branch)
   ctx.lineWidth = 13;
   ctx.strokeStyle = '#2d1810';
   ctx.beginPath();
@@ -1114,7 +1126,7 @@ function drawScene() {
   // Giant Bird
   drawGiantBird();
 
-  // Slingshot Peeche Ka Hissa (Back Prong)
+  // Slingshot Peeche Ka Hissa
   drawSlingshotBack();
 
   const tier = getCurrentTier();
@@ -1130,7 +1142,7 @@ function drawScene() {
   const bX = bird.inFlight ? bird.x : (isAiming ? dragPos.x : SLING_X);
   const bY = bird.inFlight ? bird.y : (isAiming ? dragPos.y : SLING_Y);
 
-  // Rubber Band: Peeche Wali String (Back Prong se Bird tak)
+  // Rubber Band: Peeche Wali String
   if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
     ctx.strokeStyle = '#2b1408';
     ctx.lineWidth = 4.5;
@@ -1178,7 +1190,7 @@ function drawScene() {
     ctx.fill();
   }
 
-  // Rubber Band: Aagay Wali String (Bird se Front Prong tak)
+  // Rubber Band: Aagay Wali String
   if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
     ctx.strokeStyle = '#42200f';
     ctx.lineWidth = 4.5;
@@ -1188,7 +1200,7 @@ function drawScene() {
     ctx.stroke();
   }
 
-  // Slingshot Aagay Ka Hissa (Front Prong & Handle)
+  // Slingshot Aagay Ka Hissa
   drawSlingshotFront();
 
   // Targets (Blocks & Food)
