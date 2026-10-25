@@ -9,126 +9,28 @@
     <meta property="og:image:width" content="1024">
     <meta property="og:image:height" content="1024">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #222;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #fff;
-        }
-        #game-container {
-            position: relative;
-            width: 600px;
-            height: 400px;
-            background: #70c5ce;
-            border: 4px solid #fff;
-            overflow: hidden;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-        }
-        .stats {
-            font-size: 18px;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px #000;
-        }
-        #overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            text-align: center;
-        }
-        #overlay.hidden {
-            display: none;
-        }
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: #f7d02c;
-        }
-        p {
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-        input[type="text"] {
-            width: 160px;
-            padding: 8px;
-            font-size: 18px;
-            text-align: center;
-            text-transform: uppercase;
-            border-radius: 4px;
-            border: 2px solid #f7d02c;
-            margin-bottom: 15px;
-            outline: none;
-        }
-        button {
-            padding: 10px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #fff;
-            background-color: #f75c2c;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #d94519;
-        }
-        #leaderboard {
-            margin-top: 15px;
-            width: 100%;
-            max-width: 260px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 14px;
-            text-align: left;
-        }
-        #leaderboard h3 {
-            text-align: center;
-            margin-bottom: 8px;
-            color: #f7d02c;
-        }
-        .lb-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 2px 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #222; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; }
+        #game-container { position: relative; width: 400px; height: 600px; background: #70c5ce; border: 4px solid #fff; overflow: hidden; }
+        canvas { display: block; width: 100%; height: 100%; }
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+        .stats { font-size: 18px; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
+        #overlay.hidden { display: none; }
+        h1 { font-size: 32px; margin-bottom: 10px; color: #f7d02c; }
+        p { font-size: 16px; margin-bottom: 15px; }
+        input[type="text"] { width: 160px; padding: 8px; font-size: 18px; text-align: center; text-transform: uppercase; border-radius: 4px; border: 2px solid #f7d02c; margin-bottom: 15px; outline: none; }
+        button { padding: 10px 24px; font-size: 16px; font-weight: bold; color: #fff; background-color: #f75c2c; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #d94519; }
+        #leaderboard { margin-top: 15px; width: 100%; max-width: 260px; background: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 6px; font-size: 14px; text-align: left; }
+        #leaderboard h3 { text-align: center; margin-bottom: 8px; color: #f7d02c; }
+        .lb-row { display: flex; justify-content: space-between; padding: 2px 0; }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
     <div id="ui-layer">
         <div class="stats">Score: <span id="currentScore">0</span></div>
         <div class="stats" style="text-align: right;">Total Plays: <span id="totalPlays">...</span></div>
@@ -153,18 +55,17 @@
     </div>
 </div>
 
-<!-- Firebase SDK Imports (v9 Compat) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyButgyy2ii0JbpDws6MSZ1ripkESlMGMuw",
+        authDomain: "hungrybirds-88404.firebaseapp.com",
+        projectId: "hungrybirds-88404",
+        storageBucket: "hungrybirds-88404.appspot.com",
+        messagingSenderId: "266507044450",
+        appId: "1:266507044450:web:8136abefd5790f0fd4333b"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -178,12 +79,7 @@
     let frames = 0;
 
     const bird = {
-        x: 60,
-        y: 250,
-        radius: 12,
-        velocity: 0,
-        gravity: 0.25,
-        jump: -4.5,
+        x: 60, y: 250, radius: 12, velocity: 0, gravity: 0.25, jump: -4.5,
         draw() {
             ctx.fillStyle = "#f7d02c";
             ctx.beginPath();
@@ -197,23 +93,11 @@
         update() {
             this.velocity += this.gravity;
             this.y += this.velocity;
-
-            if (this.y + this.radius >= canvas.height) {
-                this.y = canvas.height - this.radius;
-                endGame();
-            }
-            if (this.y - this.radius <= 0) {
-                this.y = this.radius;
-                this.velocity = 0;
-            }
+            if (this.y + this.radius >= canvas.height) { this.y = canvas.height - this.radius; endGame(); }
+            if (this.y - this.radius <= 0) { this.y = this.radius; this.velocity = 0; }
         },
-        flap() {
-            this.velocity = this.jump;
-        },
-        reset() {
-            this.y = 250;
-            this.velocity = 0;
-        }
+        flap() { this.velocity = this.jump; },
+        reset() { this.y = 250; this.velocity = 0; }
     };
 
     const pipes = [];
@@ -223,49 +107,21 @@
     function handlePipes() {
         if (frames % 100 === 0) {
             const topHeight = Math.floor(Math.random() * (canvas.height - pipeGap - 60)) + 30;
-            pipes.push({
-                x: canvas.width,
-                top: topHeight,
-                bottom: topHeight + pipeGap,
-                passed: false
-            });
+            pipes.push({ x: canvas.width, top: topHeight, bottom: topHeight + pipeGap, passed: false });
         }
-
         for (let i = pipes.length - 1; i >= 0; i--) {
             const p = pipes[i];
             p.x -= 2;
-
             ctx.fillStyle = "#2ecc71";
             ctx.fillRect(p.x, 0, pipeWidth, p.top);
             ctx.fillRect(p.x, p.bottom, pipeWidth, canvas.height - p.bottom);
-
-            if (
-                bird.x + bird.radius > p.x &&
-                bird.x - bird.radius < p.x + pipeWidth &&
-                (bird.y - bird.radius < p.top || bird.y + bird.radius > p.bottom)
-            ) {
-                endGame();
-            }
-
-            if (!p.passed && p.x + pipeWidth < bird.x) {
-                p.passed = true;
-                score++;
-                document.getElementById("currentScore").innerText = score;
-            }
-
-            if (p.x + pipeWidth < 0) {
-                pipes.splice(i, 1);
-            }
+            if (bird.x + bird.radius > p.x && bird.x - bird.radius < p.x + pipeWidth && (bird.y - bird.radius < p.top || bird.y + bird.radius > p.bottom)) { endGame(); }
+            if (!p.passed && p.x + pipeWidth < bird.x) { p.passed = true; score++; document.getElementById("currentScore").innerText = score; }
+            if (p.x + pipeWidth < 0) { pipes.splice(i, 1); }
         }
     }
 
-    function resetGame() {
-        bird.reset();
-        pipes.length = 0;
-        score = 0;
-        frames = 0;
-        document.getElementById("currentScore").innerText = score;
-    }
+    function resetGame() { bird.reset(); pipes.length = 0; score = 0; frames = 0; document.getElementById("currentScore").innerText = score; }
 
     function loop() {
         if (gameState !== "PLAYING") return;
@@ -277,48 +133,22 @@
         requestAnimationFrame(loop);
     }
 
-    function triggerFlap() {
-        if (gameState === "PLAYING") {
-            bird.flap();
-        }
-    }
-
-    window.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && gameState === "PLAYING") {
-            triggerFlap();
-        }
-    });
-
-    canvas.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        triggerFlap();
-    });
-
-    canvas.addEventListener("mousedown", () => {
-        triggerFlap();
-    });
+    function triggerFlap() { if (gameState === "PLAYING") bird.flap(); }
+    window.addEventListener("keydown", (e) => { if (e.code === "Space" && gameState === "PLAYING") triggerFlap(); });
+    canvas.addEventListener("touchstart", (e) => { e.preventDefault(); triggerFlap(); });
+    canvas.addEventListener("mousedown", () => triggerFlap(); );
 
     async function incrementGlobalPlayCount() {
         const statsRef = db.collection("analytics").doc("stats");
         try {
-            await statsRef.set({
-                playCount: firebase.firestore.FieldValue.increment(1)
-            }, { merge: true });
-        } catch (err) {
-            console.error("Firestore counter increment failed:", err);
-        }
+            await statsRef.set({ playCount: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+        } catch (err) { console.error("Firestore counter increment failed:", err); }
     }
 
     function listenToPlayCount() {
         db.collection("analytics").doc("stats").onSnapshot((doc) => {
-            if (doc.exists && doc.data().playCount !== undefined) {
-                document.getElementById("totalPlays").innerText = doc.data().playCount;
-            } else {
-                document.getElementById("totalPlays").innerText = "0";
-            }
-        }, (err) => {
-            console.error("Error listening to stats:", err);
-        });
+            document.getElementById("totalPlays").innerText = (doc.exists && doc.data().playCount !== undefined) ? doc.data().playCount : "0";
+        }, (err) => { console.error("Error listening to stats:", err); });
     }
 
     async function submitScore(initials, finalScore) {
@@ -329,9 +159,7 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             await loadLeaderboard();
-        } catch (err) {
-            console.error("Error submitting score:", err);
-        }
+        } catch (err) { console.error("Error submitting score:", err); }
     }
 
     async function loadLeaderboard() {
@@ -339,13 +167,8 @@
         const lbList = document.getElementById("leaderboardList");
         lbList.innerHTML = "Loading...";
         lbContainer.style.display = "block";
-
         try {
-            const snapshot = await db.collection("leaderboard")
-                .orderBy("score", "desc")
-                .limit(5)
-                .get();
-
+            const snapshot = await db.collection("leaderboard").orderBy("score", "desc").limit(5).get();
             lbList.innerHTML = "";
             let rank = 1;
             snapshot.forEach((doc) => {
@@ -356,14 +179,8 @@
                 lbList.appendChild(row);
                 rank++;
             });
-
-            if (snapshot.empty) {
-                lbList.innerHTML = "No scores yet.";
-            }
-        } catch (err) {
-            console.error("Error fetching leaderboard:", err);
-            lbList.innerHTML = "Failed to load.";
-        }
+            if (snapshot.empty) lbList.innerHTML = "No scores yet.";
+        } catch (err) { console.error("Error fetching leaderboard:", err); lbList.innerHTML = "Failed to load."; }
     }
 
     const overlay = document.getElementById("overlay");
@@ -375,30 +192,20 @@
     const saveScoreBtn = document.getElementById("saveScoreBtn");
     const finalScoreText = document.getElementById("finalScoreText");
 
-    function startGame() {
-        resetGame();
-        gameState = "PLAYING";
-        overlay.classList.add("hidden");
-        scoreSubmission.style.display = "none";
-        incrementGlobalPlayCount();
-        requestAnimationFrame(loop);
-    }
+    function startGame() { resetGame(); gameState = "PLAYING"; overlay.classList.add("hidden"); scoreSubmission.style.display = "none"; incrementGlobalPlayCount(); requestAnimationFrame(loop); }
 
     function endGame() {
         gameState = "GAMEOVER";
         overlay.classList.remove("hidden");
         overlayTitle.innerText = "GAME OVER";
         overlaySub.style.display = "none";
-        
         finalScoreText.innerText = `Your Score: ${score}`;
         scoreSubmission.style.display = "flex";
         playerInitialsInput.value = "";
         startBtn.style.display = "none";
     }
 
-    startBtn.addEventListener("click", () => {
-        startGame();
-    });
+    startBtn.addEventListener("click", () => startGame());
 
     saveScoreBtn.addEventListener("click", async () => {
         let initials = playerInitialsInput.value.trim();
@@ -416,11 +223,7 @@
 
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
-      if (
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-        (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))
-      ) {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))) {
         e.preventDefault();
         return false;
       }
