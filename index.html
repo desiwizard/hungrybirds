@@ -1,425 +1,85 @@
 <!DOCTYPE html>
-<html lang="en" prefix="og: https://ogp.me/ns#">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Hungry Bird: Energy Feast</title>
 
-  <!-- Canonical & Social Preview Properties -->
-  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/">
-  <meta property="fb:app_id" content="966242223397117">
-  <meta property="og:site_name" content="Hungry Bird">
-  <meta property="og:type" content="website">
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Hungry Bird: Energy Feast" />
+  <meta property="og:description" content="Launch hungry birds, shatter structures, and feed the Giant Hungry Bird!" />
+  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/" />
   <meta property="og:logo" content="https://desiwizard.github.io/hungrybirds/bird.jpeg" />
-  <meta property="og:title" content="Hungry Bird: Energy Feast">
-  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
-  <!-- WhatsApp Image Open Graph Tags (Local Repository Path) -->
-  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
-  <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1024">
-  <meta property="og:image:height" content="536">
-
-  <!-- Fallback Tags for Mobile & Crawlers -->
-  <link rel="image_src" href="https://desiwizard.github.io/hungrybirds/bird.jpeg">
-  <meta itemprop="name" content="Hungry Bird: Energy Feast">
-  <meta itemprop="description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
-  <meta itemprop="image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
-
-  <!-- Twitter Preview Tags -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Hungry Bird: Energy Feast">
-  <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
-  <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
-
-  <!-- Mobile Viewport & PWA Settings -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#87CEEB">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Hungry Bird">
-  <link rel="apple-touch-icon" href="bird.jpeg">
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #87CEEB;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      touch-action: none;
-      position: fixed;
-      inset: 0;
-    }
-    #game-container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #87CEEB;
-      overflow: hidden;
-    }
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      touch-action: none;
-      background-color: #87CEEB;
-    }
-    .hud {
-      position: absolute;
-      top: 26px;
-      left: 15px;
-      right: 90px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      pointer-events: none;
-      z-index: 25;
-    }
-    .hud-box {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 6px 14px;
-      border-radius: 20px;
-      color: #fff;
-      font-weight: bold;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      pointer-events: auto;
-      white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    .energy-bar-wrap {
-      width: 90px;
-      height: 14px;
-      background: #222;
-      border-radius: 7px;
-      overflow: hidden;
-      border: 2px solid #fff;
-    }
-    .energy-fill {
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(90deg, #ff3838, #ffb302, #2ed573);
-      transition: width 0.1s ease-out;
-    }
-    .sound-btn {
-      background: #ffffff !important;
-      border: 2px solid #ffffff !important;
-      color: #111111 !important;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .sound-btn.muted {
-      background: #ffcdd2 !important;
-      border-color: #e53935 !important;
-    }
-    #fs-btn {
-      position: absolute;
-      top: 26px;
-      right: 15px;
-      width: 36px;
-      height: 36px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid #ffeb3b;
-      color: #ffeb3b;
-      font-size: 18px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 30;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
-    }
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.88);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      z-index: 100;
-      text-align: center;
-      padding: 12px 20px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .overlay.hidden { display: none !important; }
-    .overlay h1 { font-size: 22px; margin-bottom: 6px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
-    .overlay p { font-size: 13px; margin-bottom: 10px; color: #eee; }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    #canvas-container { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
+    canvas { background: linear-gradient(to bottom, #38bdf8 0%, #bae6fd 65%, #4ade80 65%, #16a34a 100%); display: block; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
     
-    .start-content-grid {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 18px;
-      width: 100%;
-      max-width: 820px;
-      margin-top: 4px;
-    }
-    .start-col-left {
-      flex: 1.1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .start-col-right {
-      flex: 0.9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .rules-card {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 10px;
-      text-align: left;
-      font-size: 12px;
-      line-height: 1.45;
-      width: 100%;
-    }
-    .rules-card b { color: #ffeb3b; }
-    .diff-container {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .diff-btn {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      padding: 5px 14px;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .diff-btn.active {
-      background: #ffeb3b;
-      color: #111;
-      border-color: #fbc02d;
-    }
-    .btn {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      padding: 8px 28px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 20px;
-      cursor: pointer;
-      box-shadow: 0 4px #2e7d32;
-    }
-    .btn:active { transform: translateY(2px); box-shadow: 0 2px #2e7d32; }
-    input[type="text"] { 
-      width: 180px; 
-      padding: 8px 12px; 
-      font-size: 16px; 
-      font-weight: bold;
-      text-align: center; 
-      text-transform: uppercase; 
-      border-radius: 6px; 
-      border: 2px solid #ffeb3b; 
-      margin-bottom: 10px; 
-      outline: none; 
-      background: #111;
-      color: #fff;
-    }
-    #leaderboard { 
-      width: 100%; 
-      max-width: 320px; 
-      background: rgba(255, 255, 255, 0.1); 
-      padding: 8px 14px; 
-      border-radius: 8px; 
-      font-size: 12px; 
-      text-align: left; 
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-    #leaderboard h3 { text-align: center; margin-bottom: 4px; color: #ffeb3b; font-size: 13px; }
-    .leaderboard-scroll {
-      max-height: 160px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-    .lb-row { 
-      display: flex; 
-      justify-content: space-between; 
-      padding: 3px 0; 
-      border-bottom: 1px solid rgba(255,255,255,0.1); 
-    }
-
-    #rotate-device-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #111;
-      color: #fff;
-      z-index: 99999;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-    }
-    .rotate-icon {
-      font-size: 55px;
-      margin-bottom: 18px;
-      display: inline-block;
-      animation: rotateAnim 2s infinite ease-in-out;
-    }
-    @keyframes rotateAnim {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(-90deg); }
-      100% { transform: rotate(0deg); }
-    }
-    @media screen and (orientation: portrait) {
-      #rotate-device-overlay {
-        display: flex !important;
-      }
-    }
+    /* Top Bar HUD */
+    #hud { position: absolute; top: 12px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+    .hud-chip { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: 20px; color: #fff; font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .gold-txt { color: #facc15; }
+    
+    /* Overlay Menus */
+    .overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 20; color: white; text-align: center; padding: 20px; }
+    .dialog-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; width: 90%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    h2 { font-size: 26px; margin-bottom: 8px; color: #facc15; }
+    p { font-size: 14px; color: #cbd5e1; margin-bottom: 20px; }
+    .btn { background: #0284c7; color: white; border: none; padding: 12px 24px; font-size: 15px; font-weight: 700; border-radius: 10px; cursor: pointer; transition: 0.2s; margin: 6px; }
+    .btn:hover { background: #0369a1; transform: translateY(-2px); }
+    .btn-green { background: #16a34a; }
+    .btn-green:hover { background: #15803d; }
+    
+    /* Leaderboard */
+    .lb-box { background: rgba(0,0,0,0.3); border-radius: 8px; max-height: 160px; overflow-y: auto; padding: 8px 12px; margin-bottom: 16px; text-align: left; }
+    .lb-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; text-align: center; font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 14px; }
   </style>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<div id="rotate-device-overlay">
-  <div class="rotate-icon">🔄</div>
-  <h1 style="color: #ffeb3b; font-size: 24px; margin-bottom: 10px;">PLEASE ROTATE YOUR DEVICE</h1>
-  <p style="color: #eee; font-size: 15px; max-width: 320px; line-height: 1.5;">
-    Hungry Bird is designed for Landscape mode. Rotate your screen to play!
-  </p>
-</div>
+<div id="canvas-container">
+  <div id="hud">
+    <div class="hud-chip">Level <span id="level-display" class="gold-txt">1</span></div>
+    <div class="hud-chip">Giant Hunger: <span id="hunger-display" class="gold-txt">0 / 2</span></div>
+    <div class="hud-chip">Score: <span id="score-display" class="gold-txt">0</span></div>
+  </div>
 
-<div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
-  <button id="fs-btn" title="Fullscreen">⛶</button>
 
-  <div class="hud">
-    <div class="hud-box">
-      <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span> (<span id="hud-diff" style="color:#ffeb3b;">Normal</span>)
-      <button id="music-btn" class="sound-btn" title="Music">🎵</button>
-      <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
-      <button id="lb-hud-btn" class="sound-btn" title="Leaderboard" style="font-size: 14px;">🏆</button>
-    </div>
-    <div class="hud-box">
-      <span style="color: #ffeb3b;">🎯 Shots: <span id="shots-left-display">12</span></span>
-      <div class="energy-bar-wrap">
-        <div id="energy-fill" class="energy-fill" style="width: 60%;"></div>
+  <!-- Level Clear / Game Over Screen -->
+  <div id="dialog-overlay" class="overlay">
+    <div class="dialog-card">
+      <h2 id="modal-title">Level Cleared!</h2>
+      <p id="modal-desc">The giant bird is satisfied and energized.</p>
+
+      <div id="lb-section">
+        <input type="text" id="player-initials" maxlength="5" placeholder="ENTER INITIALS" />
+        <button class="btn btn-green" id="save-score-btn">Save Score</button>
+      </div>
+
+      <div class="lb-box" id="leaderboard-view">Loading high scores...</div>
+      
+      <div>
+        <button class="btn" id="next-lvl-btn">Next Level</button>
+        <button class="btn" id="restart-btn" style="background:#475569;">Play Again</button>
       </div>
     </div>
-    <div class="hud-box">
-      <span>Score: <span id="score-display">0</span></span>
-    </div>
-  </div>
-
-  <div id="start-overlay" class="overlay">
-    <h1>HUNGRY BIRD: ENERGY FEAST</h1>
-    <div class="start-content-grid">
-      <div class="start-col-left">
-        <div class="rules-card">
-          🎯 <b>Aim & Shoot:</b> Pull back slingshot and release to launch birds!<br>
-          🪵 <b>Obstacles:</b> Wood (1 hit), Stone (1 hit), Iron (2 hits).<br>
-          🍔 <b>Mission:</b> Knock food down to feed the Giant Bird!
-        </div>
-        <div class="diff-container">
-          <button class="diff-btn" data-diff="novice">Novice</button>
-          <button class="diff-btn active" data-diff="normal">Normal</button>
-          <button class="diff-btn" data-diff="expert">Expert</button>
-        </div>
-        <button class="btn" id="start-game-btn">PLAY NOW</button>
-      </div>
-      <div class="start-col-right">
-        <div id="leaderboard">
-          <h3>TOP 10 SCORES</h3>
-          <div id="leaderboardList" class="leaderboard-scroll">Loading...</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="lb-overlay" class="overlay hidden">
-    <h1>LEADERBOARD</h1>
-    <div id="leaderboard" style="margin-bottom: 14px; max-width: 360px;">
-      <h3>GLOBAL TOP 10</h3>
-      <div id="leaderboardListMid" class="leaderboard-scroll" style="max-height: 220px;">Loading...</div>
-    </div>
-    <button class="btn" id="close-lb-btn">BACK TO GAME</button>
-  </div>
-
-  <div id="lose-overlay" class="overlay hidden">
-    <h1 style="color: #ff5252;" id="lose-title">Giant Bird Starved!</h1>
-    <p id="lose-desc">Energy depleted! Keep the Giant Bird fed.</p>
-
-    <div id="top10Celebration" style="display: none; flex-direction: column; align-items: center; margin-bottom: 12px;">
-      <p style="color: #ffeb3b; font-size: 15px; font-weight: bold; margin-bottom: 8px;">
-        🎉 CONGRATULATIONS! You made it to the Top 10!
-      </p>
-      <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
-      <button class="btn" id="saveScoreBtn" style="padding: 6px 18px; font-size: 14px; margin-bottom: 10px;">Save Score</button>
-    </div>
-
-    <button class="btn" id="restart-btn">Try Again</button>
-  </div>
-
-  <div id="win-overlay" class="overlay hidden">
-    <h1>LEVEL COMPLETED!</h1>
-    <p id="win-msg">All food cleared! Giant Bird is full.</p>
-    <button class="btn" id="next-level-btn">Next Level</button>
-  </div>
-
-  <div id="evolve-overlay" class="overlay hidden">
-    <h1>CHARACTER EVOLVED!</h1>
-    <p id="evolve-msg">Your Giant Bird has grown bigger and stronger!</p>
-    <button class="btn" id="evolve-btn" style="background:#00bcd4; box-shadow:0 4px #008ba3;">Claim Power</button>
   </div>
 </div>
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ==================== SERVICE WORKER REGISTRATION ====================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
-}
-
-// ==================== SECURITY CODE ====================
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.onkeydown = function(e) {
-  if (e.keyCode === 123) { return false; }
-  if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { return false; }
-  if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) { return false; }
-};
-
-// ==================== FIREBASE CONFIG ====================
+// Firebase Initializer (Live Main Leaderboard)
 const firebaseConfig = {
     apiKey: "AIzaSyCfUMBhfupMiTdG9gSxBmtScrY2LSVREvQ",
     authDomain: "hungrybirds-88404.firebaseapp.com",
@@ -431,925 +91,569 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-let cachedTopScores = [];
+// Physics & Canvas Setup
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-async function incrementGlobalPlayCount() {
-  try {
-    await db.collection("analytics").doc("stats").set({ playCount: firebase.firestore.FieldValue.increment(1) }, { merge: true });
-  } catch(e){}
-}
+const CW = 960, CH = 540;
+const GRAVITY = 0.28;
+const SLING_POS = { x: 170, y: 390 };
 
-async function submitScore(initials, finalScore) {
-  try {
-    await db.collection("leaderboard").add({
-      initials: initials.toUpperCase().substring(0, 5),
-      score: finalScore,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    await loadLeaderboard();
-  } catch(e){}
-}
-
-async function loadLeaderboard() {
-  const lbLists = [document.getElementById("leaderboardList"), document.getElementById("leaderboardListMid")];
-  try {
-    const snap = await db.collection("leaderboard").orderBy("score", "desc").limit(10).get();
-    cachedTopScores = [];
-    let content = "";
-    let r = 1;
-    snap.forEach(d => {
-      const data = d.data();
-      cachedTopScores.push(data.score);
-      content += `<div class="lb-row"><span>#${r} ${data.initials || "ANON"}</span><span>${data.score}</span></div>`;
-      r++;
-    });
-    if (snap.empty) content = "<div>No scores yet!</div>";
-    lbLists.forEach(el => { if (el) el.innerHTML = content; });
-  } catch(e){
-    lbLists.forEach(el => { if (el) el.innerHTML = "<div>Leaderboard offline</div>"; });
-  }
-}
-loadLeaderboard();
-
-function toggleFullscreen() {
-  const elem = document.documentElement;
-  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen().catch(() => {});
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen();
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen().catch(() => {});
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-  }
-}
-
-const fsBtn = document.getElementById('fs-btn');
-fsBtn.addEventListener('click', (e) => {
-  e.preventDefault(); e.stopPropagation(); toggleFullscreen();
-});
-fsBtn.addEventListener('touchend', (e) => {
-  e.preventDefault(); e.stopPropagation(); toggleFullscreen();
-});
-
-document.getElementById('lb-hud-btn').addEventListener('click', (e) => {
-  e.preventDefault(); e.stopPropagation();
-  loadLeaderboard();
-  document.getElementById('lb-overlay').classList.remove('hidden');
-});
-document.getElementById('close-lb-btn').addEventListener('click', () => {
-  document.getElementById('lb-overlay').classList.add('hidden');
-});
-
-// ==================== AUDIO SYSTEM ====================
-let audioCtx = null;
-let musicEnabled = true;
-let sfxEnabled = true;
-const SOUND_PATHS = {
-  stretch: 'stretch.mp3',
-  launch: 'launch.mp3',
-  smash: 'smash.mp3',
-  crunch: 'crunch.mp3',
-  lose: 'lose.mp3',
-  win: 'win.mp3',
-  bgm: 'bgm.mp3'
-};
-
-const bgmAudio = new Audio(SOUND_PATHS.bgm);
-bgmAudio.loop = true;
-bgmAudio.volume = 1.0;
-
-const stretchAudio = new Audio(SOUND_PATHS.stretch);
-stretchAudio.preload = 'auto';
-
-const crunchAudio = new Audio(SOUND_PATHS.crunch);
-crunchAudio.preload = 'auto';
-
-let isStretchPlaying = false;
-
-function initAudioSystem() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  crunchAudio.load();
-}
-
-window.addEventListener('touchstart', function unlockAudio() {
-  initAudioSystem();
-  window.removeEventListener('touchstart', unlockAudio);
-}, { passive: true, once: true });
-
-window.addEventListener('click', function unlockAudioClick() {
-  initAudioSystem();
-  window.removeEventListener('click', unlockAudioClick);
-}, { passive: true, once: true });
-
-function playRubberStretch(pressureRatio) {
-  if (!sfxEnabled || !isAiming || gameState !== 'PLAY') return;
-  stretchAudio.volume = Math.min(0.65, 0.2 + pressureRatio * 0.45);
-  stretchAudio.playbackRate = 0.8 + pressureRatio * 0.8;
-  if (!isStretchPlaying) {
-    isStretchPlaying = true;
-    stretchAudio.currentTime = 0;
-    stretchAudio.play().catch(() => {});
-  }
-}
-function stopRubberStretch() {
-  isStretchPlaying = false;
-  try {
-    stretchAudio.pause();
-    stretchAudio.currentTime = 0;
-  } catch(e) {}
-}
-function playLaunchAudio() {
-  if (!sfxEnabled) return;
-  const snd = new Audio(SOUND_PATHS.launch);
-  snd.volume = 0.95;
-  snd.play().catch(() => {});
-}
-function playSmashAudio() {
-  if (!sfxEnabled) return;
-  initAudioSystem();
-  const snd = new Audio(SOUND_PATHS.smash);
-  snd.volume = 0.85;
-  snd.play().catch(() => {});
-}
-
-let lastCrunchPlayTime = 0;
-function playBigBirdCrunch() {
-  if (!sfxEnabled) return;
-  initAudioSystem();
-  const now = Date.now();
-  if (now - lastCrunchPlayTime < 140) return;
-  lastCrunchPlayTime = now;
-  
-  const soundClone = crunchAudio.cloneNode();
-  soundClone.volume = 1.0;
-  soundClone.play().catch(() => {
-    crunchAudio.currentTime = 0;
-    crunchAudio.play().catch(() => {});
-  });
-}
-
-function playRoundWinSound() {
-  if (!sfxEnabled) return;
-  bgmAudio.pause();
-  const winSnd = new Audio(SOUND_PATHS.win);
-  winSnd.volume = 1.0;
-  winSnd.play().catch(() => {});
-}
-function playLoseSound() {
-  if (!sfxEnabled) return;
-  bgmAudio.pause();
-  const snd = new Audio(SOUND_PATHS.lose);
-  snd.volume = 0.8;
-  snd.play().catch(() => {});
-}
-
-function startBackgroundMusic() {
-  if (!musicEnabled) return;
-  bgmAudio.volume = 1.0;
-  bgmAudio.play().catch(() => {});
-}
-
-document.getElementById('music-btn').addEventListener('click', (e) => {
-  e.preventDefault(); e.stopPropagation(); initAudioSystem();
-  musicEnabled = !musicEnabled;
-  const mBtn = document.getElementById('music-btn');
-  mBtn.innerText = musicEnabled ? '🎵' : '🔇';
-  if (musicEnabled) {
-    mBtn.classList.remove('muted');
-    if (gameState === 'PLAY') startBackgroundMusic();
-  } else {
-    mBtn.classList.add('muted');
-    bgmAudio.pause();
-  }
-});
-
-document.getElementById('sfx-btn').addEventListener('click', (e) => {
-  e.preventDefault(); e.stopPropagation(); initAudioSystem();
-  sfxEnabled = !sfxEnabled;
-  const sBtn = document.getElementById('sfx-btn');
-  sBtn.innerText = sfxEnabled ? '🔊' : '🔈';
-  if (sfxEnabled) {
-    sBtn.classList.remove('muted');
-  } else {
-    sBtn.classList.add('muted');
-    stopRubberStretch();
-  }
-});
-
-// ==================== DIFFICULTY & GAME STATE ====================
-let currentDifficulty = 'normal';
-const DIFFICULTY_CONFIG = {
-  novice: { maxBirds: 16, drainMult: 0.50, dots: 18, ironHP: 70, stoneHP: 45, label: 'Novice' },
-  normal: { maxBirds: 12, drainMult: 0.85, dots: 14, ironHP: 80, stoneHP: 45, label: 'Normal' },
-  expert: { maxBirds: 9,  drainMult: 1.10, dots: 8,  ironHP: 90, stoneHP: 50, label: 'Expert' }
-};
-
-document.querySelectorAll('.diff-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentDifficulty = btn.dataset.diff;
-    document.getElementById('hud-diff').innerText = DIFFICULTY_CONFIG[currentDifficulty].label;
-  });
-});
-
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-let level = 1;
-let score = 0;
-let energy = 70;
-let isAiming = false;
-let hasFirstFired = false;
-let gameState = 'PLAY';
-let isWinningTransition = false;
-let birdsLeft = 12;
-
-const EVOLUTIONS = [
-  { name: "Rookie (Reddy)", color: "#E53935", scale: 1.0, power: 0.28 },
-  { name: "Glutton (Bubbles)", color: "#42A5F5", scale: 1.15, power: 0.30 },
-  { name: "Speed (Flash)", color: "#FBC02D", scale: 1.25, power: 0.32 },
-  { name: "Heavy (Boomer)", color: "#37474F", scale: 1.35, power: 0.34 },
-  { name: "King Titan", color: "#FFB300", scale: 1.5, power: 0.37 }
-];
-
-function getCurrentTier() {
-  const index = Math.min(Math.floor((level - 1) / 20), EVOLUTIONS.length - 1);
-  return EVOLUTIONS[index];
-}
-
-const SLING_X = 220;
-const SLING_Y = 385;
-const MAX_DRAG = 85;
-const GROUND_Y = 470;
-const CLIFF_SURFACE_Y = 320;
-const BIG_BIRD_X = 75;
-const BIG_BIRD_Y = 288;
-let chompTimer = 0;
-
-let dragPos = { x: SLING_X, y: SLING_Y };
-let bird = {
-  x: SLING_X,
-  y: SLING_Y,
-  vx: 0,
-  vy: 0,
-  r: 13,
-  inFlight: false,
-  bounces: 0,
-  stoppedFrames: 0,
-  hitBlocksCooldown: {}
-};
-
+// State Variables
+let currentLevel = 1;
+let totalScore = 0;
+let levelScore = 0;
+let requiredFood = 2;
+let eatenFood = 0;
+let remainingBirds = 4;
+let activeBird = null;
 let blocks = [];
 let foods = [];
-let foodFlights = [];
+let giantBird = { x: 830, y: 370, r: 65, chewTimer: 0 };
+let particles = [];
 
-const FOOD_CONFIGS = [
-  { name: 'Burger', color: '#ff9800', r: 18, pts: 250 },
-  { name: 'Donut', color: '#e91e63', r: 17, pts: 200 },
-  { name: 'Watermelon', color: '#4caf50', r: 19, pts: 300 },
-  { name: 'Strawberry', color: '#f44336', r: 16, pts: 150 }
-];
+let isDragging = false;
+let dragEnd = { x: SLING_POS.x, y: SLING_POS.y };
+let maxPull = 80;
 
-function initLevel() {
+// Level Builder with Smooth Progression & 1-Hit Wood
+function buildLevel(lvl) {
   blocks = [];
   foods = [];
-  foodFlights = [];
-  hasFirstFired = false;
-  isWinningTransition = false;
-  
-  const diff = DIFFICULTY_CONFIG[currentDifficulty];
-  birdsLeft = diff.maxBirds;
-  dragPos = { x: SLING_X, y: SLING_Y };
-  stopRubberStretch();
-  resetBird();
-  if (musicEnabled) startBackgroundMusic();
+  eatenFood = 0;
+  levelScore = 0;
+  requiredFood = Math.min(2 + Math.floor(lvl / 3), 4);
+  remainingBirds = 4;
+  loadNextBird();
 
-  const numTowers = Math.min(2 + Math.floor(level / 5), 4);
-  const towerSpacing = (level >= 5) ? 135 : 110;
-  const startX = 540;
+  const baseX = 520;
+  const baseY = 460;
+  const colCount = Math.min(3 + Math.floor(lvl / 5), 4);
+  const rowCount = Math.min(3 + Math.floor(lvl / 4), 5);
 
-  for (let t = 0; t < numTowers; t++) {
-    const tX = startX + t * towerSpacing;
-    const floors = (level < 3) ? 1 : ((level < 6) ? 2 : Math.min(3, 2 + (t % 2)));
-    for (let f = 0; f < floors; f++) {
-      const bY = 440 - f * 85;
-      
-      let pType = 'wood', pColor = '#8D6E63', pHP = 35;
-      let rColor = '#A1887F', rHP = 35;
+  let stoneQuota = 0;
+  let ironQuota = 0;
 
-      if (level >= 10 && (f === 0 || Math.random() < 0.4)) {
-        pType = 'iron'; pColor = '#263238'; pHP = diff.ironHP;
-        rColor = '#37474F'; rHP = diff.ironHP;
-      } else if (level >= 3 && Math.random() < (level >= 10 ? 0.2 : 0.45)) {
-        pType = 'stone'; pColor = '#78909C'; pHP = diff.stoneHP;
-        rColor = '#607D8B'; rHP = diff.stoneHP;
+  if (lvl >= 6 && lvl <= 10) {
+    // Levels 6-10: Only 1 Stone block
+    stoneQuota = 1;
+  } else if (lvl >= 11 && lvl <= 15) {
+    // Levels 11-15: 1 Stone + 1 Iron (Total 2)
+    stoneQuota = 1;
+    ironQuota = 1;
+  } else if (lvl >= 16 && lvl <= 20) {
+    // Levels 16-20: Capped strictly at 2 hard blocks
+    if (lvl % 2 === 0) {
+      stoneQuota = 1;
+      ironQuota = 1;
+    } else {
+      stoneQuota = 2;
+      ironQuota = 0;
+    }
+  } else if (lvl > 20) {
+    stoneQuota = 2;
+    ironQuota = 1;
+  }
+
+  // Wood HP = 30 (Instantly breaks in 1 hit with 50 damage bird)
+  const hpMap = { wood: 30, stone: 95, iron: 200 };
+  const colorMap = { wood: '#b45309', stone: '#64748b', iron: '#334155' };
+
+  for (let r = 0; r < rowCount; r++) {
+    for (let c = 0; c < colCount; c++) {
+      let mat = 'wood';
+
+      if (r === 0) {
+        if (stoneQuota > 0) {
+          mat = 'stone';
+          stoneQuota--;
+        } else if (ironQuota > 0) {
+          mat = 'iron';
+          ironQuota--;
+        }
+      } else if (r === 1 && (stoneQuota > 0 || ironQuota > 0)) {
+        if (stoneQuota > 0) {
+          mat = 'stone';
+          stoneQuota--;
+        } else if (ironQuota > 0) {
+          mat = 'iron';
+          ironQuota--;
+        }
       }
 
-      blocks.push({ id: `p1_${t}_${f}`, type: pType, x: tX - 35, y: bY, w: 14, h: 60, hp: pHP, maxHP: pHP, color: pColor });
-      blocks.push({ id: `p2_${t}_${f}`, type: pType, x: tX + 25, y: bY, w: 14, h: 60, hp: pHP, maxHP: pHP, color: pColor });
-      blocks.push({ id: `rf_${t}_${f}`, type: pType, x: tX - 35, y: bY - 14, w: 74, h: 14, hp: rHP, maxHP: rHP, color: rColor, isRoof: true });
-
-      const fConfig = FOOD_CONFIGS[(t + f) % FOOD_CONFIGS.length];
-      foods.push({
-        x: tX, y: bY + 25, vy: 0, r: fConfig.r, color: fConfig.color, pts: fConfig.pts, alive: true
+      blocks.push({
+        x: baseX + c * 48,
+        y: baseY - r * 42,
+        w: 36,
+        h: 38,
+        vx: 0,
+        vy: 0,
+        mat: mat,
+        hp: hpMap[mat],
+        maxHp: hpMap[mat],
+        color: colorMap[mat]
       });
     }
   }
+
+  // Energy Berries (Food)
+  for (let f = 0; f < requiredFood; f++) {
+    foods.push({
+      x: baseX + 18 + (f * 48),
+      y: baseY - (rowCount * 42) - 16,
+      r: 14,
+      vx: 0,
+      vy: 0,
+      eaten: false
+    });
+  }
+
   updateHUD();
 }
 
-function resetBird() {
-  bird.x = SLING_X;
-  bird.y = SLING_Y;
-  bird.vx = 0;
-  bird.vy = 0;
-  bird.inFlight = false;
-  bird.bounces = 0;
-  bird.stoppedFrames = 0;
-  bird.hitBlocksCooldown = {};
-  dragPos = { x: SLING_X, y: SLING_Y };
-}
-
-function onBirdFinishFlight() {
-  const remainingFoods = foods.filter(f => f.alive).length + foodFlights.length;
-  if (birdsLeft <= 0 && remainingFoods > 0) {
-    gameOver("No More Birds Left!", "You have run out of birds to launch!");
+function loadNextBird() {
+  if (remainingBirds > 0) {
+    remainingBirds--;
+    activeBird = {
+      x: SLING_POS.x,
+      y: SLING_POS.y,
+      vx: 0,
+      vy: 0,
+      r: 13,
+      launched: false,
+      settled: false
+    };
   } else {
-    resetBird();
+    activeBird = null;
   }
 }
 
-function getCoords(e) {
+// User Interaction (Slingshot Drag & Aim)
+function getPointerPos(e) {
   const rect = canvas.getBoundingClientRect();
-  const cx = e.touches ? e.touches[0].clientX : e.clientX;
-  const cy = e.touches ? e.touches[0].clientY : e.clientY;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
   return {
-    x: (cx - rect.left) * (canvas.width / rect.width),
-    y: (cy - rect.top) * (canvas.height / rect.height)
+    x: (clientX - rect.left) * (CW / rect.width),
+    y: (clientY - rect.top) * (CH / rect.height)
   };
 }
 
-function onDown(pos) {
-  initAudioSystem();
-  if (gameState !== 'PLAY' || bird.inFlight || birdsLeft <= 0 || isWinningTransition) return;
-  const d = Math.hypot(pos.x - SLING_X, pos.y - SLING_Y);
-  if (d < 75) {
-    isAiming = true;
+canvas.addEventListener("mousedown", onDown);
+canvas.addEventListener("touchstart", onDown, { passive: false });
+window.addEventListener("mousemove", onMove);
+window.addEventListener("touchmove", onMove, { passive: false });
+window.addEventListener("mouseup", onUp);
+window.addEventListener("touchend", onUp);
+
+function onDown(e) {
+  if (!activeBird || activeBird.launched) return;
+  const pos = getPointerPos(e);
+  const dist = Math.hypot(pos.x - SLING_POS.x, pos.y - SLING_POS.y);
+  if (dist < 50) {
+    isDragging = true;
+    dragEnd = pos;
   }
 }
 
-function onMove(pos) {
-  if (!isAiming || gameState !== 'PLAY' || bird.inFlight || isWinningTransition) return;
-  const dx = pos.x - SLING_X;
-  const dy = pos.y - SLING_Y;
+function onMove(e) {
+  if (!isDragging) return;
+  const pos = getPointerPos(e);
+  const dx = pos.x - SLING_POS.x;
+  const dy = pos.y - SLING_POS.y;
   const dist = Math.hypot(dx, dy);
-  if (dist > MAX_DRAG) {
-    dragPos.x = SLING_X + (dx / dist) * MAX_DRAG;
-    dragPos.y = SLING_Y + (dy / dist) * MAX_DRAG;
+  
+  if (dist > maxPull) {
+    dragEnd.x = SLING_POS.x + (dx / dist) * maxPull;
+    dragEnd.y = SLING_POS.y + (dy / dist) * maxPull;
   } else {
-    dragPos.x = pos.x;
-    dragPos.y = pos.y;
+    dragEnd = pos;
   }
-  const pressureRatio = Math.min(1.0, Math.hypot(SLING_X - dragPos.x, SLING_Y - dragPos.y) / MAX_DRAG);
-  if (pressureRatio > 0.12) {
-    playRubberStretch(pressureRatio);
-  } else {
-    stopRubberStretch();
+  if (activeBird && !activeBird.launched) {
+    activeBird.x = dragEnd.x;
+    activeBird.y = dragEnd.y;
   }
 }
 
 function onUp() {
-  if (!isAiming) return;
-  isAiming = false;
-  stopRubberStretch();
-  const pullX = SLING_X - dragPos.x;
-  const pullY = SLING_Y - dragPos.y;
-  const pullDist = Math.hypot(pullX, pullY);
-  if (pullDist > 12) {
-    const tier = getCurrentTier();
-    bird.inFlight = true;
-    hasFirstFired = true;
-    birdsLeft--;
-    updateHUD();
-    bird.bounces = 0;
-    bird.stoppedFrames = 0;
-    bird.hitBlocksCooldown = {};
-    bird.x = dragPos.x;
-    bird.y = dragPos.y;
-    bird.vx = pullX * tier.power;
-    bird.vy = pullY * tier.power;
-    playLaunchAudio();
+  if (!isDragging) return;
+  isDragging = false;
+  if (!activeBird || activeBird.launched) return;
+
+  const dx = SLING_POS.x - dragEnd.x;
+  const dy = SLING_POS.y - dragEnd.y;
+  const pullStrength = Math.hypot(dx, dy);
+
+  if (pullStrength > 10) {
+    activeBird.launched = true;
+    const speed = pullStrength * 0.22;
+    activeBird.vx = (dx / pullStrength) * speed;
+    activeBird.vy = (dy / pullStrength) * speed;
   } else {
-    dragPos = { x: SLING_X, y: SLING_Y };
+    activeBird.x = SLING_POS.x;
+    activeBird.y = SLING_POS.y;
   }
 }
 
-canvas.addEventListener('mousedown', e => onDown(getCoords(e)));
-window.addEventListener('mousemove', e => onMove(getCoords(e)));
-window.addEventListener('mouseup', onUp);
-canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(getCoords(e)); }, { passive: false });
-window.addEventListener('touchmove', e => { if (isAiming) e.preventDefault(); onMove(getCoords(e)); }, { passive: false });
-window.addEventListener('touchend', onUp);
+// Physics Update Loop
+function update() {
+  if (activeBird && activeBird.launched && !activeBird.settled) {
+    activeBird.vy += GRAVITY;
+    activeBird.x += activeBird.vx;
+    activeBird.y += activeBird.vy;
 
-function loop() {
-  if (gameState === 'PLAY') {
-    if (hasFirstFired && !isWinningTransition) {
-      const diff = DIFFICULTY_CONFIG[currentDifficulty];
-      energy -= 0.016 * diff.drainMult;
-      if (energy <= 0) {
-        energy = 0;
-        gameOver("Giant Bird Starved!", "Energy depleted! Keep the Giant Bird fed.");
+    // Ground bounce
+    if (activeBird.y + activeBird.r >= 475) {
+      activeBird.y = 475 - activeBird.r;
+      activeBird.vy *= -0.35;
+      activeBird.vx *= 0.7;
+      if (Math.hypot(activeBird.vx, activeBird.vy) < 0.8) {
+        activeBird.settled = true;
+        setTimeout(loadNextBird, 800);
       }
     }
 
-    if (bird.inFlight) {
-      bird.vy += 0.32;
-      bird.x += bird.vx;
-      bird.y += bird.vy;
+    // Bird vs Blocks (1-Hit Break for Wood)
+    blocks.forEach((b) => {
+      if (b.hp <= 0) return;
+      if (activeBird.x + activeBird.r > b.x && activeBird.x - activeBird.r < b.x + b.w &&
+          activeBird.y + activeBird.r > b.y && activeBird.y - activeBird.r < b.y + b.h) {
+        
+        const damage = 50; // High enough to smash wood (30 HP) instantly
+        b.hp -= damage;
+        createParticles(activeBird.x, activeBird.y, b.color, 8);
 
-      if (bird.y + bird.r >= GROUND_Y) {
-        bird.y = GROUND_Y - bird.r;
-        if (Math.abs(bird.vy) > 1.5 && bird.bounces < 3) {
-          bird.vy = -Math.abs(bird.vy) * 0.55;
-          bird.vx *= 0.76;
-          bird.bounces++;
-          playSmashAudio();
+        if (b.hp <= 0) {
+          // Instant break: Bird maintains forward momentum
+          levelScore += (b.mat === 'wood' ? 100 : (b.mat === 'stone' ? 250 : 500));
+          activeBird.vx *= 0.85;
+          activeBird.vy *= 0.8;
         } else {
-          bird.vy = 0;
-          bird.vx *= 0.88;
-          bird.stoppedFrames++;
-          if (bird.stoppedFrames > 40 || Math.abs(bird.vx) < 0.15) {
-            energy = Math.max(0, energy - 4);
-            onBirdFinishFlight();
-          }
+          // Hard blocks (Stone / Iron) bounce
+          b.vx += activeBird.vx * 0.45;
+          b.vy += activeBird.vy * 0.3;
+          activeBird.vx *= -0.3;
+          activeBird.vy *= 0.4;
         }
-      }
-
-      for (let i = blocks.length - 1; i >= 0; i--) {
-        const b = blocks[i];
-        const closestX = Math.max(b.x, Math.min(bird.x, b.x + b.w));
-        const closestY = Math.max(b.y, Math.min(bird.y, b.y + b.h));
-        const distX = bird.x - closestX;
-        const distY = bird.y - closestY;
-        const distSq = (distX * distX) + (distY * distY);
-
-        if (distSq < (bird.r * bird.r)) {
-          if (!bird.hitBlocksCooldown[b.id]) {
-            bird.hitBlocksCooldown[b.id] = true;
-            
-            const impactSpeed = Math.hypot(bird.vx, bird.vy);
-            const damage = Math.max(48, Math.min(65, Math.floor(impactSpeed * 3.8)));
-            
-            b.hp -= damage;
-            score += 25;
-            playSmashAudio();
-
-            bird.vx = -bird.vx * 0.40;
-            bird.vy *= 0.6;
-            if (b.hp <= 0) {
-              blocks.splice(i, 1);
-            }
-          }
-        }
-      }
-
-      foods.forEach(f => {
-        if (f.alive && Math.hypot(bird.x - f.x, bird.y - f.y) < bird.r + f.r) {
-          f.alive = false;
-          score += f.pts;
-          foodFlights.push({
-            startX: f.x, startY: f.y, x: f.x, y: f.y, color: f.color, r: f.r, progress: 0
-          });
-        }
-      });
-
-      if (bird.x > 970 || bird.x < -30) {
-        energy = Math.max(0, energy - 4);
-        onBirdFinishFlight();
-      }
-    }
-
-    foods.forEach(f => {
-      if (f.alive && f.y + f.r < GROUND_Y) {
-        let sup = false;
-        for (let b of blocks) {
-          if (f.x > b.x && f.x < b.x + b.w && b.y >= f.y + f.r - 4 && b.y <= f.y + f.r + 10) {
-            sup = true; f.y = b.y - f.r; f.vy = 0; break;
-          }
-        }
-        if (!sup) {
-          f.vy = (f.vy || 0) + 0.35;
-          f.y += f.vy;
-          if (f.y + f.r >= GROUND_Y) { f.y = GROUND_Y - f.r; f.vy = 0; }
-        }
+        updateHUD();
       }
     });
 
-    for (let i = foodFlights.length - 1; i >= 0; i--) {
-      const fl = foodFlights[i];
-      fl.progress += 0.05;
-      const targetX = BIG_BIRD_X + 26;
-      const targetY = BIG_BIRD_Y - 4;
-      fl.x += (targetX - fl.x) * 0.15;
-      fl.y += (targetY - fl.y) * 0.15;
-
-      if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 18) {
-        energy = Math.min(100, energy + 28);
-        chompTimer = 25;
-        playBigBirdCrunch();
-        foodFlights.splice(i, 1);
-        checkAllFoodFinished();
+    // Bird vs Foods
+    foods.forEach((f) => {
+      if (f.eaten) return;
+      const dist = Math.hypot(activeBird.x - f.x, activeBird.y - f.y);
+      if (dist < activeBird.r + f.r) {
+        f.vx += activeBird.vx * 0.9;
+        f.vy += activeBird.vy * 0.7;
+        activeBird.vx *= 0.5;
       }
-    }
-    if (chompTimer > 0) chompTimer--;
+    });
   }
 
-  updateHUD();
-  drawScene();
-  requestAnimationFrame(loop);
-}
-
-function checkAllFoodFinished() {
-  const left = foods.filter(f => f.alive).length;
-  if (left === 0 && foodFlights.length === 0 && !isWinningTransition) {
-    isWinningTransition = true;
-    stopRubberStretch();
-    setTimeout(() => {
-      playRoundWinSound();
-      
-      if (level % 20 === 0) {
-        gameState = 'EVOLVE';
-        score += 5000;
-        const nextTier = EVOLUTIONS[Math.min(Math.floor(level / 20), EVOLUTIONS.length - 1)];
-        document.getElementById('evolve-msg').innerText = `MASTER STAGE CLEAR!\nGiant Bird evolved to: ${nextTier.name}`;
-        document.getElementById('evolve-overlay').classList.remove('hidden');
-      } else {
-        gameState = 'WIN';
-        score += Math.floor(energy * 15) + (birdsLeft * 100);
-        document.getElementById('win-msg').innerText = `Level ${level} complete! Bonus: +${birdsLeft * 100}`;
-        document.getElementById('win-overlay').classList.remove('hidden');
-      }
-    }, 600);
-  }
-}
-
-function gameOver(title, desc) {
-  if (isWinningTransition) return;
-  stopRubberStretch();
-  playLoseSound();
-  gameState = 'LOSE';
-  document.getElementById('lose-title').innerText = title;
-  document.getElementById('lose-desc').innerText = desc;
-
-  const isTop10 = (cachedTopScores.length < 10) || (score > 0 && score > cachedTopScores[cachedTopScores.length - 1]);
-  const celebrationBox = document.getElementById('top10Celebration');
-  
-  if (isTop10) {
-    celebrationBox.style.display = 'flex';
-    document.getElementById('playerInitials').value = '';
-    document.getElementById('saveScoreBtn').disabled = false;
-    document.getElementById('saveScoreBtn').innerText = 'Save Score';
-  } else {
-    celebrationBox.style.display = 'none';
-  }
-
-  document.getElementById('lose-overlay').classList.remove('hidden');
-}
-
-function updateHUD() {
-  const tier = getCurrentTier();
-  document.getElementById('bird-tier').innerText = tier.name;
-  document.getElementById('level-display').innerText = `Lv ${level}`;
-  document.getElementById('shots-left-display').innerText = birdsLeft;
-  document.getElementById('score-display').innerText = score;
-  document.getElementById('energy-fill').style.width = Math.min(100, energy) + '%';
-}
-
-function drawSlingshotBack() {
-  ctx.save();
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  ctx.lineWidth = 12;
-  ctx.strokeStyle = '#2d1810';
-  ctx.beginPath();
-  ctx.moveTo(SLING_X - 6, SLING_Y + 16);
-  ctx.lineTo(SLING_X - 18, SLING_Y - 14);
-  ctx.stroke();
-
-  ctx.lineWidth = 6;
-  ctx.strokeStyle = '#532d1f';
-  ctx.beginPath();
-  ctx.moveTo(SLING_X - 5, SLING_Y + 14);
-  ctx.lineTo(SLING_X - 16, SLING_Y - 12);
-  ctx.stroke();
-
-  ctx.fillStyle = '#1a0d07';
-  ctx.beginPath();
-  ctx.roundRect(SLING_X - 22, SLING_Y - 18, 9, 8, 2);
-  ctx.fill();
-  ctx.restore();
-}
-
-function drawSlingshotFront() {
-  ctx.save();
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  ctx.lineWidth = 16;
-  ctx.strokeStyle = '#2d1810';
-  ctx.beginPath();
-  ctx.moveTo(SLING_X - 1, SLING_Y + 14);
-  ctx.lineTo(SLING_X + 2, GROUND_Y);
-  ctx.stroke();
-
-  ctx.lineWidth = 9;
-  ctx.strokeStyle = '#633928';
-  ctx.beginPath();
-  ctx.moveTo(SLING_X - 2, SLING_Y + 16);
-  ctx.lineTo(SLING_X + 1, GROUND_Y);
-  ctx.stroke();
-
-  ctx.fillStyle = '#1e0f09';
-  ctx.beginPath();
-  ctx.arc(SLING_X, SLING_Y + 48, 2.5, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = '#3a1f14';
-  ctx.beginPath();
-  ctx.arc(SLING_X - 1, SLING_Y + 16, 7, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.lineWidth = 13;
-  ctx.strokeStyle = '#2d1810';
-  ctx.beginPath();
-  ctx.moveTo(SLING_X - 1, SLING_Y + 16);
-  ctx.lineTo(SLING_X + 18, SLING_Y - 14);
-  ctx.stroke();
-
-  ctx.lineWidth = 7;
-  ctx.strokeStyle = '#7c4632';
-  ctx.beginPath();
-  ctx.moveTo(SLING_X, SLING_Y + 15);
-  ctx.lineTo(SLING_X + 17, SLING_Y - 12);
-  ctx.stroke();
-
-  ctx.fillStyle = '#1a0d07';
-  ctx.beginPath();
-  ctx.roundRect(SLING_X + 14, SLING_Y - 18, 9, 8, 2);
-  ctx.fill();
-
-  ctx.fillStyle = '#ffb300';
-  ctx.beginPath();
-  ctx.arc(SLING_X + 18.5, SLING_Y - 14, 1.8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-}
-
-function drawScene() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "#87CEEB";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#FFF9C4";
-  ctx.beginPath();
-  ctx.arc(820, 90, 45, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.fillStyle = "#7986CB";
-  ctx.beginPath();
-  ctx.moveTo(150, GROUND_Y);
-  ctx.lineTo(340, 240);
-  ctx.lineTo(520, GROUND_Y);
-  ctx.fill();
-
-  ctx.fillStyle = "#9FA8DA";
-  ctx.beginPath();
-  ctx.moveTo(420, GROUND_Y);
-  ctx.lineTo(620, 200);
-  ctx.lineTo(820, GROUND_Y);
-  ctx.fill();
-
-  ctx.fillStyle = '#4E342E';
-  ctx.beginPath();
-  ctx.moveTo(0, CLIFF_SURFACE_Y);
-  ctx.lineTo(135, CLIFF_SURFACE_Y);
-  ctx.quadraticCurveTo(165, 340, 170, GROUND_Y);
-  ctx.lineTo(0, GROUND_Y);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle = '#558B2F';
-  ctx.fillRect(0, CLIFF_SURFACE_Y - 4, 135, 8);
-
-  ctx.fillStyle = '#4E342E';
-  ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
-  ctx.fillStyle = '#689F38';
-  ctx.fillRect(0, GROUND_Y, canvas.width, 14);
-
-  drawGiantBird();
-  drawSlingshotBack();
-
-  const tier = getCurrentTier();
-  for (let q = 0; q < Math.min(birdsLeft - (bird.inFlight ? 0 : 1), 6); q++) {
-    const qX = SLING_X - 45 - (q * 16);
-    const qY = GROUND_Y - 10;
-    ctx.fillStyle = tier.color;
-    ctx.beginPath();
-    ctx.arc(qX, qY, 8, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  const bX = bird.inFlight ? bird.x : (isAiming ? dragPos.x : SLING_X);
-  const bY = bird.inFlight ? bird.y : (isAiming ? dragPos.y : SLING_Y);
-
-  if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
-    ctx.strokeStyle = '#2b1408';
-    ctx.lineWidth = 4.5;
-    ctx.beginPath();
-    ctx.moveTo(SLING_X - 17, SLING_Y - 14);
-    ctx.lineTo(bX - 4, bY);
-    ctx.stroke();
-
-    if (isAiming) {
-      let pX = (SLING_X - dragPos.x) * tier.power;
-      let pY = (SLING_Y - dragPos.y) * tier.power;
-      let sX = dragPos.x, sY = dragPos.y, sVY = pY;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-      for (let i = 0; i < 14; i++) {
-        sX += pX;
-        sVY += 0.32;
-        sY += sVY;
-        ctx.beginPath();
-        ctx.arc(sX, sY, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-  }
-
-  if (birdsLeft > 0 || bird.inFlight) {
-    ctx.fillStyle = tier.color;
-    ctx.beginPath();
-    ctx.arc(bX, bY, bird.r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(bX + 4, bY - 3, 3.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#000";
-    ctx.beginPath();
-    ctx.arc(bX + 5, bY - 3, 1.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#FF9800";
-    ctx.beginPath();
-    ctx.moveTo(bX + 7, bY - 1);
-    ctx.lineTo(bX + 14, bY + 2);
-    ctx.lineTo(bX + 7, bY + 5);
-    ctx.fill();
-  }
-
-  if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
-    ctx.strokeStyle = '#42200f';
-    ctx.lineWidth = 4.5;
-    ctx.beginPath();
-    ctx.moveTo(bX + 4, bY);
-    ctx.lineTo(SLING_X + 18, SLING_Y - 14);
-    ctx.stroke();
-  }
-
-  drawSlingshotFront();
-
+  // Physics on Blocks
   blocks.forEach(b => {
+    if (b.hp <= 0) return;
+    b.vy += GRAVITY;
+    b.x += b.vx;
+    b.y += b.vy;
+    b.vx *= 0.88;
+    b.vy *= 0.88;
+
+    if (b.y + b.h >= 475) {
+      b.y = 475 - b.h;
+      b.vy = 0;
+    }
+  });
+
+  // Food Physics & Feeding Giant Bird
+  foods.forEach(f => {
+    if (f.eaten) return;
+    f.vy += GRAVITY;
+    f.x += f.vx;
+    f.y += f.vy;
+    f.vx *= 0.94;
+    f.vy *= 0.94;
+
+    if (f.y + f.r >= 475) {
+      f.y = 475 - f.r;
+      f.vy *= -0.2;
+    }
+
+    const distToMouth = Math.hypot(f.x - giantBird.x, f.y - giantBird.y);
+    if (distToMouth < giantBird.r + 20) {
+      f.eaten = true;
+      eatenFood++;
+      levelScore += 500;
+      giantBird.chewTimer = 30;
+      updateHUD();
+      createParticles(giantBird.x, giantBird.y, '#f59e0b', 15);
+
+      if (eatenFood >= requiredFood) {
+        setTimeout(showLevelComplete, 700);
+      }
+    }
+  });
+
+  if (giantBird.chewTimer > 0) giantBird.chewTimer--;
+
+  // Particle Updates
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+function createParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: x,
+      y: y,
+      vx: (Math.random() - 0.5) * 6,
+      vy: (Math.random() - 0.5) * 6,
+      color: color,
+      life: 20 + Math.random() * 15,
+      size: 2 + Math.random() * 3
+    });
+  }
+}
+
+// Drawing Routine
+function draw() {
+  ctx.clearRect(0, 0, CW, CH);
+
+  // Ground
+  ctx.fillStyle = '#15803d';
+  ctx.fillRect(0, 475, CW, 65);
+  ctx.fillStyle = '#166534';
+  ctx.fillRect(0, 485, CW, 55);
+
+  // Slingshot Stand
+  ctx.strokeStyle = '#78350f';
+  ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(SLING_POS.x - 6, 475);
+  ctx.lineTo(SLING_POS.x - 6, SLING_POS.y + 15);
+  ctx.lineTo(SLING_POS.x - 16, SLING_POS.y - 12);
+  ctx.moveTo(SLING_POS.x - 6, SLING_POS.y + 15);
+  ctx.lineTo(SLING_POS.x + 8, SLING_POS.y - 12);
+  ctx.stroke();
+
+  // Rubber Bands
+  if (activeBird && !activeBird.launched) {
+    ctx.strokeStyle = '#b91c1c';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(SLING_POS.x - 14, SLING_POS.y - 8);
+    ctx.lineTo(activeBird.x, activeBird.y);
+    ctx.lineTo(SLING_POS.x + 6, SLING_POS.y - 8);
+    ctx.stroke();
+  }
+
+  // Draw Queue Birds
+  for (let i = 0; i < remainingBirds; i++) {
+    const qX = SLING_POS.x - 45 - (i * 26);
+    const qY = 475 - 13;
+    drawSingleBird(qX, qY);
+  }
+
+  // Draw Active Bird
+  if (activeBird) {
+    drawSingleBird(activeBird.x, activeBird.y);
+  }
+
+  // Draw Blocks
+  blocks.forEach(b => {
+    if (b.hp <= 0) return;
     ctx.fillStyle = b.color;
     ctx.fillRect(b.x, b.y, b.w, b.h);
-    ctx.strokeStyle = '#222';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 2;
     ctx.strokeRect(b.x, b.y, b.w, b.h);
   });
 
+  // Draw Foods (Energy Berries)
   foods.forEach(f => {
-    if (f.alive) {
-      ctx.fillStyle = f.color;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#111';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
+    if (f.eaten) return;
+    ctx.fillStyle = '#f43f5e';
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fb7185';
+    ctx.beginPath();
+    ctx.arc(f.x - 4, f.y - 4, f.r * 0.4, 0, Math.PI * 2);
+    ctx.fill();
   });
 
-  foodFlights.forEach(fl => {
-    ctx.fillStyle = fl.color;
+  // Draw Giant Bird
+  drawGiantBird();
+
+  // Draw Particles
+  particles.forEach(p => {
+    ctx.fillStyle = p.color;
     ctx.beginPath();
-    ctx.arc(fl.x, fl.y, fl.r * 0.75, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     ctx.fill();
   });
 }
 
-function drawGiantBird() {
-  const tier = getCurrentTier();
+function drawSingleBird(x, y) {
   ctx.save();
-  ctx.translate(BIG_BIRD_X, BIG_BIRD_Y);
-  ctx.scale(tier.scale, tier.scale);
-  ctx.fillStyle = tier.color;
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 36, 32, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
+  ctx.translate(x, y);
 
-  ctx.fillStyle = '#FFF8DC';
+  // Red Bird Body
+  ctx.fillStyle = '#ef4444';
   ctx.beginPath();
-  ctx.ellipse(10, 4, 20, 18, 0, 0, Math.PI * 2);
+  ctx.arc(0, 0, 13, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Beak & Eye
+  ctx.fillStyle = '#f97316';
+  ctx.beginPath();
+  ctx.moveTo(8, -2);
+  ctx.lineTo(17, 0);
+  ctx.lineTo(8, 3);
   ctx.fill();
 
   ctx.fillStyle = '#fff';
   ctx.beginPath();
-  ctx.arc(14, -14, 9, 0, Math.PI * 2);
+  ctx.arc(3, -3, 3, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#000';
   ctx.beginPath();
-  ctx.arc(17, -14, 4, 0, Math.PI * 2);
+  ctx.arc(4, -3, 1.5, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#FF9800';
-  ctx.beginPath();
-  if (chompTimer > 0) {
-    ctx.moveTo(25, -16);
-    ctx.lineTo(52, -26);
-    ctx.lineTo(34, -4);
-    ctx.lineTo(52, 14);
-    ctx.lineTo(25, 4);
-  } else {
-    ctx.moveTo(25, -10);
-    ctx.lineTo(44, -4);
-    ctx.lineTo(25, 3);
-  }
-  ctx.fill();
   ctx.restore();
 }
 
-document.getElementById('start-game-btn').onclick = () => {
-  initAudioSystem();
-  startBackgroundMusic();
-  incrementGlobalPlayCount();
-  document.getElementById('start-overlay').classList.add('hidden');
-  gameState = 'PLAY';
-  initLevel();
-};
-document.getElementById('restart-btn').onclick = () => {
-  initAudioSystem();
-  level = 1;
-  score = 0;
-  energy = 70;
-  incrementGlobalPlayCount();
-  document.getElementById('lose-overlay').classList.add('hidden');
-  gameState = 'PLAY';
-  initLevel();
-};
-document.getElementById('next-level-btn').onclick = () => {
-  level++;
-  document.getElementById('win-overlay').classList.add('hidden');
-  gameState = 'PLAY';
-  initLevel();
-};
-document.getElementById('evolve-btn').onclick = () => {
-  level++;
-  document.getElementById('evolve-overlay').classList.add('hidden');
-  gameState = 'PLAY';
-  initLevel();
-};
-document.getElementById('saveScoreBtn').onclick = async () => {
-  const inp = document.getElementById('playerInitials');
-  let initials = inp.value.trim() || "AAA";
-  const btn = document.getElementById('saveScoreBtn');
-  btn.disabled = true;
-  btn.innerText = "Saving...";
-  await submitScore(initials, score);
-  btn.innerText = "Saved!";
+function drawGiantBird() {
+  ctx.save();
+  ctx.translate(giantBird.x, giantBird.y);
+
+  // Big Body
+  ctx.fillStyle = '#0284c7';
+  ctx.beginPath();
+  ctx.arc(0, 0, giantBird.r, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Belly
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
+  ctx.arc(-8, 12, giantBird.r * 0.6, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Eye
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(-20, -18, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(-22, -18, 6, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Animated Beak
+  ctx.fillStyle = '#f59e0b';
+  const openGap = giantBird.chewTimer > 0 ? 16 : 4;
+  ctx.beginPath();
+  ctx.moveTo(-giantBird.r + 5, 0);
+  ctx.lineTo(-giantBird.r - 28, -openGap);
+  ctx.lineTo(-giantBird.r + 5, -8);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(-giantBird.r + 5, 4);
+  ctx.lineTo(-giantBird.r - 28, openGap);
+  ctx.lineTo(-giantBird.r + 5, 12);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function updateHUD() {
+  document.getElementById("level-display").innerText = currentLevel;
+  document.getElementById("hunger-display").innerText = `${eatenFood} / ${requiredFood}`;
+  document.getElementById("score-display").innerText = totalScore + levelScore;
+}
+
+// Modal & Firestore Leaderboard Logic
+const modal = document.getElementById("dialog-overlay");
+const modalTitle = document.getElementById("modal-title");
+const modalDesc = document.getElementById("modal-desc");
+const lbView = document.getElementById("leaderboard-view");
+
+function showLevelComplete() {
+  totalScore += levelScore;
+  modalTitle.innerText = "Level Cleared!";
+  modalDesc.innerText = `Great shot! Total Score: ${totalScore}`;
+  modal.style.display = "flex";
+  document.getElementById("next-lvl-btn").style.display = "inline-block";
+  fetchLeaderboard();
+}
+
+document.getElementById("next-lvl-btn").onclick = () => {
+  modal.style.display = "none";
+  currentLevel++;
+  buildLevel(currentLevel);
 };
 
-initLevel();
-drawScene();
-requestAnimationFrame(loop);
+document.getElementById("restart-btn").onclick = () => {
+  modal.style.display = "none";
+  currentLevel = 1;
+  totalScore = 0;
+  buildLevel(1);
+};
+
+// Main Leaderboard fetch
+async function fetchLeaderboard() {
+  lbView.innerHTML = "Fetching top scores...";
+  try {
+    const snap = await db.collection("leaderboard").orderBy("score", "desc").limit(7).get();
+    if (snap.empty) {
+      lbView.innerHTML = "<div style='text-align:center;'>No scores yet! Be the first!</div>";
+      return;
+    }
+    let html = "";
+    let r = 1;
+    snap.forEach(doc => {
+      const d = doc.data();
+      html += `<div class="lb-row"><span>#${r} <b>${d.initials || "ANON"}</b></span><span style="color:#facc15;">${d.score} pts</span></div>`;
+      r++;
+    });
+    lbView.innerHTML = html;
+  } catch(e) {
+    lbView.innerHTML = "Offline or Leaderboard loading error.";
+  }
+}
+
+document.getElementById("save-score-btn").onclick = async () => {
+  const initInput = document.getElementById("player-initials");
+  const init = initInput.value.trim().toUpperCase() || "ANON";
+  try {
+    await db.collection("leaderboard").add({
+      initials: init,
+      score: totalScore,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    initInput.value = "";
+    fetchLeaderboard();
+  } catch(e) {
+    alert("Error saving: " + e.message);
+  }
+};
+
+// Launch Game Loop
+buildLevel(currentLevel);
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
 </script>
 </body>
 </html>
