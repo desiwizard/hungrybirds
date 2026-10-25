@@ -300,7 +300,7 @@ const SOUND_PATHS = {
 
 const bgmAudio = new Audio(SOUND_PATHS.bgm);
 bgmAudio.loop = true;
-bgmAudio.volume = 1.0; // 100% full volume
+bgmAudio.volume = 1.0;
 
 const stretchAudio = new Audio(SOUND_PATHS.stretch);
 stretchAudio.preload = 'auto';
@@ -387,7 +387,6 @@ function playLoseSound() {
   snd.play().catch(() => {});
 }
 
-// BGM set to full 100% volume
 function startBackgroundMusic() {
   if (!musicEnabled) return;
   bgmAudio.volume = 1.0;
@@ -668,31 +667,65 @@ function loop() {
           }
         }
       }
+
+      // Enhanced Solid Collision System (Prevents rolling inside blocks)
       for (let i = blocks.length - 1; i >= 0; i--) {
         const b = blocks[i];
-        if (bird.x + bird.r > b.x && bird.x - bird.r < b.x + b.w &&
-            bird.y + bird.r > b.y && bird.y - bird.r < b.y + b.h) {
+        
+        // Find nearest point on rectangle to circle
+        const closestX = Math.max(b.x, Math.min(bird.x, b.x + b.w));
+        const closestY = Math.max(b.y, Math.min(bird.y, b.y + b.h));
+        
+        const distX = bird.x - closestX;
+        const distY = bird.y - closestY;
+        const distSq = (distX * distX) + (distY * distY);
+
+        if (distSq < (bird.r * bird.r)) {
+          const overlap = bird.r - Math.sqrt(distSq || 1);
+          const nx = (distX / (Math.sqrt(distSq) || 1));
+          const ny = (distY / (Math.sqrt(distSq) || 1));
+
           if (!bird.hitBlocksCooldown[b.id]) {
             bird.hitBlocksCooldown[b.id] = true;
             b.hp -= 40;
             score += 25;
             playSmashAudio();
+
+            // Push bird out of block boundary immediately
+            bird.x += nx * (overlap + 2);
+            bird.y += ny * (overlap + 2);
+
             if (b.type === 'iron') {
-              bird.vx = -bird.vx * 0.5;
-              bird.vy *= 0.6;
+              bird.vx = -bird.vx * 0.6;
+              bird.vy = -bird.vy * 0.5;
             } else if (b.type === 'stone') {
-              bird.vx *= 0.45;
-              bird.vy *= 0.55;
+              if (b.hp <= 0) {
+                bird.vx *= 0.7; // Shatter through
+              } else {
+                bird.vx = -bird.vx * 0.45;
+                bird.vy *= 0.6;
+              }
             } else {
-              bird.vx *= 0.75;
-              bird.vy *= 0.75;
+              // Wood block breaks instantly on 1 hit
+              if (b.hp <= 0) {
+                bird.vx *= 0.82; // Breaks and sails through smoothly
+              } else {
+                bird.vx = -bird.vx * 0.4;
+              }
             }
+
             if (b.hp <= 0) {
               blocks.splice(i, 1);
+              continue;
             }
+          } else {
+            // Already hit block: solid push-out to prevent penetrating inside
+            bird.x += nx * (overlap + 1);
+            bird.y += ny * (overlap + 1);
           }
         }
       }
+
       foods.forEach(f => {
         if (f.alive && Math.hypot(bird.x - f.x, bird.y - f.y) < bird.r + f.r) {
           f.alive = false;
