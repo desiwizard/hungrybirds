@@ -12,7 +12,7 @@
   <meta property="og:title" content="Hungry Bird: Energy Feast">
   <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
 
-  <!-- WhatsApp Image Open Graph Tags (Local Repo Path) -->
+  <!-- WhatsApp Image Open Graph Tags (Local Repository Path) -->
   <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
   <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
   <meta property="og:image:type" content="image/jpeg">
@@ -343,9 +343,9 @@
     <div class="start-content-grid">
       <div class="start-col-left">
         <div class="rules-card">
-          🎯 <b>Aim & Shoot:</b> Bird को गुलेल (slingshot) से खींचकर छोड़ें!<br>
-          🪵 <b>Towers:</b> Wood (1 hit), Stone (1 hit), Iron (2 hits).<br>
-          🍔 <b>Mission:</b> खाना नीचे गिराएं ताकि Giant Bird खा सके!
+          🎯 <b>Aim & Shoot:</b> Pull back slingshot and release to launch birds!<br>
+          🪵 <b>Obstacles:</b> Wood (1 hit), Stone (1 hit), Iron (2 hits).<br>
+          🍔 <b>Mission:</b> Knock food down to feed the Giant Bird!
         </div>
         <div class="diff-container">
           <button class="diff-btn" data-diff="novice">Novice</button>
@@ -374,7 +374,7 @@
 
   <div id="lose-overlay" class="overlay hidden">
     <h1 style="color: #ff5252;" id="lose-title">Giant Bird Starved!</h1>
-    <p id="lose-desc">Energy खत्म हो गई!</p>
+    <p id="lose-desc">Energy depleted! Keep the Giant Bird fed.</p>
 
     <div id="top10Celebration" style="display: none; flex-direction: column; align-items: center; margin-bottom: 12px;">
       <p style="color: #ffeb3b; font-size: 15px; font-weight: bold; margin-bottom: 8px;">
@@ -789,7 +789,7 @@ function resetBird() {
 function onBirdFinishFlight() {
   const remainingFoods = foods.filter(f => f.alive).length + foodFlights.length;
   if (birdsLeft <= 0 && remainingFoods > 0) {
-    gameOver("No More Birds Left!", "Aapke birds khatam ho gaye!");
+    gameOver("No More Birds Left!", "You have run out of birds to launch!");
   } else {
     resetBird();
   }
@@ -874,7 +874,7 @@ function loop() {
       energy -= 0.016 * diff.drainMult;
       if (energy <= 0) {
         energy = 0;
-        gameOver("Giant Bird Starved!", "Energy खत्म हो गई!");
+        gameOver("Giant Bird Starved!", "Energy depleted! Keep the Giant Bird fed.");
       }
     }
 
