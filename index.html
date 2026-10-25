@@ -99,6 +99,10 @@
       font-size: 13px;
       cursor: pointer;
     }
+    .sound-btn.muted {
+      background: #ffcdd2 !important;
+      border-color: #e53935 !important;
+    }
     #fs-btn {
       position: absolute;
       top: 15px;
@@ -214,8 +218,8 @@
   <div class="hud">
     <div class="hud-box">
       <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span> (<span id="hud-diff" style="color:#ffeb3b;">Normal</span>)
-      <button id="music-btn" class="sound-btn">🎵</button>
-      <button id="sfx-btn" class="sound-btn">🔊</button>
+      <button id="music-btn" class="sound-btn" title="Music">🎵</button>
+      <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
     </div>
     <div class="hud-box">
       <span style="color: #ffeb3b;">🎯 Shots: <span id="shots-left-display">10</span></span>
@@ -322,6 +326,146 @@ async function loadLeaderboard() {
 listenToPlayCount();
 loadLeaderboard();
 
+let audioCtx = null;
+let musicEnabled = true;
+let sfxEnabled = true;
+const SOUND_PATHS = {
+  stretch: 'stretch.mp3',
+  launch: 'launch.mp3',
+  smash: 'smash.mp3',
+  crunch: 'crunch.mp3',
+  lose: 'lose.mp3',
+  win: 'win.mp3',
+  bgm: 'bgm.mp3'
+};
+
+const bgmAudio = new Audio(SOUND_PATHS.bgm);
+bgmAudio.loop = true;
+bgmAudio.volume = 1.0;
+
+const stretchAudio = new Audio(SOUND_PATHS.stretch);
+stretchAudio.preload = 'auto';
+
+const crunchAudio = new Audio(SOUND_PATHS.crunch);
+crunchAudio.preload = 'auto';
+
+let isStretchPlaying = false;
+
+function initAudioSystem() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  crunchAudio.load();
+}
+
+window.addEventListener('touchstart', function unlockAudio() {
+  initAudioSystem();
+  window.removeEventListener('touchstart', unlockAudio);
+}, { passive: true, once: true });
+
+window.addEventListener('click', function unlockAudioClick() {
+  initAudioSystem();
+  window.removeEventListener('click', unlockAudioClick);
+}, { passive: true, once: true });
+
+function playRubberStretch(pressureRatio) {
+  if (!sfxEnabled || !isAiming || gameState !== 'PLAY') return;
+  stretchAudio.volume = Math.min(0.65, 0.2 + pressureRatio * 0.45);
+  stretchAudio.playbackRate = 0.8 + pressureRatio * 0.8;
+  if (!isStretchPlaying) {
+    isStretchPlaying = true;
+    stretchAudio.currentTime = 0;
+    stretchAudio.play().catch(() => {});
+  }
+}
+function stopRubberStretch() {
+  isStretchPlaying = false;
+  try {
+    stretchAudio.pause();
+    stretchAudio.currentTime = 0;
+  } catch(e) {}
+}
+function playLaunchAudio() {
+  if (!sfxEnabled) return;
+  const snd = new Audio(SOUND_PATHS.launch);
+  snd.volume = 0.95;
+  snd.play().catch(() => {});
+}
+function playSmashAudio() {
+  if (!sfxEnabled) return;
+  initAudioSystem();
+  const snd = new Audio(SOUND_PATHS.smash);
+  snd.volume = 0.85;
+  snd.play().catch(() => {});
+}
+
+let lastCrunchPlayTime = 0;
+function playBigBirdCrunch() {
+  if (!sfxEnabled) return;
+  initAudioSystem();
+  const now = Date.now();
+  if (now - lastCrunchPlayTime < 140) return;
+  lastCrunchPlayTime = now;
+  
+  const soundClone = crunchAudio.cloneNode();
+  soundClone.volume = 1.0;
+  soundClone.play().catch(() => {
+    crunchAudio.currentTime = 0;
+    crunchAudio.play().catch(() => {});
+  });
+}
+
+function playRoundWinSound() {
+  if (!sfxEnabled) return;
+  bgmAudio.pause();
+  const winSnd = new Audio(SOUND_PATHS.win);
+  winSnd.volume = 1.0;
+  winSnd.play().catch(() => {});
+}
+function playLoseSound() {
+  if (!sfxEnabled) return;
+  bgmAudio.pause();
+  const snd = new Audio(SOUND_PATHS.lose);
+  snd.volume = 0.8;
+  snd.play().catch(() => {});
+}
+
+function startBackgroundMusic() {
+  if (!musicEnabled) return;
+  bgmAudio.volume = 1.0;
+  bgmAudio.play().catch(() => {});
+}
+
+document.getElementById('music-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation(); initAudioSystem();
+  musicEnabled = !musicEnabled;
+  const mBtn = document.getElementById('music-btn');
+  mBtn.innerText = musicEnabled ? '🎵' : '🔇';
+  if (musicEnabled) {
+    mBtn.classList.remove('muted');
+    if (gameState === 'PLAY') startBackgroundMusic();
+  } else {
+    mBtn.classList.add('muted');
+    bgmAudio.pause();
+  }
+});
+
+document.getElementById('sfx-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation(); initAudioSystem();
+  sfxEnabled = !sfxEnabled;
+  const sBtn = document.getElementById('sfx-btn');
+  sBtn.innerText = sfxEnabled ? '🔊' : '🔈';
+  if (sfxEnabled) {
+    sBtn.classList.remove('muted');
+  } else {
+    sBtn.classList.add('muted');
+    stopRubberStretch();
+  }
+});
+
 let currentDifficulty = 'normal';
 const DIFFICULTY_CONFIG = {
   novice: { maxBirds: 14, drainMult: 0.60, dots: 18, ironHP: 80, stoneHP: 40, label: 'Novice' },
@@ -394,7 +538,9 @@ function initLevel() {
   const diff = DIFFICULTY_CONFIG[currentDifficulty];
   birdsLeft = diff.maxBirds;
   dragPos = { x: SLING_X, y: SLING_Y };
+  stopRubberStretch();
   resetBird();
+  if (musicEnabled) startBackgroundMusic();
 
   const numTowers = Math.min(2 + Math.floor(level / 4), 4);
   const towerSpacing = (level >= 5) ? 135 : 105;
@@ -458,6 +604,7 @@ function getCoords(e) {
 }
 
 function onDown(pos) {
+  initAudioSystem();
   if (gameState !== 'PLAY' || bird.inFlight || birdsLeft <= 0 || isWinningTransition) return;
   const d = Math.hypot(pos.x - SLING_X, pos.y - SLING_Y);
   if (d < 75) {
@@ -477,11 +624,18 @@ function onMove(pos) {
     dragPos.x = pos.x;
     dragPos.y = pos.y;
   }
+  const pressureRatio = Math.min(1.0, Math.hypot(SLING_X - dragPos.x, SLING_Y - dragPos.y) / MAX_DRAG);
+  if (pressureRatio > 0.12) {
+    playRubberStretch(pressureRatio);
+  } else {
+    stopRubberStretch();
+  }
 }
 
 function onUp() {
   if (!isAiming) return;
   isAiming = false;
+  stopRubberStretch();
   const pullX = SLING_X - dragPos.x;
   const pullY = SLING_Y - dragPos.y;
   const pullDist = Math.hypot(pullX, pullY);
@@ -497,6 +651,7 @@ function onUp() {
     bird.y = dragPos.y;
     bird.vx = pullX * 0.28;
     bird.vy = pullY * 0.28;
+    playLaunchAudio();
   } else {
     dragPos = { x: SLING_X, y: SLING_Y };
   }
@@ -531,6 +686,7 @@ function loop() {
           bird.vy = -Math.abs(bird.vy) * 0.55;
           bird.vx *= 0.76;
           bird.bounces++;
+          playSmashAudio();
         } else {
           bird.vy = 0;
           bird.vx *= 0.88;
@@ -555,6 +711,7 @@ function loop() {
             bird.hitBlocksCooldown[b.id] = true;
             b.hp -= 40;
             score += 25;
+            playSmashAudio();
             bird.vx = -bird.vx * 0.5;
             bird.vy *= 0.6;
             if (b.hp <= 0) {
@@ -607,6 +764,7 @@ function loop() {
       if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 18) {
         energy = Math.min(100, energy + 25);
         chompTimer = 25;
+        playBigBirdCrunch();
         foodFlights.splice(i, 1);
         checkAllFoodFinished();
       }
@@ -623,7 +781,9 @@ function checkAllFoodFinished() {
   const left = foods.filter(f => f.alive).length;
   if (left === 0 && foodFlights.length === 0 && !isWinningTransition) {
     isWinningTransition = true;
+    stopRubberStretch();
     setTimeout(() => {
+      playRoundWinSound();
       gameState = 'WIN';
       score += Math.floor(energy * 15) + (birdsLeft * 100);
       document.getElementById('win-msg').innerText = `Level ${level} complete! Bonus: +${birdsLeft * 100}`;
@@ -634,6 +794,8 @@ function checkAllFoodFinished() {
 
 function gameOver(title, desc) {
   if (isWinningTransition) return;
+  stopRubberStretch();
+  playLoseSound();
   gameState = 'LOSE';
   document.getElementById('lose-title').innerText = title;
   document.getElementById('lose-desc').innerText = desc;
@@ -649,7 +811,6 @@ function updateHUD() {
 function drawScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // 1. Sky & Sun
   ctx.fillStyle = "#87CEEB";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#FFF9C4";
@@ -657,7 +818,6 @@ function drawScene() {
   ctx.arc(820, 90, 45, 0, Math.PI * 2);
   ctx.fill();
 
-  // 2. Mountains Back
   ctx.fillStyle = "#7986CB";
   ctx.beginPath();
   ctx.moveTo(150, GROUND_Y);
@@ -672,7 +832,6 @@ function drawScene() {
   ctx.lineTo(820, GROUND_Y);
   ctx.fill();
 
-  // 3. Cliff Left
   ctx.fillStyle = '#4E342E';
   ctx.beginPath();
   ctx.moveTo(0, CLIFF_SURFACE_Y);
@@ -685,16 +844,13 @@ function drawScene() {
   ctx.fillStyle = '#558B2F';
   ctx.fillRect(0, CLIFF_SURFACE_Y - 4, 135, 8);
 
-  // 4. Ground
   ctx.fillStyle = '#4E342E';
   ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
   ctx.fillStyle = '#689F38';
   ctx.fillRect(0, GROUND_Y, canvas.width, 14);
 
-  // 5. Giant Bird on Cliff
   drawGiantBird();
 
-  // 6. Slingshot Wood
   ctx.strokeStyle = '#4E342E';
   ctx.lineWidth = 9;
   ctx.beginPath();
@@ -704,7 +860,6 @@ function drawScene() {
   ctx.lineTo(SLING_X + 14, SLING_Y + 50);
   ctx.stroke();
 
-  // 7. Small Queue Birds
   for (let q = 0; q < Math.min(birdsLeft - (bird.inFlight ? 0 : 1), 6); q++) {
     const qX = SLING_X - 45 - (q * 16);
     const qY = GROUND_Y - 10;
@@ -714,7 +869,6 @@ function drawScene() {
     ctx.fill();
   }
 
-  // 8. Slingshot Rubber & Aim
   const bX = bird.inFlight ? bird.x : (isAiming ? dragPos.x : SLING_X);
   const bY = bird.inFlight ? bird.y : (isAiming ? dragPos.y : SLING_Y);
 
@@ -743,7 +897,6 @@ function drawScene() {
     }
   }
 
-  // 9. Main Bird
   if (birdsLeft > 0 || bird.inFlight) {
     ctx.fillStyle = "#E53935";
     ctx.beginPath();
@@ -765,7 +918,6 @@ function drawScene() {
     ctx.fill();
   }
 
-  // 10. Blocks
   blocks.forEach(b => {
     ctx.fillStyle = b.color;
     ctx.fillRect(b.x, b.y, b.w, b.h);
@@ -774,7 +926,6 @@ function drawScene() {
     ctx.strokeRect(b.x, b.y, b.w, b.h);
   });
 
-  // 11. Foods
   foods.forEach(f => {
     if (f.alive) {
       ctx.fillStyle = f.color;
@@ -787,7 +938,6 @@ function drawScene() {
     }
   });
 
-  // 12. Flying Foods
   foodFlights.forEach(fl => {
     ctx.fillStyle = fl.color;
     ctx.beginPath();
@@ -839,12 +989,15 @@ function drawGiantBird() {
 }
 
 document.getElementById('start-game-btn').onclick = () => {
+  initAudioSystem();
+  startBackgroundMusic();
   incrementGlobalPlayCount();
   document.getElementById('start-overlay').classList.add('hidden');
   gameState = 'PLAY';
   initLevel();
 };
 document.getElementById('restart-btn').onclick = () => {
+  initAudioSystem();
   level = 1;
   score = 0;
   energy = 60;
