@@ -11,8 +11,8 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            background-color: #222; 
-            font-family: Arial, sans-serif; 
+            background-color: #1a1a1a; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -24,13 +24,14 @@
         #game-container { 
             position: relative; 
             width: 800px; 
-            height: 500px; 
+            height: 520px; 
             max-width: 98vw;
             max-height: 95vh;
-            background: #70c5ce; 
+            background: #4ec0ca; 
             border: 4px solid #fff; 
+            border-radius: 8px;
             overflow: hidden; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
         canvas { display: block; width: 100%; height: 100%; }
         #ui-layer { 
@@ -41,17 +42,17 @@
             pointer-events: none; 
             display: flex; 
             justify-content: space-between; 
-            padding: 16px 20px; 
+            padding: 16px 24px; 
             z-index: 10;
         }
-        .stats { font-size: 18px; font-weight: bold; text-shadow: 1px 1px 3px #000; }
+        .stats { font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px #000; }
         #overlay { 
             position: absolute; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: rgba(0, 0, 0, 0.78); 
+            background: rgba(0, 0, 0, 0.75); 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
@@ -61,16 +62,16 @@
             z-index: 20;
         }
         #overlay.hidden { display: none; }
-        h1 { font-size: 36px; margin-bottom: 8px; color: #f7d02c; letter-spacing: 1px; }
-        p { font-size: 15px; margin-bottom: 12px; color: #eee; }
+        h1 { font-size: 40px; margin-bottom: 8px; color: #f7d02c; letter-spacing: 2px; text-shadow: 2px 2px 5px #000; }
+        p { font-size: 16px; margin-bottom: 14px; color: #eee; }
         input[type="text"] { 
-            width: 180px; 
-            padding: 8px 12px; 
+            width: 190px; 
+            padding: 10px 14px; 
             font-size: 18px; 
             font-weight: bold;
             text-align: center; 
             text-transform: uppercase; 
-            border-radius: 4px; 
+            border-radius: 6px; 
             border: 2px solid #f7d02c; 
             margin-bottom: 12px; 
             outline: none; 
@@ -78,36 +79,39 @@
             color: #fff;
         }
         button { 
-            padding: 12px 28px; 
-            font-size: 17px; 
+            padding: 12px 32px; 
+            font-size: 18px; 
             font-weight: bold; 
             color: #fff; 
             background-color: #f75c2c; 
             border: none; 
-            border-radius: 5px; 
+            border-radius: 6px; 
             cursor: pointer; 
-            transition: background 0.2s;
+            transition: transform 0.1s, background-color 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         button:hover { background-color: #d94519; }
+        button:active { transform: scale(0.96); }
         button:disabled { background-color: #777; cursor: not-allowed; }
         #leaderboard { 
-            margin-top: 14px; 
+            margin-top: 15px; 
             width: 100%; 
-            max-width: 300px; 
-            background: rgba(255, 255, 255, 0.08); 
-            padding: 12px 16px; 
-            border-radius: 6px; 
+            max-width: 320px; 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 12px 18px; 
+            border-radius: 8px; 
             font-size: 14px; 
             text-align: left; 
+            backdrop-filter: blur(4px);
         }
         #leaderboard h3 { text-align: center; margin-bottom: 8px; color: #f7d02c; font-size: 15px; }
-        .lb-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .lb-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <canvas id="gameCanvas" width="800" height="500"></canvas>
+    <canvas id="gameCanvas" width="800" height="520"></canvas>
     
     <div id="ui-layer">
         <div class="stats">Score: <span id="currentScore">0</span></div>
@@ -116,10 +120,10 @@
     
     <div id="overlay">
         <h1 id="overlayTitle">HUNGRY BIRD</h1>
-        <p id="overlaySub">Tap or Space to Jump</p>
+        <p id="overlaySub">Tap or Press Space to Jump</p>
         
-        <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center; margin-bottom: 10px;">
-            <p id="finalScoreText" style="font-size: 18px; font-weight: bold; margin-bottom: 8px;"></p>
+        <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center; margin-bottom: 12px;">
+            <p id="finalScoreText" style="font-size: 20px; font-weight: bold; margin-bottom: 8px;"></p>
             <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
             <button id="saveScoreBtn">Save Score</button>
         </div>
@@ -156,20 +160,93 @@
     let animationFrameId = null;
     let score = 0;
     let frames = 0;
+    let groundX = 0;
+    const groundHeight = 70;
+
+    // पहाड़ और बैकग्राउंड सीन
+    function drawBackground() {
+        // Sky
+        ctx.fillStyle = "#4ec0ca";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // दूर के पहाड़ (Mountains)
+        ctx.fillStyle = "#83c5be";
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height - groundHeight);
+        ctx.lineTo(120, canvas.height - groundHeight - 160);
+        ctx.lineTo(260, canvas.height - groundHeight);
+        ctx.lineTo(400, canvas.height - groundHeight - 200);
+        ctx.lineTo(540, canvas.height - groundHeight);
+        ctx.lineTo(680, canvas.height - groundHeight - 140);
+        ctx.lineTo(800, canvas.height - groundHeight);
+        ctx.fill();
+
+        // आगे के पहाड़
+        ctx.fillStyle = "#a8dadc";
+        ctx.beginPath();
+        ctx.moveTo(50, canvas.height - groundHeight);
+        ctx.lineTo(200, canvas.height - groundHeight - 110);
+        ctx.lineTo(340, canvas.height - groundHeight);
+        ctx.lineTo(490, canvas.height - groundHeight - 130);
+        ctx.lineTo(630, canvas.height - groundHeight);
+        ctx.lineTo(760, canvas.height - groundHeight - 90);
+        ctx.lineTo(800, canvas.height - groundHeight);
+        ctx.fill();
+
+        // बादल (Clouds)
+        ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+        drawCloud(140, 80, 40);
+        drawCloud(460, 60, 50);
+        drawCloud(700, 100, 35);
+    }
+
+    function drawCloud(cx, cy, r) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.arc(cx + r * 0.7, cy - r * 0.2, r * 0.8, 0, Math.PI * 2);
+        ctx.arc(cx + r * 1.4, cy, r * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function drawGround() {
+        const gy = canvas.height - groundHeight;
+        ctx.fillStyle = "#ded895";
+        ctx.fillRect(0, gy, canvas.width, groundHeight);
+
+        // ऊपर की हरी घास की पट्टी
+        ctx.fillStyle = "#73bf2e";
+        ctx.fillRect(0, gy, canvas.width, 14);
+
+        // मूविंग स्ट्राइप्स
+        ctx.fillStyle = "#5ba023";
+        for (let x = - (groundX % 24); x < canvas.width; x += 24) {
+            ctx.beginPath();
+            ctx.moveTo(x, gy);
+            ctx.lineTo(x + 12, gy);
+            ctx.lineTo(x + 6, gy + 14);
+            ctx.lineTo(x - 6, gy + 14);
+            ctx.fill();
+        }
+        if (gameState === "PLAYING") {
+            groundX += 2.5;
+        }
+    }
 
     const bird = {
-        x: 90,
+        x: 100,
         y: 220,
-        radius: 13,
+        radius: 14,
         velocity: 0,
         gravity: 0.28,
         jump: -5.8,
+        hasFlappedOnce: false,
         draw() {
             ctx.fillStyle = "#f7d02c";
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
             ctx.fill();
             
+            // Eye
             ctx.fillStyle = "#fff";
             ctx.beginPath();
             ctx.arc(this.x + 6, this.y - 4, 3.5, 0, Math.PI * 2);
@@ -179,17 +256,25 @@
             ctx.arc(this.x + 7, this.y - 4, 1.5, 0, Math.PI * 2);
             ctx.fill();
 
+            // Beak
             ctx.fillStyle = "#d94519";
             ctx.beginPath();
             ctx.arc(this.x + 10, this.y + 2, 5, 0, Math.PI * 2);
             ctx.fill();
         },
         update() {
+            // जब तक पहला जंप न मारा जाए, चिड़िया नीचे नहीं गिरेगी (फ़्लोट करेगी)
+            if (!this.hasFlappedOnce) {
+                this.y = 220 + Math.sin(frames * 0.08) * 6;
+                return false;
+            }
+
             this.velocity += this.gravity;
             this.y += this.velocity;
 
-            if (this.y + this.radius >= canvas.height) {
-                this.y = canvas.height - this.radius;
+            const floor = canvas.height - groundHeight - this.radius;
+            if (this.y >= floor) {
+                this.y = floor;
                 return true;
             }
             if (this.y - this.radius <= 0) {
@@ -199,23 +284,28 @@
             return false;
         },
         flap() {
+            this.hasFlappedOnce = true;
             this.velocity = this.jump;
         },
         reset() {
-            this.x = 90;
+            this.x = 100;
             this.y = 220;
-            this.velocity = -2;
+            this.velocity = 0;
+            this.hasFlappedOnce = false;
         }
     };
 
     const pipes = [];
-    const pipeWidth = 58;
-    const pipeGap = 150;
+    const pipeWidth = 64;
+    const pipeGap = 160;
 
     function handlePipes() {
-        if (frames % 115 === 0 && frames > 60) {
+        if (!bird.hasFlappedOnce) return false;
+
+        if (frames % 120 === 0 && frames > 60) {
             const minH = 50;
-            const topHeight = Math.floor(Math.random() * (canvas.height - pipeGap - (minH * 2))) + minH;
+            const maxH = canvas.height - groundHeight - pipeGap - minH;
+            const topHeight = Math.floor(Math.random() * (maxH - minH)) + minH;
             pipes.push({
                 x: canvas.width,
                 top: topHeight,
@@ -228,10 +318,21 @@
             const p = pipes[i];
             p.x -= 2.6;
 
-            ctx.fillStyle = "#2ecc71";
+            // Pipe Top
+            ctx.fillStyle = "#73bf2e";
             ctx.fillRect(p.x, 0, pipeWidth, p.top);
-            ctx.fillRect(p.x, p.bottom, pipeWidth, canvas.height - p.bottom);
+            ctx.fillStyle = "#5ba023";
+            ctx.fillRect(p.x - 3, p.top - 16, pipeWidth + 6, 16);
 
+            // Pipe Bottom
+            const bottomY = p.bottom;
+            const bottomHeight = (canvas.height - groundHeight) - bottomY;
+            ctx.fillStyle = "#73bf2e";
+            ctx.fillRect(p.x, bottomY, pipeWidth, bottomHeight);
+            ctx.fillStyle = "#5ba023";
+            ctx.fillRect(p.x - 3, bottomY, pipeWidth + 6, 16);
+
+            // Collision
             if (
                 bird.x + bird.radius > p.x &&
                 bird.x - bird.radius < p.x + pipeWidth &&
@@ -270,12 +371,13 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        drawBackground();
+        const hitPipe = handlePipes();
         const hitGround = bird.update();
         bird.draw();
+        drawGround();
 
-        const hitPipe = handlePipes();
-
-        if (frames > 40 && (hitGround || hitPipe)) {
+        if (bird.hasFlappedOnce && (hitGround || hitPipe)) {
             endGame();
             return;
         }
@@ -404,7 +506,8 @@
 
         overlay.classList.remove("hidden");
         overlayTitle.innerText = "GAME OVER";
-        overlaySub.style.display = "none";
+        overlaySub.style.display = "block";
+        overlaySub.innerText = "Click PLAY AGAIN to restart";
         finalScoreText.innerText = `Your Score: ${score}`;
         scoreSubmission.style.display = "flex";
         playerInitialsInput.value = "";
@@ -434,6 +537,9 @@
         startBtn.style.display = "block";
     });
 
+    // Initial render
+    drawBackground();
+    drawGround();
     bird.reset();
     bird.draw();
     listenToPlayCount();
