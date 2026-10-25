@@ -49,7 +49,7 @@
       position: absolute;
       top: 15px;
       left: 15px;
-      right: 70px;
+      right: 90px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -107,12 +107,12 @@
       position: absolute;
       top: 15px;
       right: 15px;
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       background: rgba(0, 0, 0, 0.85);
       border: 2px solid #ffeb3b;
       color: #ffeb3b;
-      font-size: 20px;
+      font-size: 18px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -265,7 +265,6 @@
     <h1 style="color: #ff5252;" id="lose-title">Giant Bird Starved!</h1>
     <p id="lose-desc">Energy khatam ho gayi!</p>
 
-    <!-- सिर्फ टॉप 10 में आने पर दिखने वाला सेक्शन -->
     <div id="top10Celebration" style="display: none; flex-direction: column; align-items: center; margin-bottom: 12px;">
       <p style="color: #ffeb3b; font-size: 15px; font-weight: bold; margin-bottom: 8px;">
         🎉 CONGRATULATIONS! You made it to the Top 10!
@@ -295,14 +294,12 @@
 
 <script>
 // ==================== सुरक्षा कोड (ANTI-COPY & INSPECT PROTECTION) ====================
-// 1. राइट-क्लिक बंद करना
 document.addEventListener('contextmenu', e => e.preventDefault());
 
-// 2. F12, Inspect Element (Ctrl+Shift+I/J/C) और Source Code (Ctrl+U/S) ब्लॉक करना
 document.onkeydown = function(e) {
-  if (e.keyCode === 123) { return false; } // F12 Key
-  if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { return false; } // Ctrl+Shift+I / J / C
-  if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) { return false; } // Ctrl+U / Ctrl+S
+  if (e.keyCode === 123) { return false; }
+  if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { return false; }
+  if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) { return false; }
 };
 
 // ==================== FIREBASE CONFIG ====================
@@ -898,7 +895,6 @@ function gameOver(title, desc) {
   document.getElementById('lose-title').innerText = title;
   document.getElementById('lose-desc').innerText = desc;
 
-  // स्मार्ट कंडीशन: क्या स्कोर टॉप 10 के अंदर है?
   const isTop10 = (cachedTopScores.length < 10) || (score > 0 && score > cachedTopScores[cachedTopScores.length - 1]);
   const celebrationBox = document.getElementById('top10Celebration');
   
