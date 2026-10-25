@@ -85,7 +85,6 @@
       background: linear-gradient(90deg, #ff3838, #ffb302, #2ed573);
       transition: width 0.1s ease-out;
     }
-    /* Buttons ko bilkul solid white circle banaya hai */
     .sound-btn {
       pointer-events: auto;
       background: #ffffff !important;
@@ -214,7 +213,6 @@
   <div class="hud">
     <div class="hud-box">
       <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span>
-      <!-- Sound buttons with solid visible indicators -->
       <button id="music-btn" class="sound-btn" title="Music">🎵</button>
       <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
       <button id="help-btn" class="sound-btn" title="How to Play" style="font-weight: 900; font-size: 13px;">❓</button>
@@ -379,7 +377,6 @@ function startBackgroundMusic() {
   bgmAudio.play().catch(() => {});
 }
 
-// Button click state
 document.getElementById('music-btn').addEventListener('click', (e) => {
   e.preventDefault(); e.stopPropagation(); initAudioSystem();
   musicEnabled = !musicEnabled;
@@ -448,6 +445,7 @@ let energy = 60;
 let isAiming = false;
 let hasFirstFired = false;
 let gameState = 'START';
+let isWinningTransition = false;
 const MAX_BIRDS_PER_ROUND = 10;
 let birdsLeft = MAX_BIRDS_PER_ROUND;
 const EVOLUTIONS = [
@@ -495,6 +493,7 @@ function initLevel() {
   foods = [];
   foodFlights = [];
   hasFirstFired = false;
+  isWinningTransition = false;
   birdsLeft = MAX_BIRDS_PER_ROUND;
   dragPos = { x: SLING_X, y: SLING_Y };
   stopRubberStretch();
@@ -556,7 +555,7 @@ function onBirdFinishFlight() {
 function getCoords(e) {
   const rect = canvas.getBoundingClientRect();
   const cx = e.touches ? e.touches[0].clientX : e.clientX;
-  cy = e.touches ? e.touches[0].clientY : e.clientY;
+  const cy = e.touches ? e.touches[0].clientY : e.clientY;
   return {
     x: (cx - rect.left) * (canvas.width / rect.width),
     y: (cy - rect.top) * (canvas.height / rect.height)
@@ -564,14 +563,14 @@ function getCoords(e) {
 }
 function onDown(pos) {
   initAudioSystem();
-  if (gameState !== 'PLAY' || bird.inFlight || birdsLeft <= 0) return;
+  if (gameState !== 'PLAY' || bird.inFlight || birdsLeft <= 0 || isWinningTransition) return;
   const d = Math.hypot(pos.x - SLING_X, pos.y - SLING_Y);
   if (d < 75) {
     isAiming = true;
   }
 }
 function onMove(pos) {
-  if (!isAiming || gameState !== 'PLAY' || bird.inFlight) return;
+  if (!isAiming || gameState !== 'PLAY' || bird.inFlight || isWinningTransition) return;
   const dx = pos.x - SLING_X;
   const dy = pos.y - SLING_Y;
   const dist = Math.hypot(dx, dy);
@@ -623,7 +622,7 @@ window.addEventListener('touchend', onUp);
 
 function loop() {
   if (gameState === 'PLAY') {
-    if (hasFirstFired) {
+    if (hasFirstFired && !isWinningTransition) {
       const drainRate = 0.022 + Math.min(0.016, level * 0.0012);
       energy -= drainRate;
       if (energy <= 0) {
@@ -775,24 +774,29 @@ function loop() {
 
 function checkAllFoodFinished() {
   const left = foods.filter(f => f.alive).length;
-  if (left === 0 && foodFlights.length === 0) {
+  if (left === 0 && foodFlights.length === 0 && !isWinningTransition) {
+    isWinningTransition = true;
     stopRubberStretch();
-    playRoundWinSound();
-    if (level % 20 === 0) {
-      gameState = 'EVOLVE';
-      score += 5000;
-      const nextTier = EVOLUTIONS[Math.min(Math.floor(level / 20), EVOLUTIONS.length - 1)];
-      document.getElementById('evolve-msg').innerText = `MASTER STAGE CLEAR!\nGiant Bird evolved to: ${nextTier.name}`;
-      document.getElementById('evolve-overlay').classList.remove('hidden');
-    } else {
-      gameState = 'WIN';
-      score += Math.floor(energy * 15) + (birdsLeft * 100);
-      document.getElementById('win-msg').innerText = `Level ${level} complete! Saved Birds Bonus: +${birdsLeft * 100}`;
-      document.getElementById('win-overlay').classList.remove('hidden');
-    }
+    // Crunch sound poori sunayi de, is liye 550ms ka clean delay rakha hai
+    setTimeout(() => {
+      playRoundWinSound();
+      if (level % 20 === 0) {
+        gameState = 'EVOLVE';
+        score += 5000;
+        const nextTier = EVOLUTIONS[Math.min(Math.floor(level / 20), EVOLUTIONS.length - 1)];
+        document.getElementById('evolve-msg').innerText = `MASTER STAGE CLEAR!\nGiant Bird evolved to: ${nextTier.name}`;
+        document.getElementById('evolve-overlay').classList.remove('hidden');
+      } else {
+        gameState = 'WIN';
+        score += Math.floor(energy * 15) + (birdsLeft * 100);
+        document.getElementById('win-msg').innerText = `Level ${level} complete! Saved Birds Bonus: +${birdsLeft * 100}`;
+        document.getElementById('win-overlay').classList.remove('hidden');
+      }
+    }, 550);
   }
 }
 function gameOver(title = "Giant Bird Starved!", desc = "Energy khatam ho gayi! Dobara koshish karein.") {
+  if (isWinningTransition) return;
   stopRubberStretch();
   playLoseSound();
   gameState = 'LOSE';
