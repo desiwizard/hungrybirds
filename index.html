@@ -49,7 +49,7 @@
       position: absolute;
       top: max(12px, env(safe-area-inset-top, 12px));
       left: max(10px, env(safe-area-inset-left, 10px));
-      right: max(56px, calc(env(safe-area-inset-right, 10px) + 46px));
+      right: max(60px, calc(env(safe-area-inset-right, 10px) + 50px));
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -98,28 +98,29 @@
       font-size: 11px;
       cursor: pointer;
     }
+    /* Fixed Floating Fullscreen Button - Hamesha Har Cheez Ke Upar Dikhne Ke Liye */
     #fs-btn {
-      position: absolute;
+      position: fixed;
       top: max(12px, env(safe-area-inset-top, 12px));
       right: max(12px, env(safe-area-inset-right, 12px));
-      width: 36px;
-      height: 36px;
-      background: rgba(0, 0, 0, 0.85);
+      width: 38px;
+      height: 38px;
+      background: rgba(0, 0, 0, 0.9);
       border: 2px solid #ffeb3b;
       color: #ffeb3b;
-      font-size: 17px;
+      font-size: 18px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 999;
+      z-index: 9999999;
       pointer-events: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.8);
     }
     #fs-btn:active {
       transform: scale(0.90);
-      background: #333;
+      background: #222;
     }
     .overlay {
       position: absolute;
@@ -188,6 +189,9 @@
 </head>
 <body>
 
+<!-- Hamesha Visible Floating Fullscreen Button -->
+<button id="fs-btn" title="Toggle Fullscreen">⛶</button>
+
 <div id="rotate-prompt">
   <div style="font-size: 48px; margin-bottom: 12px;">🔄</div>
   <b>Please Rotate Your Phone</b>
@@ -196,8 +200,6 @@
 
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
-
-  <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
   <div class="hud">
     <div class="hud-box">
@@ -387,16 +389,20 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
   document.getElementById('help-overlay').classList.add('hidden');
 });
 
-// Fullscreen Trigger for Real Immersion
+// Fullscreen Toggle
 function toggleFullscreen() {
   const doc = document.documentElement;
-  const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+  const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
   if (!isFs) {
     if (doc.requestFullscreen) doc.requestFullscreen().catch(() => {});
     else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
+    else if (doc.mozRequestFullScreen) doc.mozRequestFullScreen();
+    else if (doc.msRequestFullscreen) doc.msRequestFullscreen();
   } else {
     if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+    else if (document.msExitFullscreen) document.msExitFullscreen();
   }
 }
 const fsBtn = document.getElementById('fs-btn');
