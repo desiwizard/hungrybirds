@@ -326,6 +326,39 @@ async function loadLeaderboard() {
 listenToPlayCount();
 loadLeaderboard();
 
+function toggleFullscreen() {
+  const elem = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch(() => {});
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}
+
+const fsBtn = document.getElementById('fs-btn');
+fsBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleFullscreen();
+});
+fsBtn.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleFullscreen();
+});
+
 let audioCtx = null;
 let musicEnabled = true;
 let sfxEnabled = true;
