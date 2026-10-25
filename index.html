@@ -45,11 +45,12 @@
       display: block;
       touch-action: none;
     }
+    /* HUD ko top se 48px neeche kiya taake address bar se bilkul safe rahe */
     .hud {
       position: absolute;
-      top: 14px;
+      top: 48px;
       left: 12px;
-      right: 58px;
+      right: 64px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -98,17 +99,17 @@
       font-size: 11px;
       cursor: pointer;
     }
-    /* Button ab game container ke andar hi rahega, black portion mein nahi jayega */
+    /* Fullscreen Button ko top se 48px neeche shift kiya */
     #fs-btn {
       position: absolute;
-      top: 14px;
-      right: 12px;
-      width: 36px;
-      height: 36px;
+      top: 48px;
+      right: 14px;
+      width: 38px;
+      height: 38px;
       background: rgba(0, 0, 0, 0.85);
       border: 2px solid #ffeb3b;
       color: #ffeb3b;
-      font-size: 17px;
+      font-size: 18px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -116,7 +117,7 @@
       cursor: pointer;
       z-index: 50;
       pointer-events: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
     }
     #fs-btn:active {
       transform: scale(0.90);
@@ -198,7 +199,6 @@
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
 
-  <!-- Button ab seedha game-container ke andar top-right par hai -->
   <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
   <div class="hud">
