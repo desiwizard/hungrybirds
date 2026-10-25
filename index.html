@@ -49,7 +49,7 @@
       position: absolute;
       top: 10px;
       left: 12px;
-      right: 56px;
+      right: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -98,29 +98,6 @@
       font-size: 12px;
       cursor: pointer;
     }
-    #fs-btn {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      width: 34px;
-      height: 34px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      color: #ffeb3b;
-      font-size: 16px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 100;
-      pointer-events: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-    }
-    #fs-btn:active {
-      transform: scale(0.92);
-      background: #333;
-    }
     .overlay {
       position: absolute;
       inset: 0;
@@ -161,14 +138,37 @@
       box-shadow: 0 4px #2e7d32;
     }
     .btn:active { transform: translateY(2px); box-shadow: 0 2px #2e7d32; }
+    
+    /* Rotate Prompt */
+    #rotate-prompt {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #111;
+      color: #ffeb3b;
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      text-align: center;
+      padding: 20px;
+    }
+    @media screen and (orientation: portrait) {
+      #rotate-prompt { display: flex; }
+    }
   </style>
 </head>
 <body>
 
+<div id="rotate-prompt">
+  <div style="font-size: 40px; margin-bottom: 10px;">🔄</div>
+  <b>Please Rotate Your Phone</b>
+  <p style="font-size: 14px; color: #ccc; margin-top: 6px;">Landscape mode mein game shuru karein!</p>
+</div>
+
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
-
-  <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
   <div class="hud">
     <div class="hud-box">
@@ -189,7 +189,6 @@
     </div>
   </div>
 
-  <!-- Start Screen -->
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="rules-card">
@@ -200,7 +199,6 @@
     <button class="btn" id="start-game-btn">PLAY NOW</button>
   </div>
 
-  <!-- How to Play Screen (Question Mark Popup) -->
   <div id="help-overlay" class="overlay hidden">
     <h1>HOW TO PLAY</h1>
     <div class="rules-card">
@@ -258,7 +256,6 @@ function initAudioSystem() {
   }
 }
 
-// Mobile touch par audio unlock
 window.addEventListener('touchstart', function unlockAudio() {
   initAudioSystem();
   window.removeEventListener('touchstart', unlockAudio);
@@ -347,15 +344,6 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
   document.getElementById('help-overlay').classList.add('hidden');
 });
 
-// Black Exit Banner se bachne ke liye browser API call nahi hogi
-function toggleFullscreen() {
-  window.scrollTo(0, 1);
-}
-document.getElementById('fs-btn').addEventListener('click', (e) => {
-  e.preventDefault(); e.stopPropagation();
-  toggleFullscreen();
-});
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let level = 1;
@@ -427,9 +415,9 @@ function initLevel() {
       let pType = 'wood', pColor = '#8D6E63', pHP = 40;
       let rColor = '#A1887F', rHP = 40;
       if (level >= 8 && f === 0) {
-        pType = 'iron'; pColor = '#263238'; pHP = 80; // 2 hits
+        pType = 'iron'; pColor = '#263238'; pHP = 80;
       } else if (level >= 4 && (f > 0 || Math.random() > 0.35)) {
-        pType = 'stone'; pColor = '#78909C'; pHP = 80; // 2 hits
+        pType = 'stone'; pColor = '#78909C'; pHP = 80;
         rColor = '#607D8B'; rHP = 80;
       }
       blocks.push({ id: `p1_${t}_${f}`, type: pType, x: tX - 35, y: bY, w: 14, h: 60, vy: 0, hp: pHP, maxHP: pHP, color: pColor });
@@ -439,7 +427,7 @@ function initLevel() {
         const isHard = (level >= 7);
         const bType = isHard ? 'iron' : 'stone';
         const bunkerColor = isHard ? '#212121' : '#546E7A';
-        const bunkerHP = 80; // 2 hits
+        const bunkerHP = 80;
         blocks.push({ id: `bk_${t}_${f}`, type: bType, x: tX - 52, y: bY + 8, w: 12, h: 52, vy: 0, hp: bunkerHP, maxHP: bunkerHP, color: bunkerColor });
       }
       const fConfig = FOOD_CONFIGS[(t + f) % FOOD_CONFIGS.length];
@@ -536,6 +524,7 @@ window.addEventListener('mouseup', onUp);
 canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(getCoords(e)); }, { passive: false });
 window.addEventListener('touchmove', e => { if (isAiming) e.preventDefault(); onMove(getCoords(e)); }, { passive: false });
 window.addEventListener('touchend', onUp);
+
 function loop() {
   if (gameState === 'PLAY') {
     if (hasFirstFired) {
@@ -655,7 +644,6 @@ function loop() {
       }
     });
 
-    // Food Flying & Big Bird Mouth Chomp Logic
     for (let i = foodFlights.length - 1; i >= 0; i--) {
       const fl = foodFlights[i];
       if (fl.delayFrames > 0) {
@@ -688,6 +676,7 @@ function loop() {
   draw();
   requestAnimationFrame(loop);
 }
+
 function checkAllFoodFinished() {
   const left = foods.filter(f => f.alive).length;
   if (left === 0 && foodFlights.length === 0) {
@@ -913,7 +902,6 @@ function drawBigBird() {
   ctx.arc(17, -14, 4, 0, Math.PI * 2);
   ctx.fill();
   
-  // Beak & Eating Animation
   ctx.fillStyle = '#FF9800';
   ctx.strokeStyle = '#D84315';
   ctx.lineWidth = 2;
