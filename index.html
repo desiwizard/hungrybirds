@@ -128,13 +128,13 @@
             <h1 id="overlayTitle">HUNGRY BIRD</h1>
             <p id="overlaySub">Tap or Space to Jump</p>
             
-            <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center;">
+            <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center; margin-bottom: 10px;">
                 <p id="finalScoreText" style="font-size: 18px; font-weight: bold; margin-bottom: 8px;"></p>
                 <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
                 <button id="saveScoreBtn">Save Score</button>
             </div>
 
-            <button id="startBtn" style="margin-top: 10px;">PLAY</button>
+            <button id="startBtn">PLAY</button>
 
             <div id="leaderboard">
                 <h3>TOP 5 SCORES</h3>
@@ -304,6 +304,7 @@
 
     window.addEventListener("keydown", (e) => {
         if (e.code === "Space") {
+            if (e.target.tagName === 'INPUT') return;
             e.preventDefault();
             triggerFlap(e);
         }
@@ -406,7 +407,11 @@
         finalScoreText.innerText = `Your Score: ${score}`;
         scoreSubmission.style.display = "flex";
         playerInitialsInput.value = "";
-        startBtn.style.display = "none";
+        
+        // Ensure play button is visible and set to PLAY AGAIN
+        startBtn.style.display = "block";
+        startBtn.innerText = "PLAY AGAIN";
+        
         loadLeaderboard();
     }
 
@@ -416,9 +421,11 @@
         let initials = playerInitialsInput.value.trim();
         if (!initials) initials = "AAA";
         saveScoreBtn.disabled = true;
+        saveScoreBtn.innerText = "Saving...";
         await submitScore(initials, score);
         scoreSubmission.style.display = "none";
         saveScoreBtn.disabled = false;
+        saveScoreBtn.innerText = "Save Score";
         startBtn.innerText = "PLAY AGAIN";
         startBtn.style.display = "block";
     });
