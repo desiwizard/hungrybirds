@@ -24,13 +24,21 @@
             user-select: none;
             touch-action: manipulation;
         }
+        #game-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
         #game-container { 
             position: relative; 
-            width: 400px; 
-            height: 600px; 
+            width: 600px; 
+            height: 400px; 
             background: #70c5ce; 
             border: 4px solid #fff; 
             overflow: hidden; 
+            flex-shrink: 0;
         }
         canvas { display: block; width: 100%; height: 100%; }
         #ui-layer { 
@@ -107,29 +115,31 @@
 </head>
 <body>
 
-<div id="game-container">
-    <canvas id="gameCanvas" width="400" height="600"></canvas>
-    
-    <div id="ui-layer">
-        <div class="stats">Score: <span id="currentScore">0</span></div>
-        <div class="stats">Plays: <span id="totalPlays">0</span></div>
-    </div>
-    
-    <div id="overlay">
-        <h1 id="overlayTitle">HUNGRY BIRD</h1>
-        <p id="overlaySub">Tap or Space to Jump</p>
+<div id="game-wrapper">
+    <div id="game-container">
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
         
-        <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center;">
-            <p id="finalScoreText" style="font-size: 18px; font-weight: bold; margin-bottom: 8px;"></p>
-            <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
-            <button id="saveScoreBtn">Save Score</button>
+        <div id="ui-layer">
+            <div class="stats">Score: <span id="currentScore">0</span></div>
+            <div class="stats">Plays: <span id="totalPlays">0</span></div>
         </div>
+        
+        <div id="overlay">
+            <h1 id="overlayTitle">HUNGRY BIRD</h1>
+            <p id="overlaySub">Tap or Space to Jump</p>
+            
+            <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center;">
+                <p id="finalScoreText" style="font-size: 18px; font-weight: bold; margin-bottom: 8px;"></p>
+                <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
+                <button id="saveScoreBtn">Save Score</button>
+            </div>
 
-        <button id="startBtn" style="margin-top: 10px;">PLAY</button>
+            <button id="startBtn" style="margin-top: 10px;">PLAY</button>
 
-        <div id="leaderboard">
-            <h3>TOP 5 SCORES</h3>
-            <div id="leaderboardList">Loading...</div>
+            <div id="leaderboard">
+                <h3>TOP 5 SCORES</h3>
+                <div id="leaderboardList">Loading...</div>
+            </div>
         </div>
     </div>
 </div>
@@ -160,7 +170,7 @@
 
     const bird = {
         x: 60,
-        y: 250,
+        y: 200,
         radius: 12,
         velocity: 0,
         gravity: 0.28,
@@ -203,7 +213,7 @@
             this.velocity = this.jump;
         },
         reset() {
-            this.y = 250;
+            this.y = 200;
             this.velocity = 0;
         }
     };
