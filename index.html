@@ -4,22 +4,26 @@
   <meta charset="UTF-8">
   <title>Hungry Bird: Energy Feast</title>
 
-  <!-- WhatsApp & Social Media Preview Tags (Strict Order & Exact Dimensions) -->
-  <meta name="title" content="Hungry Bird: Energy Feast">
-  <meta name="description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
-  <link rel="image_src" href="https://desiwizard.github.io/hungrybirds/bird.jpeg">
-  <meta itemprop="image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
-
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Hungry Bird">
+  <!-- Canonical & Social Preview Properties -->
   <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/">
+  <meta property="fb:app_id" content="966242223397117">
+  <meta property="og:site_name" content="Hungry Bird">
+  <meta property="og:type" content="website">
   <meta property="og:title" content="Hungry Bird: Energy Feast">
   <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+
+  <!-- WhatsApp Image Open Graph Tags -->
   <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
   <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1024">
   <meta property="og:image:height" content="536">
+
+  <!-- Fallback Tags for Mobile & Crawlers -->
+  <link rel="image_src" href="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+  <meta itemprop="name" content="Hungry Bird: Energy Feast">
+  <meta itemprop="description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+  <meta itemprop="image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
 
   <!-- Twitter Preview Tags -->
   <meta name="twitter:card" content="summary_large_image">
@@ -339,9 +343,9 @@
     <div class="start-content-grid">
       <div class="start-col-left">
         <div class="rules-card">
-          🎯 <b>Aim & Shoot:</b> Bird ko slingshot se kheench kar chhorrein!<br>
-          🪵 <b>Towers:</b> Wood (1 hit), Stone (1 solid hit), Iron (2 hits).<br>
-          🍔 <b>Mission:</b> Khana girayein taake Giant Bird feed ho sakay!
+          🎯 <b>Aim & Shoot:</b> Bird को गुलेल (slingshot) से खींचकर छोड़ें!<br>
+          🪵 <b>Towers:</b> Wood (1 hit), Stone (1 hit), Iron (2 hits).<br>
+          🍔 <b>Mission:</b> खाना नीचे गिराएं ताकि Giant Bird खा सके!
         </div>
         <div class="diff-container">
           <button class="diff-btn" data-diff="novice">Novice</button>
@@ -370,7 +374,7 @@
 
   <div id="lose-overlay" class="overlay hidden">
     <h1 style="color: #ff5252;" id="lose-title">Giant Bird Starved!</h1>
-    <p id="lose-desc">Energy khatam ho gayi!</p>
+    <p id="lose-desc">Energy खत्म हो गई!</p>
 
     <div id="top10Celebration" style="display: none; flex-direction: column; align-items: center; margin-bottom: 12px;">
       <p style="color: #ffeb3b; font-size: 15px; font-weight: bold; margin-bottom: 8px;">
@@ -870,7 +874,7 @@ function loop() {
       energy -= 0.016 * diff.drainMult;
       if (energy <= 0) {
         energy = 0;
-        gameOver("Giant Bird Starved!", "Energy khatam ho gayi!");
+        gameOver("Giant Bird Starved!", "Energy खत्म हो गई!");
       }
     }
 
