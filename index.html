@@ -47,9 +47,9 @@
     }
     .hud {
       position: absolute;
-      top: max(12px, env(safe-area-inset-top, 12px));
-      left: max(10px, env(safe-area-inset-left, 10px));
-      right: max(60px, calc(env(safe-area-inset-right, 10px) + 50px));
+      top: 14px;
+      left: 12px;
+      right: 58px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -98,25 +98,25 @@
       font-size: 11px;
       cursor: pointer;
     }
-    /* Fixed Floating Fullscreen Button - Hamesha Har Cheez Ke Upar Dikhne Ke Liye */
+    /* Button ab game container ke andar hi rahega, black portion mein nahi jayega */
     #fs-btn {
-      position: fixed;
-      top: max(12px, env(safe-area-inset-top, 12px));
-      right: max(12px, env(safe-area-inset-right, 12px));
-      width: 38px;
-      height: 38px;
-      background: rgba(0, 0, 0, 0.9);
+      position: absolute;
+      top: 14px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 0, 0, 0.85);
       border: 2px solid #ffeb3b;
       color: #ffeb3b;
-      font-size: 18px;
+      font-size: 17px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 9999999;
+      z-index: 50;
       pointer-events: auto;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.8);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
     }
     #fs-btn:active {
       transform: scale(0.90);
@@ -189,9 +189,6 @@
 </head>
 <body>
 
-<!-- Hamesha Visible Floating Fullscreen Button -->
-<button id="fs-btn" title="Toggle Fullscreen">⛶</button>
-
 <div id="rotate-prompt">
   <div style="font-size: 48px; margin-bottom: 12px;">🔄</div>
   <b>Please Rotate Your Phone</b>
@@ -200,6 +197,9 @@
 
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+  <!-- Button ab seedha game-container ke andar top-right par hai -->
+  <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
   <div class="hud">
     <div class="hud-box">
@@ -389,7 +389,6 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
   document.getElementById('help-overlay').classList.add('hidden');
 });
 
-// Fullscreen Toggle
 function toggleFullscreen() {
   const doc = document.documentElement;
   const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
