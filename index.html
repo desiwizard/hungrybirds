@@ -631,7 +631,7 @@ function getCurrentTier() {
 }
 
 const SLING_X = 220;
-const SLING_Y = 390;
+const SLING_Y = 385;
 const MAX_DRAG = 85;
 const GROUND_Y = 470;
 const CLIFF_SURFACE_Y = 320;
@@ -973,9 +973,103 @@ function updateHUD() {
   document.getElementById('energy-fill').style.width = Math.min(100, energy) + '%';
 }
 
+// ==================== REALISTIC WOODEN Y-FORK SLINGSHOT ====================
+function drawSlingshotBack() {
+  ctx.save();
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Peeche wali branch (Back Prong)
+  ctx.lineWidth = 12;
+  ctx.strokeStyle = '#2d1810';
+  ctx.beginPath();
+  ctx.moveTo(SLING_X - 6, SLING_Y + 16);
+  ctx.lineTo(SLING_X - 18, SLING_Y - 14);
+  ctx.stroke();
+
+  // Bark highlight
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = '#532d1f';
+  ctx.beginPath();
+  ctx.moveTo(SLING_X - 5, SLING_Y + 14);
+  ctx.lineTo(SLING_X - 16, SLING_Y - 12);
+  ctx.stroke();
+
+  // Leather binding on tip
+  ctx.fillStyle = '#1a0d07';
+  ctx.beginPath();
+  ctx.roundRect(SLING_X - 22, SLING_Y - 18, 9, 8, 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawSlingshotFront() {
+  ctx.save();
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Base Handle (Mitti se fork ke markaz tak)
+  ctx.lineWidth = 16;
+  ctx.strokeStyle = '#2d1810';
+  ctx.beginPath();
+  ctx.moveTo(SLING_X - 1, SLING_Y + 14);
+  ctx.lineTo(SLING_X + 2, GROUND_Y);
+  ctx.stroke();
+
+  // Handle Inner Bark highlight (Real Wood feel)
+  ctx.lineWidth = 9;
+  ctx.strokeStyle = '#633928';
+  ctx.beginPath();
+  ctx.moveTo(SLING_X - 2, SLING_Y + 16);
+  ctx.lineTo(SLING_X + 1, GROUND_Y);
+  ctx.stroke();
+
+  // Wood grain knot
+  ctx.fillStyle = '#1e0f09';
+  ctx.beginPath();
+  ctx.arc(SLING_X, SLING_Y + 48, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Fork center junction collar
+  ctx.fillStyle = '#3a1f14';
+  ctx.beginPath();
+  ctx.arc(SLING_X - 1, SLING_Y + 16, 7, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Aagay wali branch (Front Prong)
+  ctx.lineWidth = 13;
+  ctx.strokeStyle = '#2d1810';
+  ctx.beginPath();
+  ctx.moveTo(SLING_X - 1, SLING_Y + 16);
+  ctx.lineTo(SLING_X + 18, SLING_Y - 14);
+  ctx.stroke();
+
+  // Front Prong Bark highlight
+  ctx.lineWidth = 7;
+  ctx.strokeStyle = '#7c4632';
+  ctx.beginPath();
+  ctx.moveTo(SLING_X, SLING_Y + 15);
+  ctx.lineTo(SLING_X + 17, SLING_Y - 12);
+  ctx.stroke();
+
+  // Leather binding on front tip
+  ctx.fillStyle = '#1a0d07';
+  ctx.beginPath();
+  ctx.roundRect(SLING_X + 14, SLING_Y - 18, 9, 8, 2);
+  ctx.fill();
+
+  // Gold rivet on leather strap
+  ctx.fillStyle = '#ffb300';
+  ctx.beginPath();
+  ctx.arc(SLING_X + 18.5, SLING_Y - 14, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
 function drawScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  // Background Sky & Sun
   ctx.fillStyle = "#87CEEB";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#FFF9C4";
@@ -983,6 +1077,7 @@ function drawScene() {
   ctx.arc(820, 90, 45, 0, Math.PI * 2);
   ctx.fill();
 
+  // Mountains
   ctx.fillStyle = "#7986CB";
   ctx.beginPath();
   ctx.moveTo(150, GROUND_Y);
@@ -997,6 +1092,7 @@ function drawScene() {
   ctx.lineTo(820, GROUND_Y);
   ctx.fill();
 
+  // Cliff
   ctx.fillStyle = '#4E342E';
   ctx.beginPath();
   ctx.moveTo(0, CLIFF_SURFACE_Y);
@@ -1009,21 +1105,17 @@ function drawScene() {
   ctx.fillStyle = '#558B2F';
   ctx.fillRect(0, CLIFF_SURFACE_Y - 4, 135, 8);
 
+  // Ground
   ctx.fillStyle = '#4E342E';
   ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
   ctx.fillStyle = '#689F38';
   ctx.fillRect(0, GROUND_Y, canvas.width, 14);
 
+  // Giant Bird
   drawGiantBird();
 
-  ctx.strokeStyle = '#4E342E';
-  ctx.lineWidth = 9;
-  ctx.beginPath();
-  ctx.moveTo(SLING_X - 14, SLING_Y + 50);
-  ctx.lineTo(SLING_X - 14, SLING_Y);
-  ctx.lineTo(SLING_X + 14, SLING_Y);
-  ctx.lineTo(SLING_X + 14, SLING_Y + 50);
-  ctx.stroke();
+  // Slingshot Peeche Ka Hissa (Back Prong)
+  drawSlingshotBack();
 
   const tier = getCurrentTier();
   for (let q = 0; q < Math.min(birdsLeft - (bird.inFlight ? 0 : 1), 6); q++) {
@@ -1038,15 +1130,16 @@ function drawScene() {
   const bX = bird.inFlight ? bird.x : (isAiming ? dragPos.x : SLING_X);
   const bY = bird.inFlight ? bird.y : (isAiming ? dragPos.y : SLING_Y);
 
+  // Rubber Band: Peeche Wali String (Back Prong se Bird tak)
   if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
-    ctx.strokeStyle = '#271711';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#2b1408';
+    ctx.lineWidth = 4.5;
     ctx.beginPath();
-    ctx.moveTo(SLING_X - 12, SLING_Y);
-    ctx.lineTo(bX, bY);
-    ctx.lineTo(SLING_X + 12, SLING_Y);
+    ctx.moveTo(SLING_X - 17, SLING_Y - 14);
+    ctx.lineTo(bX - 4, bY);
     ctx.stroke();
 
+    // Aiming trajectory dots
     if (isAiming) {
       let pX = (SLING_X - dragPos.x) * tier.power;
       let pY = (SLING_Y - dragPos.y) * tier.power;
@@ -1063,6 +1156,7 @@ function drawScene() {
     }
   }
 
+  // Bird
   if (birdsLeft > 0 || bird.inFlight) {
     ctx.fillStyle = tier.color;
     ctx.beginPath();
@@ -1084,6 +1178,20 @@ function drawScene() {
     ctx.fill();
   }
 
+  // Rubber Band: Aagay Wali String (Bird se Front Prong tak)
+  if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
+    ctx.strokeStyle = '#42200f';
+    ctx.lineWidth = 4.5;
+    ctx.beginPath();
+    ctx.moveTo(bX + 4, bY);
+    ctx.lineTo(SLING_X + 18, SLING_Y - 14);
+    ctx.stroke();
+  }
+
+  // Slingshot Aagay Ka Hissa (Front Prong & Handle)
+  drawSlingshotFront();
+
+  // Targets (Blocks & Food)
   blocks.forEach(b => {
     ctx.fillStyle = b.color;
     ctx.fillRect(b.x, b.y, b.w, b.h);
