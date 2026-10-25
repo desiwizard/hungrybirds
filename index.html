@@ -161,32 +161,9 @@
       box-shadow: 0 4px #2e7d32;
     }
     .btn:active { transform: translateY(2px); box-shadow: 0 2px #2e7d32; }
-    #rotate-prompt {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #111;
-      color: #ffeb3b;
-      z-index: 999;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      text-align: center;
-      padding: 20px;
-    }
-    @media screen and (orientation: portrait) {
-      #rotate-prompt { display: flex; }
-    }
   </style>
 </head>
 <body>
-
-<div id="rotate-prompt">
-  <div style="font-size: 40px; margin-bottom: 10px;">🔄</div>
-  <b>Please Rotate Your Phone</b>
-  <p style="font-size: 14px; color: #ccc; margin-top: 6px;">Landscape mode mein game shuru karein!</p>
-</div>
 
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
@@ -215,7 +192,7 @@
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="rules-card">
       🎯 <b>Ammo Limit:</b> Har level mein <b>10 Birds</b> milenge!<br>
-      🪵 <b>Towers:</b> Wood (1 hit), Stone (2 hits), Iron (3 hits).<br>
+      🪵 <b>Towers:</b> Wood (1 hit), Stone (2 hits), Iron (2 hits).<br>
       🍔 <b>Objective:</b> Birds khatam hone se pehle saara food Giant Bird ko feed karein!
     </div>
     <button class="btn" id="start-game-btn">PLAY NOW</button>
@@ -257,6 +234,7 @@ const bgmAudio = new Audio(SOUND_PATHS.bgm);
 bgmAudio.loop = true;
 const stretchAudio = new Audio(SOUND_PATHS.stretch);
 let isStretchPlaying = false;
+
 function initAudioSystem() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -265,6 +243,13 @@ function initAudioSystem() {
     audioCtx.resume();
   }
 }
+
+// Mobile touch par audio auto unlock
+window.addEventListener('touchstart', function unlockAudio() {
+  initAudioSystem();
+  window.removeEventListener('touchstart', unlockAudio);
+}, { passive: true, once: true });
+
 function playRubberStretch(pressureRatio) {
   if (!sfxEnabled || !isAiming || gameState !== 'PLAY') return;
   stretchAudio.volume = Math.min(0.65, 0.2 + pressureRatio * 0.45);
@@ -423,9 +408,9 @@ function initLevel() {
       let pType = 'wood', pColor = '#8D6E63', pHP = 40;
       let rColor = '#A1887F', rHP = 40;
       if (level >= 8 && f === 0) {
-        pType = 'iron'; pColor = '#263238'; pHP = 120;
+        pType = 'iron'; pColor = '#263238'; pHP = 80; // 2 hits
       } else if (level >= 4 && (f > 0 || Math.random() > 0.35)) {
-        pType = 'stone'; pColor = '#78909C'; pHP = 80;
+        pType = 'stone'; pColor = '#78909C'; pHP = 80; // 2 hits
         rColor = '#607D8B'; rHP = 80;
       }
       blocks.push({ id: `p1_${t}_${f}`, type: pType, x: tX - 35, y: bY, w: 14, h: 60, vy: 0, hp: pHP, maxHP: pHP, color: pColor });
@@ -435,7 +420,7 @@ function initLevel() {
         const isHard = (level >= 7);
         const bType = isHard ? 'iron' : 'stone';
         const bunkerColor = isHard ? '#212121' : '#546E7A';
-        const bunkerHP = isHard ? 120 : 80;
+        const bunkerHP = 80; // 2 hits
         blocks.push({ id: `bk_${t}_${f}`, type: bType, x: tX - 52, y: bY + 8, w: 12, h: 52, vy: 0, hp: bunkerHP, maxHP: bunkerHP, color: bunkerColor });
       }
       const fConfig = FOOD_CONFIGS[(t + f) % FOOD_CONFIGS.length];
@@ -593,7 +578,7 @@ function loop() {
           f.alive = false;
           score += f.pts;
           foodFlights.push({
-            startX: f.x, startY: f.y, x: f.x, y: f.y, color: f.color, r: f.r, progress: 0, delayFrames: 12
+            startX: f.x, startY: f.y, x: f.x, y: f.y, color: f.color, r: f.r, progress: 0, delayFrames: 10
           });
         }
       });
@@ -650,6 +635,8 @@ function loop() {
         }
       }
     });
+
+    // Food Flying & Big Bird Mouth Chomp Logic
     for (let i = foodFlights.length - 1; i >= 0; i--) {
       const fl = foodFlights[i];
       if (fl.delayFrames > 0) {
@@ -658,13 +645,19 @@ function loop() {
         continue;
       }
       fl.progress += 0.045;
-      const targetX = BIG_BIRD_X + 22;
-      const targetY = BIG_BIRD_Y - 10;
-      fl.x += (targetX - fl.x) * 0.12;
-      fl.y += (targetY - fl.y) * 0.12;
-      if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 22) {
+      const targetX = BIG_BIRD_X + 26;
+      const targetY = BIG_BIRD_Y - 4;
+      fl.x += (targetX - fl.x) * 0.14;
+      fl.y += (targetY - fl.y) * 0.14;
+
+      const distToMouth = Math.hypot(fl.x - targetX, fl.y - targetY);
+      if (distToMouth < 70) {
+        chompTimer = Math.max(chompTimer, 24); // Munh pehle hi khul jayega
+      }
+
+      if (fl.progress >= 0.96 || distToMouth < 16) {
         energy = Math.min(120, energy + 25);
-        chompTimer = 18;
+        chompTimer = 28; // Khana khane ke baad bhi munh wazeh khula dikhega
         playBigBirdCrunch();
         foodFlights.splice(i, 1);
         checkAllFoodFinished();
@@ -900,18 +893,24 @@ function drawBigBird() {
   ctx.beginPath();
   ctx.arc(17, -14, 4, 0, Math.PI * 2);
   ctx.fill();
+  
+  // Beak & Eating Animation
   ctx.fillStyle = '#FF9800';
+  ctx.strokeStyle = '#D84315';
+  ctx.lineWidth = 2;
   ctx.beginPath();
   if (chompTimer > 0) {
-    ctx.moveTo(25, -12);
-    ctx.lineTo(44, -20);
-    ctx.lineTo(30, -5);
-    ctx.lineTo(44, 4);
-    ctx.lineTo(25, -2);
+    // Wazeh bada khula hua munh
+    ctx.moveTo(25, -16);
+    ctx.lineTo(52, -26);
+    ctx.lineTo(34, -4);
+    ctx.lineTo(52, 14);
+    ctx.lineTo(25, 4);
   } else {
+    // Normal Closed Beak
     ctx.moveTo(25, -10);
-    ctx.lineTo(42, -5);
-    ctx.lineTo(25, 2);
+    ctx.lineTo(44, -4);
+    ctx.lineTo(25, 3);
   }
   ctx.closePath();
   ctx.fill();
