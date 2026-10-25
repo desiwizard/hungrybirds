@@ -160,7 +160,6 @@
     .overlay h1 { font-size: 22px; margin-bottom: 6px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
     .overlay p { font-size: 13px; margin-bottom: 10px; color: #eee; }
     
-    /* Responsive 2-column layout in landscape */
     .start-content-grid {
       display: flex;
       flex-direction: row;
@@ -335,7 +334,7 @@
       <div class="start-col-left">
         <div class="rules-card">
           🎯 <b>Aim & Shoot:</b> Bird ko slingshot se kheench kar chhorrein!<br>
-          🪵 <b>Towers:</b> Wood (1 hit), Stone (2 hits), Iron (2 hits - Lv 10+).<br>
+          🪵 <b>Towers:</b> Wood (1 hit), Stone (1 solid hit), Iron (2 hits).<br>
           🍔 <b>Mission:</b> Khana girayein taake Giant Bird feed ho sakay!
         </div>
         <div class="diff-container">
@@ -645,9 +644,9 @@ document.getElementById('sfx-btn').addEventListener('click', (e) => {
 // ==================== DIFFICULTY & GAME STATE ====================
 let currentDifficulty = 'normal';
 const DIFFICULTY_CONFIG = {
-  novice: { maxBirds: 16, drainMult: 0.50, dots: 18, ironHP: 80, stoneHP: 80, label: 'Novice' },
-  normal: { maxBirds: 12, drainMult: 0.85, dots: 14, ironHP: 80, stoneHP: 80, label: 'Normal' },
-  expert: { maxBirds: 9,  drainMult: 1.10, dots: 8,  ironHP: 80, stoneHP: 80, label: 'Expert' }
+  novice: { maxBirds: 16, drainMult: 0.50, dots: 18, ironHP: 70, stoneHP: 45, label: 'Novice' },
+  normal: { maxBirds: 12, drainMult: 0.85, dots: 14, ironHP: 80, stoneHP: 45, label: 'Normal' },
+  expert: { maxBirds: 9,  drainMult: 1.10, dots: 8,  ironHP: 90, stoneHP: 50, label: 'Expert' }
 };
 
 document.querySelectorAll('.diff-btn').forEach(btn => {
@@ -742,8 +741,8 @@ function initLevel() {
     for (let f = 0; f < floors; f++) {
       const bY = 440 - f * 85;
       
-      let pType = 'wood', pColor = '#8D6E63', pHP = 40;
-      let rColor = '#A1887F', rHP = 40;
+      let pType = 'wood', pColor = '#8D6E63', pHP = 35;
+      let rColor = '#A1887F', rHP = 35;
 
       if (level >= 10 && (f === 0 || Math.random() < 0.4)) {
         pType = 'iron'; pColor = '#263238'; pHP = diff.ironHP;
@@ -904,10 +903,17 @@ function loop() {
         if (distSq < (bird.r * bird.r)) {
           if (!bird.hitBlocksCooldown[b.id]) {
             bird.hitBlocksCooldown[b.id] = true;
-            b.hp -= 40;
+            
+            // Impact damage calculation (Speed based damage)
+            const impactSpeed = Math.hypot(bird.vx, bird.vy);
+            const damage = Math.max(48, Math.min(65, Math.floor(impactSpeed * 3.8)));
+            
+            b.hp -= damage;
             score += 25;
             playSmashAudio();
-            bird.vx = -bird.vx * 0.45;
+
+            // Rebound bounce
+            bird.vx = -bird.vx * 0.40;
             bird.vy *= 0.6;
             if (b.hp <= 0) {
               blocks.splice(i, 1);
