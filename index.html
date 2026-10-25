@@ -4,8 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hungry Bird: Energy Feast</title>
+  
+  <!-- Social Media Previews -->
   <meta property="og:image" content="https://raw.githubusercontent.com/DesiWizard/hungrybirds/main/bird.jpeg">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/DesiWizard/hungrybirds/main/bird.jpeg">
+
+  <!-- PWA & Mobile Web App Settings -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#87CEEB">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hungry Bird">
+  <link rel="apple-touch-icon" href="bird.jpeg">
+
   <style>
     * {
       box-sizing: border-box;
@@ -43,7 +55,7 @@
     }
     .hud {
       position: absolute;
-      top: 15px;
+      top: 26px;
       left: 15px;
       right: 90px;
       display: flex;
@@ -101,7 +113,7 @@
     }
     #fs-btn {
       position: absolute;
-      top: 15px;
+      top: 26px;
       right: 15px;
       width: 36px;
       height: 36px;
@@ -204,7 +216,7 @@
     #leaderboard h3 { text-align: center; margin-bottom: 6px; color: #ffeb3b; font-size: 14px; }
     .lb-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
 
-    /* ==================== मोबाइल रोटेट स्क्रीन ओवरले ==================== */
+    /* ==================== MOBILE ROTATE SCREEN OVERLAY ==================== */
     #rotate-device-overlay {
       display: none;
       position: fixed;
@@ -238,7 +250,6 @@
 </head>
 <body>
 
-<!-- स्क्रीन को आड़ा (Landscape) करने की चेतावनी -->
 <div id="rotate-device-overlay">
   <div class="rotate-icon">🔄</div>
   <h1 style="color: #ffeb3b; font-size: 24px; margin-bottom: 10px;">PLEASE ROTATE YOUR DEVICE</h1>
@@ -329,7 +340,14 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ==================== सुरक्षा कोड (ANTI-COPY & INSPECT PROTECTION) ====================
+// ==================== SERVICE WORKER REGISTRATION ====================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+// ==================== SECURITY CODE (ANTI-COPY & INSPECT PROTECTION) ====================
 document.addEventListener('contextmenu', e => e.preventDefault());
 
 document.onkeydown = function(e) {
@@ -595,7 +613,7 @@ let score = 0;
 let energy = 70;
 let isAiming = false;
 let hasFirstFired = false;
-let gameState = 'START';
+let gameState = 'PLAY';
 let isWinningTransition = false;
 let birdsLeft = 12;
 
