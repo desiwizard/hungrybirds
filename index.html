@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hungry Bird</title>
     <meta property="og:title" content="Hungry Bird">
     <meta property="og:description" content="Flap, survive, and reach the top of the leaderboard!">
@@ -13,54 +13,51 @@
     <meta name="twitter:image" content="https://raw.githubusercontent.com/DesiWizard/hungrybirds/main/bird.jpeg">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background-color: #222; 
-            font-family: Arial, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            color: #fff; 
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #70c5ce;
+            font-family: Arial, sans-serif;
+            color: #fff;
             user-select: none;
             touch-action: manipulation;
         }
-        #game-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
         #game-container { 
             position: relative; 
-            width: 600px; 
-            height: 400px; 
-            background: #70c5ce; 
-            border: 4px solid #fff; 
+            width: 100vw; 
+            height: 100vh; 
             overflow: hidden; 
-            flex-shrink: 0;
         }
-        canvas { display: block; width: 100%; height: 100%; }
+        canvas { 
+            display: block; 
+            width: 100%; 
+            height: 100%; 
+            background: #70c5ce;
+        }
         #ui-layer { 
             position: absolute; 
             top: 0; 
             left: 0; 
             width: 100%; 
-            height: 100%; 
             pointer-events: none; 
             display: flex; 
             justify-content: space-between; 
-            padding: 16px; 
+            padding: 20px 28px; 
             z-index: 10;
         }
-        .stats { font-size: 16px; font-weight: bold; text-shadow: 1px 1px 3px #000; }
+        .stats { 
+            font-size: 22px; 
+            font-weight: bold; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); 
+        }
         #overlay { 
             position: absolute; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: rgba(0, 0, 0, 0.78); 
+            background: rgba(0, 0, 0, 0.75); 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
@@ -70,76 +67,77 @@
             z-index: 20;
         }
         #overlay.hidden { display: none; }
-        h1 { font-size: 32px; margin-bottom: 8px; color: #f7d02c; letter-spacing: 1px; }
-        p { font-size: 15px; margin-bottom: 14px; color: #eee; }
+        h1 { font-size: 42px; margin-bottom: 10px; color: #f7d02c; letter-spacing: 2px; text-shadow: 2px 2px 5px #000; }
+        p { font-size: 18px; margin-bottom: 16px; color: #eee; }
         input[type="text"] { 
-            width: 180px; 
-            padding: 8px 12px; 
-            font-size: 18px; 
+            width: 200px; 
+            padding: 10px 14px; 
+            font-size: 20px; 
             font-weight: bold;
             text-align: center; 
             text-transform: uppercase; 
-            border-radius: 4px; 
+            border-radius: 6px; 
             border: 2px solid #f7d02c; 
-            margin-bottom: 12px; 
+            margin-bottom: 14px; 
             outline: none; 
             background: #111;
             color: #fff;
         }
         button { 
-            padding: 10px 24px; 
-            font-size: 16px; 
+            padding: 12px 32px; 
+            font-size: 18px; 
             font-weight: bold; 
             color: #fff; 
             background-color: #f75c2c; 
             border: none; 
-            border-radius: 4px; 
+            border-radius: 6px; 
             cursor: pointer; 
-            transition: background 0.2s;
+            transition: transform 0.1s, background-color 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         button:hover { background-color: #d94519; }
+        button:active { transform: scale(0.96); }
         button:disabled { background-color: #777; cursor: not-allowed; }
         #leaderboard { 
-            margin-top: 15px; 
+            margin-top: 20px; 
             width: 100%; 
-            max-width: 280px; 
-            background: rgba(255, 255, 255, 0.08); 
-            padding: 12px; 
-            border-radius: 6px; 
-            font-size: 13px; 
+            max-width: 320px; 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 14px 18px; 
+            border-radius: 8px; 
+            font-size: 15px; 
             text-align: left; 
+            backdrop-filter: blur(4px);
         }
-        #leaderboard h3 { text-align: center; margin-bottom: 8px; color: #f7d02c; font-size: 14px; }
-        .lb-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        #leaderboard h3 { text-align: center; margin-bottom: 10px; color: #f7d02c; font-size: 16px; }
+        .lb-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.12); }
     </style>
 </head>
 <body>
 
-<div id="game-wrapper">
-    <div id="game-container">
-        <canvas id="gameCanvas" width="600" height="400"></canvas>
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui-layer">
+        <div class="stats">Score: <span id="currentScore">0</span></div>
+        <div class="stats">Plays: <span id="totalPlays">0</span></div>
+    </div>
+    
+    <div id="overlay">
+        <h1 id="overlayTitle">HUNGRY BIRD</h1>
+        <p id="overlaySub">Tap or Space to Jump</p>
         
-        <div id="ui-layer">
-            <div class="stats">Score: <span id="currentScore">0</span></div>
-            <div class="stats">Plays: <span id="totalPlays">0</span></div>
+        <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center; margin-bottom: 12px;">
+            <p id="finalScoreText" style="font-size: 20px; font-weight: bold; margin-bottom: 10px;"></p>
+            <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
+            <button id="saveScoreBtn">Save Score</button>
         </div>
-        
-        <div id="overlay">
-            <h1 id="overlayTitle">HUNGRY BIRD</h1>
-            <p id="overlaySub">Tap or Space to Jump</p>
-            
-            <div id="scoreSubmission" style="display: none; flex-direction: column; align-items: center; margin-bottom: 10px;">
-                <p id="finalScoreText" style="font-size: 18px; font-weight: bold; margin-bottom: 8px;"></p>
-                <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
-                <button id="saveScoreBtn">Save Score</button>
-            </div>
 
-            <button id="startBtn">PLAY</button>
+        <button id="startBtn">PLAY</button>
 
-            <div id="leaderboard">
-                <h3>TOP 5 SCORES</h3>
-                <div id="leaderboardList">Loading...</div>
-            </div>
+        <div id="leaderboard">
+            <h3>TOP 5 SCORES</h3>
+            <div id="leaderboardList">Loading...</div>
         </div>
     </div>
 </div>
@@ -163,18 +161,25 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
     let gameState = "START";
     let animationFrameId = null;
     let score = 0;
     let frames = 0;
 
     const bird = {
-        x: 60,
-        y: 200,
-        radius: 12,
+        x: 80,
+        y: window.innerHeight / 2,
+        radius: 14,
         velocity: 0,
-        gravity: 0.28,
-        jump: -5.2,
+        gravity: 0.32,
+        jump: -6.2,
         draw() {
             ctx.fillStyle = "#f7d02c";
             ctx.beginPath();
@@ -183,16 +188,16 @@
             
             ctx.fillStyle = "#fff";
             ctx.beginPath();
-            ctx.arc(this.x + 5, this.y - 4, 3.5, 0, Math.PI * 2);
+            ctx.arc(this.x + 6, this.y - 4, 4, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillStyle = "#000";
             ctx.beginPath();
-            ctx.arc(this.x + 6, this.y - 4, 1.5, 0, Math.PI * 2);
+            ctx.arc(this.x + 7, this.y - 4, 2, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.fillStyle = "#d94519";
             ctx.beginPath();
-            ctx.arc(this.x + 9, this.y + 2, 4.5, 0, Math.PI * 2);
+            ctx.arc(this.x + 11, this.y + 2, 5, 0, Math.PI * 2);
             ctx.fill();
         },
         update() {
@@ -213,18 +218,21 @@
             this.velocity = this.jump;
         },
         reset() {
-            this.y = 200;
+            this.x = Math.max(70, canvas.width * 0.15);
+            this.y = canvas.height / 2;
             this.velocity = 0;
         }
     };
 
     const pipes = [];
-    const pipeWidth = 52;
-    const pipeGap = 130;
+    const pipeWidth = 64;
+    const pipeGap = 160;
 
     function handlePipes() {
-        if (frames % 110 === 0) {
-            const topHeight = Math.floor(Math.random() * (canvas.height - pipeGap - 100)) + 40;
+        if (frames % 120 === 0 && frames > 30) {
+            const minHeight = 60;
+            const availableHeight = canvas.height - pipeGap - (minHeight * 2);
+            const topHeight = Math.floor(Math.random() * Math.max(40, availableHeight)) + minHeight;
             pipes.push({
                 x: canvas.width,
                 top: topHeight,
@@ -235,11 +243,16 @@
 
         for (let i = pipes.length - 1; i >= 0; i--) {
             const p = pipes[i];
-            p.x -= 2;
+            p.x -= 3;
 
             ctx.fillStyle = "#2ecc71";
             ctx.fillRect(p.x, 0, pipeWidth, p.top);
             ctx.fillRect(p.x, p.bottom, pipeWidth, canvas.height - p.bottom);
+
+            // Pipe Cap borders for better look
+            ctx.fillStyle = "#27ae60";
+            ctx.fillRect(p.x - 3, p.top - 12, pipeWidth + 6, 12);
+            ctx.fillRect(p.x - 3, p.bottom, pipeWidth + 6, 12);
 
             if (
                 bird.x + bird.radius > p.x &&
@@ -270,7 +283,7 @@
         bird.reset();
         pipes.length = 0;
         score = 0;
-        frames = 1;
+        frames = 0;
         document.getElementById("currentScore").innerText = "0";
     }
 
@@ -304,7 +317,7 @@
 
     window.addEventListener("keydown", (e) => {
         if (e.code === "Space") {
-            if (e.target.tagName === 'INPUT') return;
+            if (e.target && e.target.tagName === 'INPUT') return;
             e.preventDefault();
             triggerFlap(e);
         }
@@ -386,21 +399,32 @@
     const finalScoreText = document.getElementById("finalScoreText");
 
     function startGame() {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+
         resetGame();
         gameState = "PLAYING";
+
+        bird.flap();
+
         overlay.classList.add("hidden");
         scoreSubmission.style.display = "none";
         incrementGlobalPlayCount().catch(console.error);
+
         animationFrameId = requestAnimationFrame(loop);
     }
 
     function endGame() {
         if (gameState === "GAMEOVER") return;
         gameState = "GAMEOVER";
+        
         if (animationFrameId) {
             cancelAnimationFrame(animationFrameId);
             animationFrameId = null;
         }
+
         overlay.classList.remove("hidden");
         overlayTitle.innerText = "GAME OVER";
         overlaySub.style.display = "none";
@@ -408,16 +432,19 @@
         scoreSubmission.style.display = "flex";
         playerInitialsInput.value = "";
         
-        // Ensure play button is visible and set to PLAY AGAIN
         startBtn.style.display = "block";
         startBtn.innerText = "PLAY AGAIN";
         
         loadLeaderboard();
     }
 
-    startBtn.addEventListener("click", () => startGame());
+    startBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startGame();
+    });
 
-    saveScoreBtn.addEventListener("click", async () => {
+    saveScoreBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
         let initials = playerInitialsInput.value.trim();
         if (!initials) initials = "AAA";
         saveScoreBtn.disabled = true;
