@@ -66,7 +66,7 @@
       font-size: 13px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       pointer-events: auto;
       white-space: nowrap;
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
@@ -198,9 +198,9 @@
     #leaderboard { 
       margin-top: 14px; 
       width: 100%; 
-      max-width: 300px; 
+      max-width: 320px; 
       background: rgba(255, 255, 255, 0.1); 
-      padding: 10px 15px; 
+      padding: 12px 16px; 
       border-radius: 8px; 
       font-size: 13px; 
       text-align: left; 
@@ -220,16 +220,16 @@
       <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span> (<span id="hud-diff" style="color:#ffeb3b;">Normal</span>)
       <button id="music-btn" class="sound-btn" title="Music">🎵</button>
       <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
+      <button id="lb-hud-btn" class="sound-btn" title="Leaderboard" style="font-size: 14px;">🏆</button>
     </div>
     <div class="hud-box">
-      <span style="color: #ffeb3b;">🎯 Shots: <span id="shots-left-display">10</span></span>
+      <span style="color: #ffeb3b;">🎯 Shots: <span id="shots-left-display">12</span></span>
       <div class="energy-bar-wrap">
         <div id="energy-fill" class="energy-fill" style="width: 60%;"></div>
       </div>
     </div>
     <div class="hud-box">
       <span>Score: <span id="score-display">0</span></span>
-      <span>Plays: <span id="total-plays-display">0</span></span>
     </div>
   </div>
 
@@ -237,7 +237,7 @@
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="rules-card">
       🎯 <b>Aim & Shoot:</b> Bird ko slingshot se kheench kar chhorrein!<br>
-      🪵 <b>Towers:</b> Wood (1 hit), Stone (2 hits), Iron (3 hits).<br>
+      🪵 <b>Towers:</b> Wood (1 hit), Stone (2 hits), Iron (2 hits - Lv 10+).<br>
       🍔 <b>Mission:</b> Khana girayein taake Giant Bird feed ho sakay!
     </div>
     <div class="diff-container">
@@ -247,18 +247,33 @@
     </div>
     <button class="btn" id="start-game-btn">PLAY NOW</button>
     <div id="leaderboard">
-      <h3>TOP SCORES</h3>
+      <h3>TOP 10 SCORES</h3>
       <div id="leaderboardList">Loading...</div>
     </div>
+  </div>
+
+  <div id="lb-overlay" class="overlay hidden">
+    <h1>LEADERBOARD</h1>
+    <div id="leaderboard" style="margin-bottom: 16px;">
+      <h3>GLOBAL TOP 10</h3>
+      <div id="leaderboardListMid">Loading...</div>
+    </div>
+    <button class="btn" id="close-lb-btn">BACK TO GAME</button>
   </div>
 
   <div id="lose-overlay" class="overlay hidden">
     <h1 style="color: #ff5252;" id="lose-title">Giant Bird Starved!</h1>
     <p id="lose-desc">Energy khatam ho gayi!</p>
-    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;">
+
+    <!-- सिर्फ टॉप 10 में आने पर दिखने वाला सेक्शन -->
+    <div id="top10Celebration" style="display: none; flex-direction: column; align-items: center; margin-bottom: 12px;">
+      <p style="color: #ffeb3b; font-size: 15px; font-weight: bold; margin-bottom: 8px;">
+        🎉 CONGRATULATIONS! You made it to the Top 10!
+      </p>
       <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
       <button class="btn" id="saveScoreBtn" style="padding: 6px 18px; font-size: 14px; margin-bottom: 10px;">Save Score</button>
     </div>
+
     <button class="btn" id="restart-btn">Try Again</button>
   </div>
 
@@ -267,12 +282,30 @@
     <p id="win-msg">All food cleared! Giant Bird is full.</p>
     <button class="btn" id="next-level-btn">Next Level</button>
   </div>
+
+  <div id="evolve-overlay" class="overlay hidden">
+    <h1>CHARACTER EVOLVED!</h1>
+    <p id="evolve-msg">Your Giant Bird has grown bigger and stronger!</p>
+    <button class="btn" id="evolve-btn" style="background:#00bcd4; box-shadow:0 4px #008ba3;">Claim Power</button>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
+// ==================== सुरक्षा कोड (ANTI-COPY & INSPECT PROTECTION) ====================
+// 1. राइट-क्लिक बंद करना
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// 2. F12, Inspect Element (Ctrl+Shift+I/J/C) और Source Code (Ctrl+U/S) ब्लॉक करना
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) { return false; } // F12 Key
+  if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { return false; } // Ctrl+Shift+I / J / C
+  if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) { return false; } // Ctrl+U / Ctrl+S
+};
+
+// ==================== FIREBASE CONFIG ====================
 const firebaseConfig = {
     apiKey: "AIzaSyButgyy2ii0JbpDws6MSZ1ripkESlMGMuw",
     authDomain: "hungrybirds-88404.firebaseapp.com",
@@ -284,20 +317,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+let cachedTopScores = [];
+
 async function incrementGlobalPlayCount() {
   try {
     await db.collection("analytics").doc("stats").set({ playCount: firebase.firestore.FieldValue.increment(1) }, { merge: true });
   } catch(e){}
 }
-function listenToPlayCount() {
-  try {
-    db.collection("analytics").doc("stats").onSnapshot(doc => {
-      if (doc.exists && doc.data().playCount !== undefined) {
-        document.getElementById("total-plays-display").innerText = doc.data().playCount;
-      }
-    });
-  } catch(e){}
-}
+
 async function submitScore(initials, finalScore) {
   try {
     await db.collection("leaderboard").add({
@@ -305,25 +332,29 @@ async function submitScore(initials, finalScore) {
       score: finalScore,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
-    loadLeaderboard();
+    await loadLeaderboard();
   } catch(e){}
 }
+
 async function loadLeaderboard() {
-  const lbList = document.getElementById("leaderboardList");
-  if (!lbList) return;
+  const lbLists = [document.getElementById("leaderboardList"), document.getElementById("leaderboardListMid")];
   try {
-    const snap = await db.collection("leaderboard").orderBy("score", "desc").limit(5).get();
-    lbList.innerHTML = "";
+    const snap = await db.collection("leaderboard").orderBy("score", "desc").limit(10).get();
+    cachedTopScores = [];
+    let content = "";
     let r = 1;
     snap.forEach(d => {
       const data = d.data();
-      lbList.innerHTML += `<div class="lb-row"><span>#${r} ${data.initials || "ANON"}</span><span>${data.score}</span></div>`;
+      cachedTopScores.push(data.score);
+      content += `<div class="lb-row"><span>#${r} ${data.initials || "ANON"}</span><span>${data.score}</span></div>`;
       r++;
     });
-    if (snap.empty) lbList.innerHTML = "<div>No scores yet!</div>";
-  } catch(e){ lbList.innerHTML = "<div>Leaderboard offline</div>"; }
+    if (snap.empty) content = "<div>No scores yet!</div>";
+    lbLists.forEach(el => { if (el) el.innerHTML = content; });
+  } catch(e){
+    lbLists.forEach(el => { if (el) el.innerHTML = "<div>Leaderboard offline</div>"; });
+  }
 }
-listenToPlayCount();
 loadLeaderboard();
 
 function toggleFullscreen() {
@@ -349,16 +380,22 @@ function toggleFullscreen() {
 
 const fsBtn = document.getElementById('fs-btn');
 fsBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  toggleFullscreen();
+  e.preventDefault(); e.stopPropagation(); toggleFullscreen();
 });
 fsBtn.addEventListener('touchend', (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  toggleFullscreen();
+  e.preventDefault(); e.stopPropagation(); toggleFullscreen();
 });
 
+document.getElementById('lb-hud-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  loadLeaderboard();
+  document.getElementById('lb-overlay').classList.remove('hidden');
+});
+document.getElementById('close-lb-btn').addEventListener('click', () => {
+  document.getElementById('lb-overlay').classList.add('hidden');
+});
+
+// ==================== AUDIO SYSTEM ====================
 let audioCtx = null;
 let musicEnabled = true;
 let sfxEnabled = true;
@@ -499,11 +536,12 @@ document.getElementById('sfx-btn').addEventListener('click', (e) => {
   }
 });
 
+// ==================== DIFFICULTY & GAME STATE ====================
 let currentDifficulty = 'normal';
 const DIFFICULTY_CONFIG = {
-  novice: { maxBirds: 14, drainMult: 0.60, dots: 18, ironHP: 80, stoneHP: 40, label: 'Novice' },
-  normal: { maxBirds: 10, drainMult: 1.00, dots: 12, ironHP: 80, stoneHP: 80, label: 'Normal' },
-  expert: { maxBirds: 7,  drainMult: 1.35, dots: 6,  ironHP: 120, stoneHP: 80, label: 'Expert' }
+  novice: { maxBirds: 16, drainMult: 0.50, dots: 18, ironHP: 80, stoneHP: 80, label: 'Novice' },
+  normal: { maxBirds: 12, drainMult: 0.85, dots: 14, ironHP: 80, stoneHP: 80, label: 'Normal' },
+  expert: { maxBirds: 9,  drainMult: 1.10, dots: 8,  ironHP: 80, stoneHP: 80, label: 'Expert' }
 };
 
 document.querySelectorAll('.diff-btn').forEach(btn => {
@@ -521,12 +559,25 @@ const ctx = canvas.getContext('2d');
 
 let level = 1;
 let score = 0;
-let energy = 60;
+let energy = 70;
 let isAiming = false;
 let hasFirstFired = false;
 let gameState = 'START';
 let isWinningTransition = false;
-let birdsLeft = 10;
+let birdsLeft = 12;
+
+const EVOLUTIONS = [
+  { name: "Rookie (Reddy)", color: "#E53935", scale: 1.0, power: 0.28 },
+  { name: "Glutton (Bubbles)", color: "#42A5F5", scale: 1.15, power: 0.30 },
+  { name: "Speed (Flash)", color: "#FBC02D", scale: 1.25, power: 0.32 },
+  { name: "Heavy (Boomer)", color: "#37474F", scale: 1.35, power: 0.34 },
+  { name: "King Titan", color: "#FFB300", scale: 1.5, power: 0.37 }
+];
+
+function getCurrentTier() {
+  const index = Math.min(Math.floor((level - 1) / 20), EVOLUTIONS.length - 1);
+  return EVOLUTIONS[index];
+}
 
 const SLING_X = 220;
 const SLING_Y = 390;
@@ -575,8 +626,8 @@ function initLevel() {
   resetBird();
   if (musicEnabled) startBackgroundMusic();
 
-  const numTowers = Math.min(2 + Math.floor(level / 4), 4);
-  const towerSpacing = (level >= 5) ? 135 : 105;
+  const numTowers = Math.min(2 + Math.floor(level / 5), 4);
+  const towerSpacing = (level >= 5) ? 135 : 110;
   const startX = 540;
 
   for (let t = 0; t < numTowers; t++) {
@@ -584,14 +635,18 @@ function initLevel() {
     const floors = (level < 3) ? 1 : ((level < 6) ? 2 : Math.min(3, 2 + (t % 2)));
     for (let f = 0; f < floors; f++) {
       const bY = 440 - f * 85;
+      
       let pType = 'wood', pColor = '#8D6E63', pHP = 40;
       let rColor = '#A1887F', rHP = 40;
-      if (level >= 8 && f === 0) {
+
+      if (level >= 10 && (f === 0 || Math.random() < 0.4)) {
         pType = 'iron'; pColor = '#263238'; pHP = diff.ironHP;
-      } else if (level >= 4 && (f > 0 || Math.random() > 0.35)) {
+        rColor = '#37474F'; rHP = diff.ironHP;
+      } else if (level >= 3 && Math.random() < (level >= 10 ? 0.2 : 0.45)) {
         pType = 'stone'; pColor = '#78909C'; pHP = diff.stoneHP;
         rColor = '#607D8B'; rHP = diff.stoneHP;
       }
+
       blocks.push({ id: `p1_${t}_${f}`, type: pType, x: tX - 35, y: bY, w: 14, h: 60, hp: pHP, maxHP: pHP, color: pColor });
       blocks.push({ id: `p2_${t}_${f}`, type: pType, x: tX + 25, y: bY, w: 14, h: 60, hp: pHP, maxHP: pHP, color: pColor });
       blocks.push({ id: `rf_${t}_${f}`, type: pType, x: tX - 35, y: bY - 14, w: 74, h: 14, hp: rHP, maxHP: rHP, color: rColor, isRoof: true });
@@ -673,6 +728,7 @@ function onUp() {
   const pullY = SLING_Y - dragPos.y;
   const pullDist = Math.hypot(pullX, pullY);
   if (pullDist > 12) {
+    const tier = getCurrentTier();
     bird.inFlight = true;
     hasFirstFired = true;
     birdsLeft--;
@@ -682,8 +738,8 @@ function onUp() {
     bird.hitBlocksCooldown = {};
     bird.x = dragPos.x;
     bird.y = dragPos.y;
-    bird.vx = pullX * 0.28;
-    bird.vy = pullY * 0.28;
+    bird.vx = pullX * tier.power;
+    bird.vy = pullY * tier.power;
     playLaunchAudio();
   } else {
     dragPos = { x: SLING_X, y: SLING_Y };
@@ -701,7 +757,7 @@ function loop() {
   if (gameState === 'PLAY') {
     if (hasFirstFired && !isWinningTransition) {
       const diff = DIFFICULTY_CONFIG[currentDifficulty];
-      energy -= 0.022 * diff.drainMult;
+      energy -= 0.016 * diff.drainMult;
       if (energy <= 0) {
         energy = 0;
         gameOver("Giant Bird Starved!", "Energy khatam ho gayi!");
@@ -725,7 +781,7 @@ function loop() {
           bird.vx *= 0.88;
           bird.stoppedFrames++;
           if (bird.stoppedFrames > 40 || Math.abs(bird.vx) < 0.15) {
-            energy = Math.max(0, energy - 5);
+            energy = Math.max(0, energy - 4);
             onBirdFinishFlight();
           }
         }
@@ -745,7 +801,7 @@ function loop() {
             b.hp -= 40;
             score += 25;
             playSmashAudio();
-            bird.vx = -bird.vx * 0.5;
+            bird.vx = -bird.vx * 0.45;
             bird.vy *= 0.6;
             if (b.hp <= 0) {
               blocks.splice(i, 1);
@@ -765,7 +821,7 @@ function loop() {
       });
 
       if (bird.x > 970 || bird.x < -30) {
-        energy = Math.max(0, energy - 5);
+        energy = Math.max(0, energy - 4);
         onBirdFinishFlight();
       }
     }
@@ -795,7 +851,7 @@ function loop() {
       fl.y += (targetY - fl.y) * 0.15;
 
       if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 18) {
-        energy = Math.min(100, energy + 25);
+        energy = Math.min(100, energy + 28);
         chompTimer = 25;
         playBigBirdCrunch();
         foodFlights.splice(i, 1);
@@ -817,10 +873,19 @@ function checkAllFoodFinished() {
     stopRubberStretch();
     setTimeout(() => {
       playRoundWinSound();
-      gameState = 'WIN';
-      score += Math.floor(energy * 15) + (birdsLeft * 100);
-      document.getElementById('win-msg').innerText = `Level ${level} complete! Bonus: +${birdsLeft * 100}`;
-      document.getElementById('win-overlay').classList.remove('hidden');
+      
+      if (level % 20 === 0) {
+        gameState = 'EVOLVE';
+        score += 5000;
+        const nextTier = EVOLUTIONS[Math.min(Math.floor(level / 20), EVOLUTIONS.length - 1)];
+        document.getElementById('evolve-msg').innerText = `MASTER STAGE CLEAR!\nGiant Bird evolved to: ${nextTier.name}`;
+        document.getElementById('evolve-overlay').classList.remove('hidden');
+      } else {
+        gameState = 'WIN';
+        score += Math.floor(energy * 15) + (birdsLeft * 100);
+        document.getElementById('win-msg').innerText = `Level ${level} complete! Bonus: +${birdsLeft * 100}`;
+        document.getElementById('win-overlay').classList.remove('hidden');
+      }
     }, 600);
   }
 }
@@ -832,10 +897,27 @@ function gameOver(title, desc) {
   gameState = 'LOSE';
   document.getElementById('lose-title').innerText = title;
   document.getElementById('lose-desc').innerText = desc;
+
+  // स्मार्ट कंडीशन: क्या स्कोर टॉप 10 के अंदर है?
+  const isTop10 = (cachedTopScores.length < 10) || (score > 0 && score > cachedTopScores[cachedTopScores.length - 1]);
+  const celebrationBox = document.getElementById('top10Celebration');
+  
+  if (isTop10) {
+    celebrationBox.style.display = 'flex';
+    document.getElementById('playerInitials').value = '';
+    document.getElementById('saveScoreBtn').disabled = false;
+    document.getElementById('saveScoreBtn').innerText = 'Save Score';
+  } else {
+    celebrationBox.style.display = 'none';
+  }
+
   document.getElementById('lose-overlay').classList.remove('hidden');
 }
 
 function updateHUD() {
+  const tier = getCurrentTier();
+  document.getElementById('bird-tier').innerText = tier.name;
+  document.getElementById('level-display').innerText = `Lv ${level}`;
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
   document.getElementById('energy-fill').style.width = Math.min(100, energy) + '%';
@@ -893,10 +975,11 @@ function drawScene() {
   ctx.lineTo(SLING_X + 14, SLING_Y + 50);
   ctx.stroke();
 
+  const tier = getCurrentTier();
   for (let q = 0; q < Math.min(birdsLeft - (bird.inFlight ? 0 : 1), 6); q++) {
     const qX = SLING_X - 45 - (q * 16);
     const qY = GROUND_Y - 10;
-    ctx.fillStyle = "#E53935";
+    ctx.fillStyle = tier.color;
     ctx.beginPath();
     ctx.arc(qX, qY, 8, 0, Math.PI * 2);
     ctx.fill();
@@ -915,11 +998,11 @@ function drawScene() {
     ctx.stroke();
 
     if (isAiming) {
-      let pX = (SLING_X - dragPos.x) * 0.28;
-      let pY = (SLING_Y - dragPos.y) * 0.28;
+      let pX = (SLING_X - dragPos.x) * tier.power;
+      let pY = (SLING_Y - dragPos.y) * tier.power;
       let sX = dragPos.x, sY = dragPos.y, sVY = pY;
       ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 14; i++) {
         sX += pX;
         sVY += 0.32;
         sY += sVY;
@@ -931,7 +1014,7 @@ function drawScene() {
   }
 
   if (birdsLeft > 0 || bird.inFlight) {
-    ctx.fillStyle = "#E53935";
+    ctx.fillStyle = tier.color;
     ctx.beginPath();
     ctx.arc(bX, bY, bird.r, 0, Math.PI * 2);
     ctx.fill();
@@ -980,9 +1063,11 @@ function drawScene() {
 }
 
 function drawGiantBird() {
+  const tier = getCurrentTier();
   ctx.save();
   ctx.translate(BIG_BIRD_X, BIG_BIRD_Y);
-  ctx.fillStyle = "#E53935";
+  ctx.scale(tier.scale, tier.scale);
+  ctx.fillStyle = tier.color;
   ctx.beginPath();
   ctx.ellipse(0, 0, 36, 32, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -1033,7 +1118,7 @@ document.getElementById('restart-btn').onclick = () => {
   initAudioSystem();
   level = 1;
   score = 0;
-  energy = 60;
+  energy = 70;
   incrementGlobalPlayCount();
   document.getElementById('lose-overlay').classList.add('hidden');
   gameState = 'PLAY';
@@ -1042,6 +1127,12 @@ document.getElementById('restart-btn').onclick = () => {
 document.getElementById('next-level-btn').onclick = () => {
   level++;
   document.getElementById('win-overlay').classList.add('hidden');
+  gameState = 'PLAY';
+  initLevel();
+};
+document.getElementById('evolve-btn').onclick = () => {
+  level++;
+  document.getElementById('evolve-overlay').classList.add('hidden');
   gameState = 'PLAY';
   initLevel();
 };
