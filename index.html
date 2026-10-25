@@ -13,7 +13,6 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
-      -webkit-touch-callout: none;
     }
     html, body {
       width: 100vw;
@@ -44,7 +43,7 @@
       height: 100%;
       display: block;
       touch-action: none;
-      background: #87CEEB;
+      background-color: #87CEEB;
     }
     .hud {
       position: absolute;
@@ -871,6 +870,7 @@ document.getElementById('saveScoreBtn').onclick = async () => {
 };
 
 initLevel();
+drawScene();
 requestAnimationFrame(loop);
 </script>
 </body>
