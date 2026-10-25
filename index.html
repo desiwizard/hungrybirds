@@ -1,19 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hungry Bird: Energy Feast</title>
-  
-  <!-- WhatsApp, Facebook & Social Media Preview Tags -->
+
+  <!-- WhatsApp & Social Media Preview Tags (Strict Order & Exact Dimensions) -->
+  <meta name="title" content="Hungry Bird: Energy Feast">
+  <meta name="description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+  <link rel="image_src" href="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+  <meta itemprop="image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hungry Bird">
+  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/">
   <meta property="og:title" content="Hungry Bird: Energy Feast">
   <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
   <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
   <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
   <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="536">
 
   <!-- Twitter Preview Tags -->
   <meta name="twitter:card" content="summary_large_image">
@@ -21,7 +27,8 @@
   <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
   <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
 
-  <!-- PWA & Mobile Web App Settings -->
+  <!-- Mobile Viewport & PWA Settings -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#87CEEB">
   <meta name="mobile-web-app-capable" content="yes">
@@ -264,7 +271,6 @@
       border-bottom: 1px solid rgba(255,255,255,0.1); 
     }
 
-    /* ==================== MOBILE ROTATE SCREEN OVERLAY ==================== */
     #rotate-device-overlay {
       display: none;
       position: fixed;
@@ -401,9 +407,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ==================== SECURITY CODE (ANTI-COPY & INSPECT PROTECTION) ====================
+// ==================== SECURITY CODE ====================
 document.addEventListener('contextmenu', e => e.preventDefault());
-
 document.onkeydown = function(e) {
   if (e.keyCode === 123) { return false; }
   if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { return false; }
@@ -904,7 +909,6 @@ function loop() {
           if (!bird.hitBlocksCooldown[b.id]) {
             bird.hitBlocksCooldown[b.id] = true;
             
-            // Impact damage calculation (Speed based damage)
             const impactSpeed = Math.hypot(bird.vx, bird.vy);
             const damage = Math.max(48, Math.min(65, Math.floor(impactSpeed * 3.8)));
             
@@ -912,7 +916,6 @@ function loop() {
             score += 25;
             playSmashAudio();
 
-            // Rebound bounce
             bird.vx = -bird.vx * 0.40;
             bird.vy *= 0.6;
             if (b.hp <= 0) {
@@ -1034,7 +1037,6 @@ function updateHUD() {
   document.getElementById('energy-fill').style.width = Math.min(100, energy) + '%';
 }
 
-// ==================== REALISTIC WOODEN Y-FORK SLINGSHOT ====================
 function drawSlingshotBack() {
   ctx.save();
   ctx.lineCap = 'round';
