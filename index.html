@@ -148,25 +148,51 @@
       padding: 16px;
     }
     .overlay.hidden { display: none !important; }
-    .overlay h1 { font-size: 26px; margin-bottom: 8px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
-    .overlay p { font-size: 14px; margin-bottom: 12px; line-height: 1.4; max-width: 480px; }
+    .overlay h1 { font-size: 24px; margin-bottom: 6px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
+    .overlay p { font-size: 13px; margin-bottom: 10px; line-height: 1.4; max-width: 480px; }
     .rules-card {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 16px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
       text-align: left;
-      font-size: 12px;
-      line-height: 1.5;
+      font-size: 11.5px;
+      line-height: 1.45;
       max-width: 460px;
     }
     .rules-card b { color: #ffeb3b; }
+
+    .diff-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .diff-btn {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .diff-btn.active {
+      background: #ffeb3b;
+      color: #111;
+      border-color: #fbc02d;
+      box-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
+      transform: scale(1.05);
+    }
+
     .btn {
       background: #4CAF50;
       color: white;
       border: none;
-      padding: 10px 28px;
+      padding: 10px 30px;
       font-size: 18px;
       font-weight: bold;
       border-radius: 20px;
@@ -214,7 +240,7 @@
 
   <div class="hud">
     <div class="hud-box">
-      <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span>
+      <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span> (<span id="hud-diff" style="color:#ffeb3b;">Normal</span>)
       <button id="music-btn" class="sound-btn" title="Music">🎵</button>
       <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
       <button id="help-btn" class="sound-btn" title="How to Play" style="font-weight: 900; font-size: 13px;">❓</button>
@@ -234,10 +260,17 @@
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="rules-card">
-      🎯 <b>Ammo Limit:</b> Har level mein <b>10 Birds</b> milenge!<br>
-      🪵 <b>Towers:</b> Wood (1 hit), Stone (2 hits), Iron (2 hits).<br>
-      🍔 <b>Objective:</b> Birds khatam hone se pehle saara food Giant Bird ko feed karein!
+      🎯 <b>Ammo:</b> Birds khatam hone se pehle Giant Bird ko feed karein!<br>
+      🪵 <b>Towers:</b> Wood (1 hit), Stone (2 hits), Iron (2-3 hits).<br>
+      ⚡ <b>Difficulty:</b> Apni pasand ka mode select karein:
     </div>
+
+    <div class="diff-container">
+      <button class="diff-btn" data-diff="novice">Novice</button>
+      <button class="diff-btn active" data-diff="normal">Normal</button>
+      <button class="diff-btn" data-diff="expert">Expert</button>
+    </div>
+
     <button class="btn" id="start-game-btn">PLAY NOW</button>
   </div>
 
@@ -247,7 +280,7 @@
       🎯 <b>Aim & Shoot:</b> Bird ko peeche khenchein aur chhor dein slingshot chalane ke liye!<br><br>
       🪵 <b>Towers & Hits:</b> Wood (1 hit), Stone (2 hits), Iron (2 hits).<br><br>
       🍔 <b>Objective:</b> Khana girayein aur Giant Bird ko feed karein! Giant Bird bhooki na marne paye.<br><br>
-      🎯 <b>Ammo:</b> Har level mein sirf 10 birds milengi.
+      ⚙️ <b>Difficulty:</b> Novice (14 birds), Normal (10 birds), Expert (7 birds).
     </div>
     <button class="btn" id="close-help-btn">GOT IT!</button>
   </div>
@@ -286,6 +319,22 @@ window.addEventListener('orientationchange', () => {
   setTimeout(checkOrientation, 200);
 });
 checkOrientation();
+
+let currentDifficulty = 'normal';
+const DIFFICULTY_CONFIG = {
+  novice: { maxBirds: 14, drainMult: 0.60, dots: 18, ironHP: 80, stoneHP: 40, label: 'Novice' },
+  normal: { maxBirds: 10, drainMult: 1.00, dots: 12, ironHP: 80, stoneHP: 80, label: 'Normal' },
+  expert: { maxBirds: 7,  drainMult: 1.35, dots: 6,  ironHP: 120, stoneHP: 80, label: 'Expert' }
+};
+
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentDifficulty = btn.dataset.diff;
+  });
+});
 
 let audioCtx = null;
 let musicEnabled = true;
@@ -430,7 +479,6 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
   document.getElementById('help-overlay').classList.add('hidden');
 });
 
-// Clean Viewport Auto-fit (Zero Black Security Popup)
 function toggleFullscreen() {
   window.scrollTo(0, 1);
   const container = document.getElementById('game-container');
@@ -456,8 +504,8 @@ let isAiming = false;
 let hasFirstFired = false;
 let gameState = 'START';
 let isWinningTransition = false;
-const MAX_BIRDS_PER_ROUND = 10;
-let birdsLeft = MAX_BIRDS_PER_ROUND;
+let birdsLeft = 10;
+
 const EVOLUTIONS = [
   { name: "Rookie (Reddy)", color: "#E53935", scale: 1.0, power: 0.27 },
   { name: "Glutton (Bubbles)", color: "#42A5F5", scale: 1.15, power: 0.29 },
@@ -498,17 +546,21 @@ const FOOD_CONFIGS = [
   { name: 'Watermelon', color: '#4caf50', r: 19, pts: 300 },
   { name: 'Strawberry', color: '#f44336', r: 16, pts: 150 }
 ];
+
 function initLevel() {
   blocks = [];
   foods = [];
   foodFlights = [];
   hasFirstFired = false;
   isWinningTransition = false;
-  birdsLeft = MAX_BIRDS_PER_ROUND;
+  
+  const diffSettings = DIFFICULTY_CONFIG[currentDifficulty];
+  birdsLeft = diffSettings.maxBirds;
   dragPos = { x: SLING_X, y: SLING_Y };
   stopRubberStretch();
   resetBird();
   if (musicEnabled) startBackgroundMusic();
+
   const numTowers = Math.min(2 + Math.floor(level / 4), 4);
   const towerSpacing = (level >= 5) ? 135 : 105;
   const startX = (level >= 5) ? 530 : 550;
@@ -520,10 +572,10 @@ function initLevel() {
       let pType = 'wood', pColor = '#8D6E63', pHP = 40;
       let rColor = '#A1887F', rHP = 40;
       if (level >= 8 && f === 0) {
-        pType = 'iron'; pColor = '#263238'; pHP = 80;
+        pType = 'iron'; pColor = '#263238'; pHP = diffSettings.ironHP;
       } else if (level >= 4 && (f > 0 || Math.random() > 0.35)) {
-        pType = 'stone'; pColor = '#78909C'; pHP = 80;
-        rColor = '#607D8B'; rHP = 80;
+        pType = 'stone'; pColor = '#78909C'; pHP = diffSettings.stoneHP;
+        rColor = '#607D8B'; rHP = diffSettings.stoneHP;
       }
       blocks.push({ id: `p1_${t}_${f}`, type: pType, x: tX - 35, y: bY, w: 14, h: 60, vy: 0, hp: pHP, maxHP: pHP, color: pColor });
       blocks.push({ id: `p2_${t}_${f}`, type: pType, x: tX + 25, y: bY, w: 14, h: 60, vy: 0, hp: pHP, maxHP: pHP, color: pColor });
@@ -532,7 +584,7 @@ function initLevel() {
         const isHard = (level >= 7);
         const bType = isHard ? 'iron' : 'stone';
         const bunkerColor = isHard ? '#212121' : '#546E7A';
-        const bunkerHP = 80;
+        const bunkerHP = (bType === 'iron') ? diffSettings.ironHP : diffSettings.stoneHP;
         blocks.push({ id: `bk_${t}_${f}`, type: bType, x: tX - 52, y: bY + 8, w: 12, h: 52, vy: 0, hp: bunkerHP, maxHP: bunkerHP, color: bunkerColor });
       }
       const fConfig = FOOD_CONFIGS[(t + f) % FOOD_CONFIGS.length];
@@ -543,6 +595,7 @@ function initLevel() {
   }
   updateHUD();
 }
+
 function resetBird() {
   bird.x = SLING_X;
   bird.y = SLING_Y;
@@ -554,14 +607,16 @@ function resetBird() {
   bird.hitBlocksCooldown = {};
   dragPos = { x: SLING_X, y: SLING_Y };
 }
+
 function onBirdFinishFlight() {
   const remainingFoods = foods.filter(f => f.alive).length + foodFlights.length;
   if (birdsLeft <= 0 && remainingFoods > 0) {
-    gameOver("No More Birds Left!", "Aapke 10 birds khatam ho gaye lekin khana baqi reh gaya!");
+    gameOver("No More Birds Left!", `Aapke birds khatam ho gaye lekin khana baqi reh gaya!`);
   } else {
     resetBird();
   }
 }
+
 function getCoords(e) {
   const rect = canvas.getBoundingClientRect();
   const cx = e.touches ? e.touches[0].clientX : e.clientX;
@@ -571,6 +626,7 @@ function getCoords(e) {
     y: (cy - rect.top) * (canvas.height / rect.height)
   };
 }
+
 function onDown(pos) {
   initAudioSystem();
   if (gameState !== 'PLAY' || bird.inFlight || birdsLeft <= 0 || isWinningTransition) return;
@@ -579,6 +635,7 @@ function onDown(pos) {
     isAiming = true;
   }
 }
+
 function onMove(pos) {
   if (!isAiming || gameState !== 'PLAY' || bird.inFlight || isWinningTransition) return;
   const dx = pos.x - SLING_X;
@@ -598,6 +655,7 @@ function onMove(pos) {
     stopRubberStretch();
   }
 }
+
 function onUp() {
   if (!isAiming) return;
   isAiming = false;
@@ -623,6 +681,7 @@ function onUp() {
     dragPos = { x: SLING_X, y: SLING_Y };
   }
 }
+
 canvas.addEventListener('mousedown', e => onDown(getCoords(e)));
 window.addEventListener('mousemove', e => onMove(getCoords(e)));
 window.addEventListener('mouseup', onUp);
@@ -633,7 +692,8 @@ window.addEventListener('touchend', onUp);
 function loop() {
   if (gameState === 'PLAY') {
     if (hasFirstFired && !isWinningTransition) {
-      const drainRate = 0.022 + Math.min(0.016, level * 0.0012);
+      const diffSettings = DIFFICULTY_CONFIG[currentDifficulty];
+      const drainRate = (0.022 + Math.min(0.016, level * 0.0012)) * diffSettings.drainMult;
       energy -= drainRate;
       if (energy <= 0) {
         energy = 0;
@@ -832,6 +892,7 @@ function checkAllFoodFinished() {
     }, 550);
   }
 }
+
 function gameOver(title = "Giant Bird Starved!", desc = "Energy khatam ho gayi! Dobara koshish karein.") {
   if (isWinningTransition) return;
   stopRubberStretch();
@@ -841,6 +902,7 @@ function gameOver(title = "Giant Bird Starved!", desc = "Energy khatam ho gayi! 
   document.getElementById('lose-desc').innerText = desc;
   document.getElementById('lose-overlay').classList.remove('hidden');
 }
+
 document.getElementById('start-game-btn').onclick = () => {
   initAudioSystem();
   startBackgroundMusic();
@@ -868,16 +930,20 @@ document.getElementById('restart-btn').onclick = () => {
   gameState = 'PLAY';
   initLevel();
 };
+
 function updateHUD() {
   const tier = getCurrentTier();
+  const diffSettings = DIFFICULTY_CONFIG[currentDifficulty];
   document.getElementById('bird-tier').innerText = tier.name;
   document.getElementById('level-display').innerText = `Lv ${level}`;
+  document.getElementById('hud-diff').innerText = diffSettings.label;
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
   document.getElementById('food-left-display').innerText = foods.filter(f => f.alive).length;
   const pct = Math.min(100, (energy / 100) * 100);
   document.getElementById('energy-fill').style.width = pct + '%';
 }
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#4E342E';
@@ -912,6 +978,7 @@ function draw() {
   ctx.lineTo(SLING_X + 14, SLING_Y);
   ctx.lineTo(SLING_X + 14, SLING_Y + 50);
   ctx.stroke();
+
   const tier = getCurrentTier();
   const queueCount = bird.inFlight ? birdsLeft : birdsLeft - 1;
   for (let q = 0; q < Math.min(queueCount, 8); q++) {
@@ -946,7 +1013,9 @@ function draw() {
       const pY = (SLING_Y - dragPos.y) * tier.power;
       let sX = dragPos.x, sY = dragPos.y, sVY = pY;
       ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-      for (let i = 0; i < 12; i++) {
+      
+      const numDots = DIFFICULTY_CONFIG[currentDifficulty].dots;
+      for (let i = 0; i < numDots; i++) {
         sX += pX;
         sVY += 0.32;
         sY += sVY;
@@ -1013,6 +1082,7 @@ function draw() {
     ctx.fill();
   });
 }
+
 function drawBigBird() {
   const tier = getCurrentTier();
   const bellyScale = 1.0 + (energy / 120) * 0.4;
@@ -1059,8 +1129,22 @@ function drawBigBird() {
   ctx.stroke();
   ctx.restore();
 }
+
 initLevel();
 requestAnimationFrame(loop);
+
+// Security: Disable Right-Click and Developer Inspection Shortcuts
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+    (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))
+  ) {
+    e.preventDefault();
+    return false;
+  }
+});
 </script>
 </body>
 </html>
