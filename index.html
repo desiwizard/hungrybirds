@@ -18,8 +18,8 @@
       -webkit-touch-callout: none;
     }
     html, body {
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       background-color: #000;
       display: flex;
       align-items: center;
@@ -49,7 +49,7 @@
       position: absolute;
       top: 10px;
       left: 12px;
-      right: 12px;
+      right: 56px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -98,6 +98,29 @@
       font-size: 12px;
       cursor: pointer;
     }
+    #fs-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid #ffeb3b;
+      color: #ffeb3b;
+      font-size: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 999;
+      pointer-events: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+    #fs-btn:active {
+      transform: scale(0.90);
+      background: #333;
+    }
     .overlay {
       position: absolute;
       inset: 0;
@@ -111,7 +134,7 @@
       text-align: center;
       padding: 16px;
     }
-    .overlay.hidden { display: none; }
+    .overlay.hidden { display: none !important; }
     .overlay h1 { font-size: 28px; margin-bottom: 8px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
     .overlay p { font-size: 14px; margin-bottom: 12px; line-height: 1.4; max-width: 480px; }
     .rules-card {
@@ -138,15 +161,17 @@
       box-shadow: 0 4px #2e7d32;
     }
     .btn:active { transform: translateY(2px); box-shadow: 0 2px #2e7d32; }
-    
-    /* Rotate Prompt */
+
     #rotate-prompt {
       display: none;
       position: fixed;
-      inset: 0;
-      background: #111;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0d0d0d;
       color: #ffeb3b;
-      z-index: 999;
+      z-index: 999999;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -155,20 +180,24 @@
       padding: 20px;
     }
     @media screen and (orientation: portrait) {
-      #rotate-prompt { display: flex; }
+      #rotate-prompt {
+        display: flex !important;
+      }
     }
   </style>
 </head>
 <body>
 
 <div id="rotate-prompt">
-  <div style="font-size: 40px; margin-bottom: 10px;">🔄</div>
+  <div style="font-size: 48px; margin-bottom: 12px;">🔄</div>
   <b>Please Rotate Your Phone</b>
-  <p style="font-size: 14px; color: #ccc; margin-top: 6px;">Landscape mode mein game shuru karein!</p>
+  <p style="font-size: 14px; color: #ccc; margin-top: 8px;">Landscape mode mein game khele!</p>
 </div>
 
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+  <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
   <div class="hud">
     <div class="hud-box">
@@ -230,6 +259,21 @@
 </div>
 
 <script>
+function checkOrientation() {
+  const prompt = document.getElementById('rotate-prompt');
+  const isPortrait = window.innerHeight > window.innerWidth || screen.height > screen.width && window.matchMedia("(orientation: portrait)").matches;
+  if (isPortrait) {
+    prompt.style.display = 'flex';
+  } else {
+    prompt.style.display = 'none';
+  }
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', () => {
+  setTimeout(checkOrientation, 200);
+});
+checkOrientation();
+
 let audioCtx = null;
 let musicEnabled = true;
 let sfxEnabled = true;
@@ -335,13 +379,50 @@ document.getElementById('sfx-btn').addEventListener('click', (e) => {
   if (!sfxEnabled) stopRubberStretch();
 });
 
-// Help Popup Events
 document.getElementById('help-btn').addEventListener('click', (e) => {
   e.preventDefault(); e.stopPropagation();
   document.getElementById('help-overlay').classList.remove('hidden');
 });
-document.getElementById('close-help-btn').addEventListener('click', () => {
+document.getElementById('close-help-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
   document.getElementById('help-overlay').classList.add('hidden');
+});
+
+// Robust Fullscreen Function for all devices
+function toggleFullscreen() {
+  const container = document.getElementById('game-container') || document.documentElement;
+  const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+  
+  if (!isFs) {
+    if (container.requestFullscreen) {
+      container.requestFullscreen().catch(() => {});
+    } else if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    } else if (container.mozRequestFullScreen) {
+      container.mozRequestFullScreen();
+    } else if (container.msRequestFullscreen) {
+      container.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}
+const fsBtn = document.getElementById('fs-btn');
+fsBtn.addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  toggleFullscreen();
+});
+fsBtn.addEventListener('touchend', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  toggleFullscreen();
 });
 
 const canvas = document.getElementById('gameCanvas');
