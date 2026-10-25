@@ -297,9 +297,17 @@ const SOUND_PATHS = {
   win: 'win.mp3',
   bgm: 'bgm.mp3'
 };
+
 const bgmAudio = new Audio(SOUND_PATHS.bgm);
 bgmAudio.loop = true;
+bgmAudio.volume = 1.0; // 100% full volume
+
 const stretchAudio = new Audio(SOUND_PATHS.stretch);
+stretchAudio.preload = 'auto';
+
+const crunchAudio = new Audio(SOUND_PATHS.crunch);
+crunchAudio.preload = 'auto';
+
 let isStretchPlaying = false;
 
 function initAudioSystem() {
@@ -309,6 +317,7 @@ function initAudioSystem() {
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
+  crunchAudio.load();
 }
 
 window.addEventListener('touchstart', function unlockAudio() {
@@ -346,6 +355,7 @@ function playSmashAudio() {
   snd.volume = 0.85;
   snd.play().catch(() => {});
 }
+
 let lastCrunchPlayTime = 0;
 function playBigBirdCrunch() {
   if (!sfxEnabled) return;
@@ -353,10 +363,15 @@ function playBigBirdCrunch() {
   const now = Date.now();
   if (now - lastCrunchPlayTime < 140) return;
   lastCrunchPlayTime = now;
-  const crunchAudio = new Audio(SOUND_PATHS.crunch);
-  crunchAudio.volume = 1.0;
-  crunchAudio.play().catch(() => {});
+  
+  const soundClone = crunchAudio.cloneNode();
+  soundClone.volume = 1.0;
+  soundClone.play().catch((err) => {
+    crunchAudio.currentTime = 0;
+    crunchAudio.play().catch(() => {});
+  });
 }
+
 function playRoundWinSound() {
   if (!sfxEnabled) return;
   bgmAudio.pause();
@@ -371,9 +386,11 @@ function playLoseSound() {
   snd.volume = 0.8;
   snd.play().catch(() => {});
 }
+
+// BGM set to full 100% volume
 function startBackgroundMusic() {
   if (!musicEnabled) return;
-  bgmAudio.volume = 0.45;
+  bgmAudio.volume = 1.0;
   bgmAudio.play().catch(() => {});
 }
 
@@ -777,7 +794,6 @@ function checkAllFoodFinished() {
   if (left === 0 && foodFlights.length === 0 && !isWinningTransition) {
     isWinningTransition = true;
     stopRubberStretch();
-    // Crunch sound poori sunayi de, is liye 550ms ka clean delay rakha hai
     setTimeout(() => {
       playRoundWinSound();
       if (level % 20 === 0) {
