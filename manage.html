@@ -24,7 +24,7 @@
     #pin-input:focus { border-color: #facc15; }
 
     /* Main Admin Container */
-    .container { max-width: 900px; width: 100%; display: none; flex-direction: column; gap: 20px; }
+    .container { max-width: 950px; width: 100%; display: none; flex-direction: column; gap: 20px; }
     .card { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     h1 { color: #facc15; font-size: 22px; text-align: center; margin-bottom: 4px; }
     h2 { font-size: 16px; color: #38bdf8; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
@@ -47,19 +47,22 @@
     .btn-primary:hover { background: #0369a1; }
     .btn-refresh { background: #06b6d4; color: #fff; width: 100%; margin-bottom: 12px; }
     .btn-refresh:hover { background: #0891b2; }
+    .btn-trim { background: #8b5cf6; color: #fff; width: 100%; margin-top: 12px; }
+    .btn-trim:hover { background: #7c3aed; }
     .btn-warning { background: #d97706; color: #fff; width: 100%; margin-top: 14px; }
     .btn-warning:hover { background: #b45309; }
-    .btn-danger { background: #ef4444; color: #fff; width: 100%; margin-top: 12px; }
+    .btn-danger { background: #ef4444; color: #fff; width: 100%; margin-top: 8px; }
     .btn-danger:hover { background: #dc2626; }
     .btn-logout { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 4px 10px; font-size: 11px; border-radius: 4px; float: right; cursor: pointer; }
     .btn-logout:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
     /* Tables & Lists */
-    .table-container { max-height: 320px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 6px; }
+    .table-container { max-height: 340px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 6px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
     th { padding: 9px 10px; background: rgba(255,255,255,0.06); color: #94a3b8; font-size: 11px; text-transform: uppercase; }
     td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
     .device-tag { display: inline-block; background: rgba(255,255,255,0.1); padding: 2px 7px; border-radius: 4px; font-size: 11px; color: #cbd5e1; }
+    .location-tag { display: inline-block; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; }
     
     .status-msg { margin-top: 10px; text-align: center; font-size: 13px; font-weight: bold; }
   </style>
@@ -70,7 +73,7 @@
 <div id="login-box">
   <h2>🔒 Admin Access</h2>
   <p>Enter Master PIN to view analytics & controls</p>
-  <input type="password" id="pin-input" placeholder="••••" maxlength="10" autocomplete="off">
+  <input type="password" id="pin-input" placeholder="••••" maxlength="20" autocomplete="off">
   <button class="btn btn-primary" id="login-btn">Unlock Console</button>
   <div id="login-error" style="color: #ef4444; font-size: 12px; margin-top: 10px; font-weight: bold;"></div>
 </div>
@@ -81,7 +84,7 @@
   <div class="card">
     <button class="btn-logout" id="logout-btn">Logout</button>
     <h1>Hungry Bird <span class="badge">Live Admin</span></h1>
-    <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 18px;">Real-time Device Analytics & Leaderboard Management</p>
+    <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 18px;">Real-time Device Analytics, Geo-Tracking & Leaderboard</p>
 
     <!-- Top Key Stats -->
     <div class="grid-stats">
@@ -103,9 +106,9 @@
       </div>
     </div>
 
-    <!-- Operating System & Browser Breakdown -->
+    <!-- Operating System, Browser & Geo Breakdown -->
     <div style="margin-top: 14px;">
-      <div class="stat-title">Platform & Browser Breakdown</div>
+      <div class="stat-title">Platform, Browser & Location Breakdown</div>
       <div class="pill-group" id="tech-breakdown">
         <span class="pill">Loading details...</span>
       </div>
@@ -119,7 +122,7 @@
   <!-- Leaderboard Records Card -->
   <div class="card">
     <h2>
-      <span>🏆 Leaderboard Records (With Devices)</span>
+      <span>🏆 Leaderboard Records (With Geo-Location)</span>
       <span style="font-size: 12px; color: #94a3b8;" id="db-status">Status: Ready</span>
     </h2>
 
@@ -133,18 +136,22 @@
             <th>Player</th>
             <th>Score</th>
             <th>Mode</th>
+            <th>Location (City, Country)</th>
             <th>Device & OS</th>
             <th>Screen</th>
           </tr>
         </thead>
         <tbody id="scores-table-body">
-          <tr><td colspan="6" style="text-align:center; padding:15px; color:#94a3b8;">Fetching records...</td></tr>
+          <tr><td colspan="7" style="text-align:center; padding:15px; color:#94a3b8;">Fetching records...</td></tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Wipe Leaderboard Scores Button -->
-    <button class="btn btn-danger" id="reset-btn">⚠️ Wipe Leaderboard Scores (Reset)</button>
+    <!-- Trim to Top 10 Only Button -->
+    <button class="btn btn-trim" id="trim-btn">🧹 Trim to Top 10 (Keep Top 10, Delete Rest)</button>
+
+    <!-- Wipe All Scores Button -->
+    <button class="btn btn-danger" id="reset-btn">⚠️ Wipe Entire Leaderboard (Zero All Scores)</button>
     <div id="status" class="status-msg"></div>
   </div>
 
@@ -156,13 +163,14 @@
         <thead>
           <tr>
             <th>Time</th>
+            <th>Location</th>
             <th>Device</th>
             <th>OS / Browser</th>
             <th>Resolution</th>
           </tr>
         </thead>
         <tbody id="sessions-table-body">
-          <tr><td colspan="4" style="text-align:center; padding:15px; color:#94a3b8;">Loading sessions...</td></tr>
+          <tr><td colspan="5" style="text-align:center; padding:15px; color:#94a3b8;">Loading sessions...</td></tr>
         </tbody>
       </table>
     </div>
@@ -174,7 +182,7 @@
 
 <script>
 // ==================== SECURITY PIN GATE ====================
-// अपना पिन यहाँ बदल सकते हैं:
+// अपना नया पासवर्ड यहाँ डालें:
 const ADMIN_PIN = "4724"; 
 
 const loginBox = document.getElementById("login-box");
@@ -247,6 +255,7 @@ async function loadAnalytics() {
 
       const osData = data.os || {};
       const browsersData = data.browsers || {};
+      const countriesData = data.countries || {};
       let pillsHtml = "";
 
       for (let [os, count] of Object.entries(osData)) {
@@ -254,6 +263,9 @@ async function loadAnalytics() {
       }
       for (let [br, count] of Object.entries(browsersData)) {
         pillsHtml += `<span class="pill" style="background:rgba(250,204,21,0.12); border-color:rgba(250,204,21,0.3); color:#fef08a;">${br}: <b>${count}</b></span>`;
+      }
+      for (let [c, count] of Object.entries(countriesData)) {
+        pillsHtml += `<span class="pill" style="background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3); color:#6ee7b7;">🌍 ${c}: <b>${count}</b></span>`;
       }
       if (!pillsHtml) pillsHtml = "<span class='pill'>No analytics data yet</span>";
       document.getElementById("tech-breakdown").innerHTML = pillsHtml;
@@ -268,18 +280,18 @@ async function loadAnalytics() {
   }
 }
 
-// 2. Load Leaderboard Scores
+// 2. Load Leaderboard Scores with Geo-Location
 async function loadScores() {
   const tbody = document.getElementById("scores-table-body");
   const countEl = document.getElementById("total-scores");
-  tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:15px; color:#94a3b8;'>Fetching latest records...</td></tr>";
+  tbody.innerHTML = "<tr><td colspan='7' style='text-align:center; padding:15px; color:#94a3b8;'>Fetching latest records...</td></tr>";
   
   try {
     const snap = await db.collection("leaderboard").orderBy("score", "desc").get();
     countEl.innerText = snap.size;
 
     if (snap.empty) {
-      tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:15px; color:#94a3b8;'>Leaderboard is empty.</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='7' style='text-align:center; padding:15px; color:#94a3b8;'>Leaderboard is empty.</td></tr>";
       return;
     }
 
@@ -290,12 +302,14 @@ async function loadScores() {
       const devSummary = d.device || "Desktop (Web)";
       const screenRes = d.screen || "N/A";
       const mode = d.difficulty ? d.difficulty.toUpperCase() : "NORMAL";
+      const loc = d.location || (d.country ? `${d.city || ''}, ${d.country}` : "Unknown");
 
       html += `<tr>
         <td style="font-weight:bold; color:#facc15;">#${rank}</td>
         <td><b>${d.initials || "ANON"}</b></td>
         <td style="color:#4ade80; font-weight:bold;">${d.score || 0}</td>
         <td><span style="font-size:11px; color:#38bdf8; font-weight:bold;">${mode}</span></td>
+        <td><span class="location-tag">📍 ${loc}</span></td>
         <td><span class="device-tag">${devSummary}</span></td>
         <td style="color:#94a3b8; font-size:12px;">${screenRes}</td>
       </tr>`;
@@ -303,17 +317,17 @@ async function loadScores() {
     });
     tbody.innerHTML = html;
   } catch(err) {
-    tbody.innerHTML = `<tr><td colspan='6' style='color:#ef4444; padding:12px;'>Error: ${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan='7' style='color:#ef4444; padding:12px;'>Error: ${err.message}</td></tr>`;
   }
 }
 
-// 3. Load Recent Live Sessions Log
+// 3. Load Recent Live Sessions Log with Geo-Location
 async function loadSessionsLog() {
   const tbody = document.getElementById("sessions-table-body");
   try {
     const snap = await db.collection("analytics_logs").orderBy("timestamp", "desc").limit(15).get();
     if (snap.empty) {
-      tbody.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:12px; color:#94a3b8;'>No recent session logs recorded yet.</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:12px; color:#94a3b8;'>No recent session logs recorded yet.</td></tr>";
       return;
     }
 
@@ -324,9 +338,11 @@ async function loadSessionsLog() {
       if (log.timestamp && log.timestamp.toDate) {
         timeStr = log.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       }
+      const loc = log.location || (log.country ? `${log.city || ''}, ${log.country}` : "Unknown");
 
       html += `<tr>
         <td style="color:#94a3b8; font-size:12px;">${timeStr}</td>
+        <td><span class="location-tag">📍 ${loc}</span></td>
         <td><span class="device-tag" style="color:#38bdf8;">${log.deviceType || "Desktop"}</span></td>
         <td>${log.os || "OS"} / ${log.browser || "Browser"}</td>
         <td style="color:#94a3b8; font-size:12px;">${log.screen || "N/A"}</td>
@@ -334,7 +350,7 @@ async function loadSessionsLog() {
     });
     tbody.innerHTML = html;
   } catch(e) {
-    tbody.innerHTML = "<tr><td colspan='4' style='color:#94a3b8; text-align:center;'>Session logs unavailable.</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='5' style='color:#94a3b8; text-align:center;'>Session logs unavailable.</td></tr>";
   }
 }
 
@@ -343,6 +359,39 @@ async function refreshAll() {
 }
 
 document.getElementById("refresh-btn").onclick = refreshAll;
+
+// ==================== TRIM TO TOP 10 ONLY ====================
+document.getElementById("trim-btn").onclick = async () => {
+  const statusEl = document.getElementById("status");
+  try {
+    const snap = await db.collection("leaderboard").orderBy("score", "desc").get();
+    
+    if (snap.size <= 10) {
+      alert(`Abhi sirf ${snap.size} entries hain. Trim karne ke liye kam az kam 10 se zyada entries honi chahiye.`);
+      return;
+    }
+
+    const excessCount = snap.size - 10;
+    const confirmAction = confirm(`Top 10 scores mehfooz rahenge aur neeche ke ${excessCount} scores delete ho jayenge. Kya aap delete karna chahte hain?`);
+    if (!confirmAction) return;
+
+    statusEl.style.color = "#facc15";
+    statusEl.innerText = "Trimming leaderboard to Top 10...";
+
+    const batch = db.batch();
+    snap.docs.slice(10).forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    statusEl.style.color = "#22c55e";
+    statusEl.innerText = `Success! ${excessCount} lower scores delete ho gaye. Sirf Top 10 mehfooz hain.`;
+    await refreshAll();
+  } catch(err) {
+    statusEl.style.color = "#ef4444";
+    statusEl.innerText = "Trim Failed: " + err.message;
+  }
+};
 
 // ==================== RESET ANALYTICS (DAILY STATS) ====================
 document.getElementById("reset-analytics-btn").onclick = async () => {
@@ -354,16 +403,15 @@ document.getElementById("reset-analytics-btn").onclick = async () => {
   statusEl.innerText = "Resetting play counts & analytics...";
 
   try {
-    // 1. Reset stats document to 0
     await db.collection("analytics").doc("stats").set({
       playCount: 0,
       devices: { Desktop: 0, Mobile: 0, Tablet: 0 },
       os: {},
       browsers: {},
+      countries: {},
       lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // 2. Clear analytics_logs collection
     const logsSnap = await db.collection("analytics_logs").get();
     const batch = db.batch();
     logsSnap.forEach(doc => batch.delete(doc.ref));
@@ -378,7 +426,7 @@ document.getElementById("reset-analytics-btn").onclick = async () => {
   }
 };
 
-// ==================== WIPE LEADERBOARD SCORES ====================
+// ==================== WIPE ENTIRE LEADERBOARD ====================
 document.getElementById("reset-btn").onclick = async () => {
   const confirmAction = confirm("Kya aap waqayi tamaam scores delete karke leaderboard zero karna chahte hain?");
   if (!confirmAction) return;
