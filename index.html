@@ -156,7 +156,6 @@
     }
     .rules-card b { color: #ffeb3b; }
 
-    /* Perfect 2-Column Equal Grid */
     .hud-legend-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -254,7 +253,7 @@
 
   <div class="hud">
     <div class="hud-pill">
-      <span id="level-display" style="color: #ffeb3b;">Lv 1</span>
+      <span id="level-display" style="color: #ffeb3b;">Lv 1 • Normal</span>
       <span>|</span>
       <span>🎯 <span id="shots-left-display">8</span></span>
       <span>|</span>
@@ -273,16 +272,14 @@
     </div>
   </div>
 
-  <!-- START OVERLAY: Perfectly Aligned 2-Column Grid -->
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="start-content-grid">
       <div class="start-col-left">
-        <!-- Screen HUD & Buttons 2-Column Equal Grid -->
         <div class="rules-card" style="background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); margin-bottom: 6px;">
           <b style="color:#00e5ff;">📊 SCREEN HUD & BUTTONS:</b>
           <div class="hud-legend-grid">
-            <div>• <b>Lv (Level):</b> Game stage</div>
+            <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
             <div>• <b>🎯 Shots:</b> Birds in queue</div>
             
             <div>• <b>⚡ Energy:</b> Giant Bird timer</div>
@@ -296,7 +293,6 @@
           </div>
         </div>
 
-        <!-- Gameplay Rules -->
         <div class="rules-card" style="margin-bottom: 8px;">
           🎯 <b>Aim & Fire:</b> Drag bird backwards on slingshot to aim & smash towers!<br>
           🪵 <b>Hit Durability:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
@@ -330,7 +326,6 @@
     <button class="btn" id="close-lb-btn">BACK TO GAME</button>
   </div>
 
-  <!-- HELP OVERLAY: Also perfectly aligned with the same grid -->
   <div id="help-overlay" class="overlay hidden">
     <h1 style="margin-bottom: 4px;">HOW TO PLAY</h1>
 
@@ -358,7 +353,7 @@
     <div class="rules-card" style="max-width: 540px; margin-bottom: 8px; background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4);">
       <b style="color:#00e5ff; font-size:12px;">📊 SCREEN HUD & ICONS EXPLAINED:</b>
       <div class="hud-legend-grid">
-        <div>• <b>Lv (Level):</b> Game stage</div>
+        <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
         <div>• <b>🎯 Shots:</b> Birds in queue</div>
         
         <div>• <b>⚡ Energy:</b> Giant Bird timer</div>
@@ -461,8 +456,8 @@ function getDeviceInfo() {
   let browser = "Unknown Browser";
   if (/SamsungBrowser/i.test(ua)) browser = "Samsung Browser";
   else if (/Edg/i.test(ua)) browser = "Edge";
-  else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Chrome";
-  else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = "Safari";
+  else if (/Chrome/i.test(ua)) browser = "Chrome";
+  else if (/Safari/i.test(ua)) browser = "Safari";
   else if (/Firefox/i.test(ua)) browser = "Firefox";
   else if (/OPR|Opera/i.test(ua)) browser = "Opera";
 
@@ -523,6 +518,7 @@ async function submitScore(initials, finalScore) {
     await db.collection("leaderboard").add({
       initials: initials.toUpperCase().substring(0, 5),
       score: finalScore,
+      difficulty: currentDifficulty,
       device: dev.summary,
       deviceType: dev.type,
       screen: dev.screen,
@@ -722,6 +718,7 @@ document.querySelectorAll('.diff-btn').forEach(btn => {
     document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentDifficulty = btn.dataset.diff;
+    updateHUD();
   });
 });
 
@@ -1258,7 +1255,8 @@ function gameOver(title, desc) {
 }
 
 function updateHUD() {
-  document.getElementById('level-display').innerText = `Lv ${level}`;
+  const diffLabel = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+  document.getElementById('level-display').innerText = `Lv ${level} • ${diffLabel}`;
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
   
