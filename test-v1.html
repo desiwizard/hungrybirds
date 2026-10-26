@@ -49,7 +49,6 @@
     #game-container { position: relative; width: 100vw; height: 100vh; background: #87CEEB; overflow: hidden; }
     canvas { width: 100%; height: 100%; display: block; touch-action: none; background-color: #87CEEB; }
     
-    /* Sleek Clean Modern HUD */
     .hud {
       position: absolute; top: 10px; left: 12px; right: 12px;
       display: flex; justify-content: space-between; align-items: center;
@@ -211,9 +210,7 @@
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
 
-  <!-- Clean Minimal Modern HUD (No Screen Clutter) -->
   <div class="hud">
-    <!-- Left: Stats & Numbered Energy -->
     <div class="hud-pill">
       <span id="level-display" style="color: #ffeb3b;">Lv 1</span>
       <span>|</span>
@@ -222,12 +219,10 @@
       <span>⚡ <span id="energy-digits" class="energy-digit-box">15</span></span>
     </div>
 
-    <!-- Center: Score -->
     <div class="hud-pill">
       <span>Score: <span id="score-display" style="color:#ffeb3b;">0</span></span>
     </div>
 
-    <!-- Right: Unified Compact Action Controls -->
     <div class="hud-pill" style="gap: 6px; padding: 4px 8px;">
       <button id="music-btn" class="sound-btn" title="Music">🎵</button>
       <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
@@ -583,7 +578,7 @@ const ctx = canvas.getContext('2d');
 
 let level = 1;
 let score = 0;
-let energy = 15; // Numeric countdown (15 -> 0)
+let energy = 15;
 let isAiming = false;
 let hasFirstFired = false;
 let gameState = 'PLAY';
@@ -609,8 +604,10 @@ const SLING_Y = 385;
 const MAX_DRAG = 85;
 const GROUND_Y = 470;
 
+// Cliff Geometry (Half Width: 75px instead of 145px)
 const CLIFF_SURFACE_Y = 220;
-const BIG_BIRD_BASE_X = 75;
+const CLIFF_WIDTH = 75;
+const BIG_BIRD_BASE_X = 48; // Shifted backward onto the slimmer cliff
 const BIG_BIRD_BASE_Y = 188;
 
 let bigBird = {
@@ -662,7 +659,7 @@ function initLevel() {
   hasFirstFired = false;
   isWinningTransition = false;
   screenShake = 0;
-  energy = 15; // Set fresh 15 numeric energy
+  energy = 15;
   
   bigBird.x = BIG_BIRD_BASE_X;
   bigBird.y = BIG_BIRD_BASE_Y;
@@ -847,7 +844,6 @@ function loop() {
     if (hasFirstFired && !isWinningTransition && !bigBird.falling) {
       const diff = DIFFICULTY_CONFIG[currentDifficulty];
       const levelDrainFactor = 1.0 + (level * 0.035);
-      // Smooth numeric energy drain (from 15 towards 0)
       energy -= 0.0055 * diff.drainMult * levelDrainFactor;
       if (energy <= 0) { energy = 0; triggerBigBirdFall(); }
     }
@@ -868,7 +864,6 @@ function loop() {
       bird.x += bird.vx;
       bird.y += bird.vy;
 
-      // Real Arcade Bounce
       if (bird.y + bird.r >= GROUND_Y) {
         bird.y = GROUND_Y - bird.r;
         if (Math.abs(bird.vy) > 1.2 && bird.bounces < 3) {
@@ -887,7 +882,6 @@ function loop() {
         }
       }
 
-      // Bird Collisions with Blocks
       for (let i = blocks.length - 1; i >= 0; i--) {
         const b = blocks[i];
         const closestX = Math.max(b.x, Math.min(bird.x, b.x + b.w));
@@ -928,7 +922,6 @@ function loop() {
         }
       }
 
-      // Food Collisions
       foods.forEach(f => {
         if (f.alive && Math.hypot(bird.x - f.x, bird.y - f.y) < bird.r + f.r) {
           f.alive = false;
@@ -945,7 +938,6 @@ function loop() {
       }
     }
 
-    // Tilt Fall & Crash Dynamics
     for (let i = blocks.length - 1; i >= 0; i--) {
       const b = blocks[i];
       const bottomY = b.y + b.h;
@@ -983,7 +975,6 @@ function loop() {
       }
     }
 
-    // Update Particles
     for (let i = woodParticles.length - 1; i >= 0; i--) {
       const p = woodParticles[i];
       p.vy += 0.35;
@@ -996,7 +987,6 @@ function loop() {
       }
     }
 
-    // Food Fall Physics
     foods.forEach(f => {
       if (f.alive && f.y + f.r < GROUND_Y) {
         let sup = false;
@@ -1013,7 +1003,6 @@ function loop() {
       }
     });
 
-    // Feeding Animation to Big Bird
     for (let i = foodFlights.length - 1; i >= 0; i--) {
       const fl = foodFlights[i];
       fl.progress += 0.05;
@@ -1023,7 +1012,7 @@ function loop() {
       fl.y += (targetY - fl.y) * 0.15;
 
       if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 18) {
-        energy = Math.min(15, energy + 4.5); // Add numeric energy
+        energy = Math.min(15, energy + 4.5);
         chompTimer = 25;
         playBigBirdCrunch();
         foodFlights.splice(i, 1);
@@ -1122,7 +1111,6 @@ function updateHUD() {
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
   
-  // Numeric Energy Display
   const currentEnergyVal = Math.max(0, Math.ceil(energy));
   const energyEl = document.getElementById('energy-digits');
   energyEl.innerText = currentEnergyVal;
@@ -1190,18 +1178,19 @@ function drawScene() {
   ctx.fillStyle = "#9FA8DA";
   ctx.beginPath(); ctx.moveTo(420, GROUND_Y); ctx.lineTo(620, 200); ctx.lineTo(820, GROUND_Y); ctx.fill();
 
-  // High Cliff (Y=220)
+  // Slim High Cliff (Half Width: 75px instead of 145px)
   ctx.fillStyle = '#4E342E';
   ctx.beginPath();
   ctx.moveTo(0, CLIFF_SURFACE_Y);
-  ctx.lineTo(145, CLIFF_SURFACE_Y);
-  ctx.quadraticCurveTo(175, 270, 185, GROUND_Y);
+  ctx.lineTo(CLIFF_WIDTH, CLIFF_SURFACE_Y);
+  ctx.quadraticCurveTo(CLIFF_WIDTH + 15, 270, CLIFF_WIDTH + 25, GROUND_Y);
   ctx.lineTo(0, GROUND_Y);
   ctx.closePath();
   ctx.fill();
 
+  // Grass on top of Slim Cliff
   ctx.fillStyle = '#558B2F';
-  ctx.fillRect(0, CLIFF_SURFACE_Y - 4, 145, 8);
+  ctx.fillRect(0, CLIFF_SURFACE_Y - 4, CLIFF_WIDTH, 8);
 
   // Ground Line
   ctx.fillStyle = '#4E342E';
@@ -1212,7 +1201,6 @@ function drawScene() {
   drawGiantBird();
   drawSlingshotBack();
 
-  // Ground Visual Birds Queue (Up to 12)
   const tier = getCurrentTier();
   const groundQueueCount = Math.max(0, birdsLeft - 1);
   const queueSpacing = (groundQueueCount > 8) ? 12 : 15;
