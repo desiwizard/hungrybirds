@@ -43,36 +43,69 @@
     html, body {
       width: 100%; height: 100%; background-color: #87CEEB;
       display: flex; align-items: center; justify-content: center;
-      overflow: hidden; font-family: Arial, sans-serif;
+      overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       touch-action: none; position: fixed; inset: 0;
     }
     #game-container { position: relative; width: 100vw; height: 100vh; background: #87CEEB; overflow: hidden; }
     canvas { width: 100%; height: 100%; display: block; touch-action: none; background-color: #87CEEB; }
+    
+    /* Sleek Clean Modern HUD */
     .hud {
-      position: absolute; top: 26px; left: 15px; right: 90px;
+      position: absolute; top: 10px; left: 12px; right: 12px;
       display: flex; justify-content: space-between; align-items: center;
-      gap: 10px; pointer-events: none; z-index: 25;
+      pointer-events: none; z-index: 25; gap: 8px;
     }
-    .hud-box {
-      background: rgba(0, 0, 0, 0.85); padding: 6px 14px; border-radius: 20px;
-      color: #fff; font-weight: bold; font-size: 13px; display: flex; align-items: center;
-      gap: 8px; pointer-events: auto; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      border: 1px solid rgba(255,255,255,0.2);
+    .hud-pill {
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 5px 12px;
+      border-radius: 20px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.18);
     }
-    .energy-bar-wrap { width: 90px; height: 14px; background: #222; border-radius: 7px; overflow: hidden; border: 2px solid #fff; }
-    .energy-fill { width: 60%; height: 100%; background: linear-gradient(90deg, #ff3838, #ffb302, #2ed573); transition: width 0.1s ease-out; }
+    .energy-digit-box {
+      color: #2ed573;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 900;
+      font-size: 15px;
+      min-width: 20px;
+      text-align: center;
+      transition: color 0.2s ease;
+    }
+    .energy-digit-box.warning {
+      color: #ff4757;
+      animation: pulseAlert 0.7s infinite alternate;
+    }
+    @keyframes pulseAlert {
+      from { transform: scale(1); }
+      to { transform: scale(1.18); }
+    }
     .sound-btn {
-      background: #ffffff !important; border: 2px solid #ffffff !important;
-      color: #111111 !important; border-radius: 50%; width: 28px; height: 28px;
-      display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer;
+      background: rgba(255, 255, 255, 0.9) !important;
+      border: none !important;
+      color: #111 !important;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform 0.1s ease;
     }
-    .sound-btn.muted { background: #ffcdd2 !important; border-color: #e53935 !important; }
-    #fs-btn {
-      position: absolute; top: 26px; right: 15px; width: 36px; height: 36px;
-      background: rgba(0, 0, 0, 0.85); border: 2px solid #ffeb3b; color: #ffeb3b;
-      font-size: 18px; border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; cursor: pointer; z-index: 30; box-shadow: 0 3px 8px rgba(0,0,0,0.6);
-    }
+    .sound-btn:active { transform: scale(0.92); }
+    .sound-btn.muted { background: #ffcdd2 !important; color: #d32f2f !important; }
+
     .overlay {
       position: absolute; inset: 0; background: rgba(0,0,0,0.88);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -150,29 +183,12 @@
     }
 
     .slingshot-demo-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 235, 59, 0.4);
-      border-radius: 10px;
-      padding: 10px 16px;
-      margin-bottom: 12px;
-      width: 100%;
-      max-width: 500px;
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 235, 59, 0.4);
+      border-radius: 10px; padding: 10px 16px; margin-bottom: 12px; width: 100%; max-width: 500px;
     }
-    .slingshot-demo-svg {
-      width: 120px;
-      height: 70px;
-      flex-shrink: 0;
-    }
-    .slingshot-demo-text {
-      font-size: 12px;
-      text-align: left;
-      line-height: 1.45;
-      color: #eee;
-    }
+    .slingshot-demo-svg { width: 120px; height: 70px; flex-shrink: 0; }
+    .slingshot-demo-text { font-size: 12px; text-align: left; line-height: 1.45; color: #eee; }
 
     #rotate-device-overlay {
       display: none; position: fixed; inset: 0; background: #111; color: #fff;
@@ -194,24 +210,30 @@
 
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
-  <button id="fs-btn" title="Fullscreen">⛶</button>
 
+  <!-- Clean Minimal Modern HUD (No Screen Clutter) -->
   <div class="hud">
-    <div class="hud-box">
-      <span id="bird-tier">Rookie</span> | <span id="level-display">Lv 1</span> (<span id="hud-diff" style="color:#ffeb3b;">Normal</span>)
+    <!-- Left: Stats & Numbered Energy -->
+    <div class="hud-pill">
+      <span id="level-display" style="color: #ffeb3b;">Lv 1</span>
+      <span>|</span>
+      <span>🎯 <span id="shots-left-display">8</span></span>
+      <span>|</span>
+      <span>⚡ <span id="energy-digits" class="energy-digit-box">15</span></span>
+    </div>
+
+    <!-- Center: Score -->
+    <div class="hud-pill">
+      <span>Score: <span id="score-display" style="color:#ffeb3b;">0</span></span>
+    </div>
+
+    <!-- Right: Unified Compact Action Controls -->
+    <div class="hud-pill" style="gap: 6px; padding: 4px 8px;">
       <button id="music-btn" class="sound-btn" title="Music">🎵</button>
       <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
-      <button id="lb-hud-btn" class="sound-btn" title="Leaderboard" style="font-size: 14px;">🏆</button>
-      <button id="help-hud-btn" class="sound-btn" title="Help / How to Play" style="font-size: 14px; font-weight: bold;">❓</button>
-    </div>
-    <div class="hud-box">
-      <span style="color: #ffeb3b;">🎯 Shots: <span id="shots-left-display">8</span></span>
-      <div class="energy-bar-wrap">
-        <div id="energy-fill" class="energy-fill" style="width: 60%;"></div>
-      </div>
-    </div>
-    <div class="hud-box">
-      <span>Score: <span id="score-display">0</span></span>
+      <button id="lb-hud-btn" class="sound-btn" title="Leaderboard">🏆</button>
+      <button id="help-hud-btn" class="sound-btn" title="Help" style="font-weight: bold;">❓</button>
+      <button id="fs-btn" class="sound-btn" title="Fullscreen">⛶</button>
     </div>
   </div>
 
@@ -553,7 +575,6 @@ document.querySelectorAll('.diff-btn').forEach(btn => {
     document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentDifficulty = btn.dataset.diff;
-    document.getElementById('hud-diff').innerText = DIFFICULTY_CONFIG[currentDifficulty].label;
   });
 });
 
@@ -562,7 +583,7 @@ const ctx = canvas.getContext('2d');
 
 let level = 1;
 let score = 0;
-let energy = 70;
+let energy = 15; // Numeric countdown (15 -> 0)
 let isAiming = false;
 let hasFirstFired = false;
 let gameState = 'PLAY';
@@ -641,6 +662,7 @@ function initLevel() {
   hasFirstFired = false;
   isWinningTransition = false;
   screenShake = 0;
+  energy = 15; // Set fresh 15 numeric energy
   
   bigBird.x = BIG_BIRD_BASE_X;
   bigBird.y = BIG_BIRD_BASE_Y;
@@ -819,13 +841,14 @@ canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(getCoord
 window.addEventListener('touchmove', e => { if (isAiming) e.preventDefault(); onMove(getCoords(e)); }, { passive: false });
 window.addEventListener('touchend', onUp);
 
-// ==================== MAIN GAME LOOP WITH REALISTIC HIGHER BOUNCE ====================
+// ==================== MAIN GAME LOOP ====================
 function loop() {
   if (gameState === 'PLAY') {
     if (hasFirstFired && !isWinningTransition && !bigBird.falling) {
       const diff = DIFFICULTY_CONFIG[currentDifficulty];
       const levelDrainFactor = 1.0 + (level * 0.035);
-      energy -= 0.026 * diff.drainMult * levelDrainFactor;
+      // Smooth numeric energy drain (from 15 towards 0)
+      energy -= 0.0055 * diff.drainMult * levelDrainFactor;
       if (energy <= 0) { energy = 0; triggerBigBirdFall(); }
     }
 
@@ -845,14 +868,12 @@ function loop() {
       bird.x += bird.vx;
       bird.y += bird.vy;
 
-      // ==================== REAL ARCADE BOUNCE ON GROUND ====================
+      // Real Arcade Bounce
       if (bird.y + bird.r >= GROUND_Y) {
         bird.y = GROUND_Y - bird.r;
-        
-        // Agar impact speed theek hai to uncha bounce hoga (skid nahi karega)
         if (Math.abs(bird.vy) > 1.2 && bird.bounces < 3) {
-          bird.vy = -Math.abs(bird.vy) * 0.72; // Increased from 0.55 to 0.72 for natural high bounce!
-          bird.vx *= 0.72;                     // Controlled forward drive so it leaps over obstacles
+          bird.vy = -Math.abs(bird.vy) * 0.72;
+          bird.vx *= 0.72;
           bird.bounces++;
           playSmashAudio();
         } else {
@@ -860,7 +881,7 @@ function loop() {
           bird.vx *= 0.85; 
           bird.stoppedFrames++;
           if (bird.stoppedFrames > 35 || Math.abs(bird.vx) < 0.15) {
-            energy = Math.max(0, energy - 4);
+            energy = Math.max(0, energy - 1.2);
             onBirdFinishFlight();
           }
         }
@@ -890,7 +911,6 @@ function loop() {
               const hitFloor = b.floor;
               blocks.splice(i, 1);
 
-              // Floor Collapse
               for (let k = blocks.length - 1; k >= 0; k--) {
                 const target = blocks[k];
                 if (target.towerId === hitTowerId && target.floor === hitFloor) {
@@ -920,7 +940,7 @@ function loop() {
       });
 
       if (bird.x > 1150 || bird.x < -150) {
-        energy = Math.max(0, energy - 4);
+        energy = Math.max(0, energy - 1.2);
         onBirdFinishFlight();
       }
     }
@@ -1003,7 +1023,7 @@ function loop() {
       fl.y += (targetY - fl.y) * 0.15;
 
       if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 18) {
-        energy = Math.min(100, energy + 28);
+        energy = Math.min(15, energy + 4.5); // Add numeric energy
         chompTimer = 25;
         playBigBirdCrunch();
         foodFlights.splice(i, 1);
@@ -1052,7 +1072,7 @@ function checkAllFoodFinished() {
 
       const earnedStars = birdsLeft;
       const starBonusPts = earnedStars * 100;
-      score += Math.floor(energy * 15) + starBonusPts;
+      score += Math.floor(energy * 30) + starBonusPts;
 
       const milestoneBadge = document.getElementById('win-milestone-badge');
       if (milestoneBadge) milestoneBadge.style.display = 'none';
@@ -1098,12 +1118,20 @@ function gameOver(title, desc) {
 }
 
 function updateHUD() {
-  const tier = getCurrentTier();
-  document.getElementById('bird-tier').innerText = tier.name;
   document.getElementById('level-display').innerText = `Lv ${level}`;
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
-  document.getElementById('energy-fill').style.width = Math.min(100, energy) + '%';
+  
+  // Numeric Energy Display
+  const currentEnergyVal = Math.max(0, Math.ceil(energy));
+  const energyEl = document.getElementById('energy-digits');
+  energyEl.innerText = currentEnergyVal;
+
+  if (currentEnergyVal <= 4) {
+    energyEl.className = 'energy-digit-box warning';
+  } else {
+    energyEl.className = 'energy-digit-box';
+  }
 }
 
 function drawSlingshotBack() {
@@ -1338,11 +1366,10 @@ document.getElementById('start-game-btn').onclick = () => {
   gameState = 'PLAY';
   level = 1;
   score = 0;
-  energy = 70;
   initLevel();
 };
 document.getElementById('restart-btn').onclick = () => {
-  initAudioSystem(); level = 1; score = 0; energy = 70; incrementGlobalPlayCount();
+  initAudioSystem(); level = 1; score = 0; incrementGlobalPlayCount();
   document.getElementById('lose-overlay').classList.add('hidden');
   gameState = 'PLAY';
   initLevel();
