@@ -167,7 +167,7 @@
       <div class="start-col-left">
         <div class="rules-card">
           🎯 <b>Aim & Shoot:</b> Pull back slingshot and release to launch birds!<br>
-          🪵 <b>Tower Collapse:</b> Knock out the bottom pillars to crash the tower down!<br>
+          🪵 <b>1-Hit Tower Smash:</b> Hit the front pillar to smash down the whole structure!<br>
           🍔 <b>Mission:</b> Knock food down to feed the Giant Bird!
         </div>
         <div class="diff-container">
@@ -511,7 +511,7 @@ const FOOD_CONFIGS = [
   { name: 'Strawberry', color: '#f44336', r: 16, pts: 150 }
 ];
 
-// ==================== LEVEL GENERATION (SAFE SPACING) ====================
+// ==================== LEVEL GENERATION ====================
 function initLevel() {
   blocks = [];
   foods = [];
@@ -534,9 +534,9 @@ function initLevel() {
   resetBird();
   if (musicEnabled) startBackgroundMusic();
 
-  const numTowers = Math.min(2 + Math.floor(level / 5), 3); // Max 3 towers taake clear gap rahe
-  const towerSpacing = 145; // Khula fasla taake 1 tower ka fall doosre ko na chhue
-  const startX = 520;
+  const numTowers = Math.min(2 + Math.floor(level / 5), 3);
+  const towerSpacing = 150;
+  const startX = 530;
 
   let stoneQuota = 0;
   let ironQuota = 0;
@@ -567,8 +567,9 @@ function initLevel() {
       const pillarY = floorBaseY - PILLAR_H;
       const roofY = pillarY - ROOF_H;
       
-      let pType = 'wood', pColor = '#8D6E63', pHP = 30;
-      let rColor = '#A1887F', rHP = 30;
+      // Instant 1-hit shatter HP for wood (HP = 15)
+      let pType = 'wood', pColor = '#8D6E63', pHP = 15;
+      let rColor = '#A1887F', rHP = 15;
 
       if (f === 0) {
         if (stoneQuota > 0) {
@@ -685,7 +686,7 @@ canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(getCoord
 window.addEventListener('touchmove', e => { if (isAiming) e.preventDefault(); onMove(getCoords(e)); }, { passive: false });
 window.addEventListener('touchend', onUp);
 
-// ==================== GAME LOOP WITH SINGLE TOWER HIT ABSORPTION ====================
+// ==================== 1-HIT TOWER COLLAPSE GAME LOOP ====================
 function loop() {
   if (gameState === 'PLAY') {
     if (hasFirstFired && !isWinningTransition && !bigBird.falling) {
@@ -726,7 +727,7 @@ function loop() {
         }
       }
 
-      // Bird Collisions with Blocks (MOMENTUM ABSORPTION: Bird agle towers tak nahi jayega)
+      // Bird Collisions with Blocks (1-HIT CRUSH FOR WOOD)
       for (let i = blocks.length - 1; i >= 0; i--) {
         const b = blocks[i];
         const closestX = Math.max(b.x, Math.min(bird.x, b.x + b.w));
@@ -738,21 +739,32 @@ function loop() {
           if (!bird.hitBlocksCooldown[b.id]) {
             bird.hitBlocksCooldown[b.id] = true;
             const impactSpeed = Math.hypot(bird.vx, bird.vy);
-            const damage = Math.max(48, Math.min(65, Math.floor(impactSpeed * 3.8)));
+            const damage = Math.max(50, Math.min(70, Math.floor(impactSpeed * 4.0)));
             
             b.hp -= damage;
             score += 25;
             playSmashAudio();
 
-            // Hit hone par block destroy
+            // Hit hone par agar base pillar toota, to us floor ka saara structure collapse ho jayega
             if (b.hp <= 0) {
+              const hitTowerId = b.towerId;
+              const hitFloor = b.floor;
               blocks.splice(i, 1);
+
+              // 1-HIT ENTIRE FLOOR SHATTER (Peeche wala pillar aur chhat bhi collapse ho jayenge)
+              for (let k = blocks.length - 1; k >= 0; k--) {
+                const target = blocks[k];
+                if (target.towerId === hitTowerId && target.floor === hitFloor) {
+                  blocks.splice(k, 1);
+                  score += 25;
+                }
+              }
             }
 
-            // CRITICAL FIX: Bird ki speed kill kar do taake agle tower tak na pohnche!
-            bird.vx = -bird.vx * 0.18; // Reverse bounce and kill forward momentum
-            bird.vy = Math.min(1.5, bird.vy * 0.5); // Drop downwards
-            break; // Loop break taake ek frame mein doosre block ko hit na kare
+            // Bird absorbs hit and drops down naturally
+            bird.vx = -bird.vx * 0.20;
+            bird.vy = Math.min(1.5, bird.vy * 0.5);
+            break;
           }
         }
       }
@@ -774,7 +786,7 @@ function loop() {
       }
     }
 
-    // ==================== TOWER COLLAPSE (TOWER ISOLATED) ====================
+    // ==================== TOP FLOORS FALL TO GROUND ====================
     for (let i = blocks.length - 1; i >= 0; i--) {
       const b = blocks[i];
       const bottomY = b.y + b.h;
@@ -782,7 +794,6 @@ function loop() {
       if (bottomY < GROUND_Y) {
         let isSupported = false;
         for (let other of blocks) {
-          // Sirf usi tower ke blocks support check karenge
           if (other !== b && other.towerId === b.towerId && !other.falling) {
             const horizontalOverlap = (b.x < other.x + other.w) && (b.x + b.w > other.x);
             const verticallyTouching = (other.y >= bottomY - 3) && (other.y <= bottomY + 8);
@@ -793,10 +804,9 @@ function loop() {
           }
         }
 
-        // Support na ho to zameen ki taraf girega
         if (!isSupported) {
           b.falling = true;
-          b.vy = (b.vy || 0) + 0.55;
+          b.vy = (b.vy || 0) + 0.60;
           b.y += b.vy;
         } else {
           b.falling = false;
@@ -804,7 +814,7 @@ function loop() {
         }
       }
 
-      // Zameen par aate hi smash hokar gayab hoga
+      // Zameen par aate hi collapse hokar gayab
       if (b.falling && b.y + b.h >= GROUND_Y) {
         blocks.splice(i, 1);
         score += 35;
@@ -812,7 +822,7 @@ function loop() {
       }
     }
 
-    // Food Fall Physics
+    // Food Fall Physics (Neeche aate hi accessible ho jaye)
     foods.forEach(f => {
       if (f.alive && f.y + f.r < GROUND_Y) {
         let sup = false;
@@ -822,7 +832,7 @@ function loop() {
           }
         }
         if (!sup) {
-          f.vy = (f.vy || 0) + 0.45;
+          f.vy = (f.vy || 0) + 0.50;
           f.y += f.vy;
           if (f.y + f.r >= GROUND_Y) { f.y = GROUND_Y - f.r; f.vy = 0; }
         }
