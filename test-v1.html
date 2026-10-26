@@ -135,46 +135,46 @@
     .overlay {
       position: absolute; inset: 0; background: rgba(0,0,0,0.88);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: white; z-index: 100; text-align: center; padding: 10px 18px;
+      color: white; z-index: 100; text-align: center; padding: 8px 16px;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
     .overlay.hidden { display: none !important; }
-    .overlay h1 { font-size: 21px; margin-bottom: 6px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
+    .overlay h1 { font-size: 20px; margin-bottom: 4px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
     .overlay p { font-size: 13px; margin-bottom: 8px; color: #eee; white-space: pre-line; }
     
     .start-content-grid {
       display: flex; flex-direction: row; align-items: flex-start; justify-content: center;
-      gap: 16px; width: 100%; max-width: 860px; margin-top: 2px;
+      gap: 14px; width: 100%; max-width: 890px; margin-top: 2px;
     }
-    .start-col-left { flex: 1.15; display: flex; flex-direction: column; align-items: center; }
-    .start-col-right { flex: 0.85; display: flex; flex-direction: column; align-items: center; }
+    .start-col-left { flex: 1.25; display: flex; flex-direction: column; align-items: center; }
+    .start-col-right { flex: 0.75; display: flex; flex-direction: column; align-items: center; }
 
     .rules-card {
       background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px; padding: 8px 12px; margin-bottom: 8px;
-      text-align: left; font-size: 11px; line-height: 1.45; width: 100%;
+      border-radius: 10px; padding: 7px 10px; margin-bottom: 6px;
+      text-align: left; font-size: 11px; line-height: 1.4; width: 100%;
     }
     .rules-card b { color: #ffeb3b; }
 
     .hud-legend-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4px 14px;
-      margin-top: 5px;
-      font-size: 11px;
+      gap: 3px 12px;
+      margin-top: 4px;
+      font-size: 10.5px;
     }
     .hud-legend-grid div {
       white-space: nowrap;
     }
 
-    .diff-container { display: flex; gap: 10px; margin-bottom: 10px; }
+    .diff-container { display: flex; gap: 10px; margin-bottom: 8px; }
     .diff-btn {
       background: rgba(255, 255, 255, 0.15); color: #fff; border: 2px solid rgba(255, 255, 255, 0.3);
       padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer;
     }
     .diff-btn.active { background: #ffeb3b; color: #111; border-color: #fbc02d; }
     .btn {
-      background: #4CAF50; color: white; border: none; padding: 8px 28px;
+      background: #4CAF50; color: white; border: none; padding: 7px 26px;
       font-size: 15px; font-weight: bold; border-radius: 20px; cursor: pointer;
       box-shadow: 0 4px #2e7d32;
     }
@@ -186,10 +186,10 @@
     }
     #leaderboard { 
       width: 100%; max-width: 320px; background: rgba(255, 255, 255, 0.1); 
-      padding: 8px 14px; border-radius: 8px; font-size: 12px; text-align: left; border: 1px solid rgba(255,255,255,0.15);
+      padding: 8px 12px; border-radius: 8px; font-size: 12px; text-align: left; border: 1px solid rgba(255,255,255,0.15);
     }
     #leaderboard h3 { text-align: center; margin-bottom: 4px; color: #ffeb3b; font-size: 13px; }
-    .leaderboard-scroll { max-height: 160px; overflow-y: auto; padding-right: 4px; }
+    .leaderboard-scroll { max-height: 180px; overflow-y: auto; padding-right: 4px; }
     .lb-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
 
     .stars-container {
@@ -220,30 +220,70 @@
       display: none;
     }
 
-    .slingshot-demo-box {
-      display: flex; align-items: center; justify-content: center; gap: 16px;
-      background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 235, 59, 0.4);
-      border-radius: 10px; padding: 8px 14px; margin-bottom: 8px; width: 100%; max-width: 540px;
+    /* VISUAL GUIDE CARD (USED IN START & HELP SCREENS) */
+    .visual-guide-container {
+      display: flex; flex-direction: column; align-items: center;
+      background: rgba(0, 0, 0, 0.55); border: 1.5px solid #ffeb3b;
+      border-radius: 10px; padding: 6px 8px; margin-bottom: 6px; width: 100%;
     }
-    .slingshot-demo-svg { width: 110px; height: 60px; flex-shrink: 0; }
-    .slingshot-demo-text { font-size: 11px; text-align: left; line-height: 1.4; color: #eee; }
+    .visual-guide-svg { width: 100%; max-height: 82px; }
 
+    /* ROTATE DEVICE OVERLAY & ANIMATION */
     #rotate-device-overlay {
-      display: none; position: fixed; inset: 0; background: #111; color: #fff;
+      display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); color: #fff;
       z-index: 99999; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 20px;
+      text-align: center; padding: 25px;
     }
-    .rotate-icon { font-size: 55px; margin-bottom: 18px; display: inline-block; animation: rotateAnim 2s infinite ease-in-out; }
-    @keyframes rotateAnim { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(0deg); } }
+    
+    .phone-anim-box {
+      width: 70px; height: 120px; border: 4px solid #38bdf8;
+      border-radius: 14px; position: relative; margin-bottom: 25px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      animation: phoneRotate 2.6s infinite ease-in-out;
+      background: rgba(255,255,255,0.06);
+    }
+    .phone-anim-box::before {
+      content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      width: 14px; height: 3px; background: #38bdf8; border-radius: 2px;
+    }
+    .phone-anim-box::after {
+      content: ''; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+      width: 10px; height: 10px; border: 2px solid #38bdf8; border-radius: 50%;
+    }
+    @keyframes phoneRotate {
+      0% { transform: rotate(0deg) scale(1); }
+      20% { transform: rotate(0deg) scale(1); }
+      60% { transform: rotate(-90deg) scale(1.1); }
+      80% { transform: rotate(-90deg) scale(1.1); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    .force-play-btn {
+      background: #22c55e; color: #fff; border: 2px solid #fff;
+      padding: 14px 28px; font-size: 16px; font-weight: 900; border-radius: 30px;
+      cursor: pointer; box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+      animation: pulseBtn 1.2s infinite alternate; margin-top: 15px;
+    }
+    @keyframes pulseBtn {
+      from { transform: scale(1); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5); }
+      to { transform: scale(1.06); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.9); }
+    }
+
     @media screen and (orientation: portrait) { #rotate-device-overlay { display: flex !important; } }
   </style>
 </head>
 <body>
 
+<!-- ROTATE SCREEN ANIMATED OVERLAY -->
 <div id="rotate-device-overlay">
-  <div class="rotate-icon">🔄</div>
-  <h1 style="color: #ffeb3b; font-size: 24px; margin-bottom: 10px;">PLEASE ROTATE YOUR DEVICE</h1>
-  <p style="color: #eee; font-size: 15px; max-width: 320px; line-height: 1.5;">Hungry Bird is designed for Landscape mode.</p>
+  <div class="phone-anim-box"></div>
+  <h1 style="color: #ffeb3b; font-size: 22px; margin-bottom: 8px;">ROTATE YOUR PHONE</h1>
+  <p style="color: #cbd5e1; font-size: 14px; max-width: 300px; line-height: 1.5;">
+    Please rotate your phone sideways into <b>Landscape</b> mode to start playing.
+  </p>
+  <button id="force-rotate-btn" class="force-play-btn">
+    🔄 TAP TO ROTATE & PLAY
+  </button>
 </div>
 
 <div id="game-container">
@@ -272,11 +312,55 @@
     </div>
   </div>
 
+  <!-- START OVERLAY -->
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="start-content-grid">
       <div class="start-col-left">
-        <div class="rules-card" style="background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); margin-bottom: 6px;">
+
+        <!-- VISUAL GUIDE ON START SCREEN -->
+        <div class="visual-guide-container">
+          <svg class="visual-guide-svg" viewBox="0 0 540 100">
+            <!-- Slingshot Assembly -->
+            <g transform="translate(10, 0)">
+              <path d="M 50 90 L 50 60 L 32 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+              <path d="M 50 60 L 68 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+              <line x1="32" y1="30" x2="-8" y2="44" stroke="#2b1408" stroke-width="4"/>
+              <line x1="68" y1="30" x2="-8" y2="44" stroke="#42200f" stroke-width="4"/>
+              <circle cx="-8" cy="44" r="14" fill="#E53935" stroke="#111" stroke-width="2"/>
+              <circle cx="-4" cy="40" r="3" fill="#fff"/>
+              <circle cx="-3" cy="40" r="1.5" fill="#000"/>
+              <polygon points="2,43 9,46 2,49" fill="#FF9800"/>
+              <path d="M -8 44 Q 40 10 95 18" stroke="#ffeb3b" stroke-width="3" stroke-dasharray="4,4" fill="none"/>
+              <polygon points="93,13 100,18 93,23" fill="#ffeb3b"/>
+              <path d="M -15 58 L -35 70" stroke="#00e676" stroke-width="3.5" stroke-linecap="round"/>
+              <polygon points="-39,66 -37,76 -27,74" fill="#00e676"/>
+              <text x="25" y="98" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">🏹 YOUR SLINGSHOT</text>
+            </g>
+
+            <!-- Center Action Arrow & Food -->
+            <g transform="translate(200, 25)">
+              <path d="M 10 25 L 90 25" stroke="#00e5ff" stroke-width="3" stroke-dasharray="5,4"/>
+              <polygon points="90,19 104,25 90,31" fill="#00e5ff"/>
+              <circle cx="50" cy="14" r="13" fill="#ff9800" stroke="#111" stroke-width="1.5"/>
+              <rect x="40" y="12" width="20" height="4" fill="#4caf50" rx="2"/>
+              <text x="50" y="44" fill="#00e5ff" font-size="10" font-weight="bold" text-anchor="middle">SMASH & FEED</text>
+            </g>
+
+            <!-- Giant Bird Target -->
+            <g transform="translate(420, 15)">
+              <path d="M 10 80 L 90 80 L 90 55 L 10 55 Z" fill="#4E342E"/>
+              <rect x="10" y="52" width="80" height="5" fill="#558B2F"/>
+              <ellipse cx="50" cy="38" rx="28" ry="24" fill="#E53935" stroke="#000" stroke-width="2"/>
+              <circle cx="62" cy="26" r="6" fill="#fff"/>
+              <circle cx="64" cy="26" r="3" fill="#000"/>
+              <polygon points="72,25 96,16 80,34 96,50 72,43" fill="#FF9800"/>
+              <text x="50" y="95" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">👑 GIANT BIRD</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="rules-card" style="background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); margin-bottom: 5px;">
           <b style="color:#00e5ff;">📊 SCREEN HUD & BUTTONS:</b>
           <div class="hud-legend-grid">
             <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
@@ -293,11 +377,10 @@
           </div>
         </div>
 
-        <div class="rules-card" style="margin-bottom: 8px;">
-          🎯 <b>Aim & Fire:</b> Drag bird backwards on slingshot to aim & smash towers!<br>
+        <div class="rules-card" style="margin-bottom: 6px;">
+          🎯 <b>How to Play:</b> Drag bird back on slingshot, aim & release to smash towers!<br>
           🪵 <b>Hit Durability:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
-          ⭐ <b>Star Bonus:</b> Earn 1 Star (+100 pts) per unused bird each round!<br>
-          🍔 <b>Mission:</b> Knock food to the ground to feed the hungry Giant Bird!
+          ⭐ <b>Star Bonus:</b> Earn 1 Star (+100 pts) per unused bird each round!
         </div>
 
         <div class="diff-container">
@@ -317,6 +400,7 @@
     </div>
   </div>
 
+  <!-- LEADERBOARD OVERLAY -->
   <div id="lb-overlay" class="overlay hidden">
     <h1>LEADERBOARD</h1>
     <div id="leaderboard" style="margin-bottom: 14px; max-width: 360px;">
@@ -326,31 +410,52 @@
     <button class="btn" id="close-lb-btn">BACK TO GAME</button>
   </div>
 
+  <!-- HELP OVERLAY -->
   <div id="help-overlay" class="overlay hidden">
     <h1 style="margin-bottom: 4px;">HOW TO PLAY</h1>
 
-    <div class="slingshot-demo-box">
-      <svg class="slingshot-demo-svg" viewBox="0 0 160 90">
-        <path d="M 125 80 L 125 50 L 105 25" stroke="#5D4037" stroke-width="7" stroke-linecap="round"/>
-        <path d="M 125 50 L 145 25" stroke="#5D4037" stroke-width="7" stroke-linecap="round"/>
-        <line x1="105" y1="25" x2="45" y2="40" stroke="#2b1408" stroke-width="3.5"/>
-        <line x1="145" y1="25" x2="45" y2="40" stroke="#42200f" stroke-width="3.5"/>
-        <path d="M 45 40 Q 90 5 155 18" stroke="#ffeb3b" stroke-width="2.5" stroke-dasharray="4,4" fill="none"/>
-        <polygon points="153,13 160,18 153,23" fill="#ffeb3b"/>
-        <circle cx="45" cy="40" r="13" fill="#E53935" stroke="#111" stroke-width="1.5"/>
-        <circle cx="49" cy="37" r="3" fill="#fff"/>
-        <circle cx="50" cy="37" r="1.5" fill="#000"/>
-        <polygon points="53,39 60,42 53,45" fill="#FF9800"/>
-        <path d="M 40 55 L 20 65" stroke="#00e676" stroke-width="3" stroke-linecap="round"/>
-        <polygon points="16,61 14,70 23,69" fill="#00e676"/>
+    <div class="visual-guide-container">
+      <svg class="visual-guide-svg" viewBox="0 0 540 100">
+        <!-- Slingshot Assembly -->
+        <g transform="translate(10, 0)">
+          <path d="M 50 90 L 50 60 L 32 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 50 60 L 68 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+          <line x1="32" y1="30" x2="-8" y2="44" stroke="#2b1408" stroke-width="4"/>
+          <line x1="68" y1="30" x2="-8" y2="44" stroke="#42200f" stroke-width="4"/>
+          <circle cx="-8" cy="44" r="14" fill="#E53935" stroke="#111" stroke-width="2"/>
+          <circle cx="-4" cy="40" r="3" fill="#fff"/>
+          <circle cx="-3" cy="40" r="1.5" fill="#000"/>
+          <polygon points="2,43 9,46 2,49" fill="#FF9800"/>
+          <path d="M -8 44 Q 40 10 95 18" stroke="#ffeb3b" stroke-width="3" stroke-dasharray="4,4" fill="none"/>
+          <polygon points="93,13 100,18 93,23" fill="#ffeb3b"/>
+          <path d="M -15 58 L -35 70" stroke="#00e676" stroke-width="3.5" stroke-linecap="round"/>
+          <polygon points="-39,66 -37,76 -27,74" fill="#00e676"/>
+          <text x="25" y="98" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">🏹 YOUR SLINGSHOT</text>
+        </g>
+
+        <!-- Center Action Arrow & Food -->
+        <g transform="translate(200, 25)">
+          <path d="M 10 25 L 90 25" stroke="#00e5ff" stroke-width="3" stroke-dasharray="5,4"/>
+          <polygon points="90,19 104,25 90,31" fill="#00e5ff"/>
+          <circle cx="50" cy="14" r="13" fill="#ff9800" stroke="#111" stroke-width="1.5"/>
+          <rect x="40" y="12" width="20" height="4" fill="#4caf50" rx="2"/>
+          <text x="50" y="44" fill="#00e5ff" font-size="10" font-weight="bold" text-anchor="middle">SMASH & FEED</text>
+        </g>
+
+        <!-- Giant Bird Target -->
+        <g transform="translate(420, 15)">
+          <path d="M 10 80 L 90 80 L 90 55 L 10 55 Z" fill="#4E342E"/>
+          <rect x="10" y="52" width="80" height="5" fill="#558B2F"/>
+          <ellipse cx="50" cy="38" rx="28" ry="24" fill="#E53935" stroke="#000" stroke-width="2"/>
+          <circle cx="62" cy="26" r="6" fill="#fff"/>
+          <circle cx="64" cy="26" r="3" fill="#000"/>
+          <polygon points="72,25 96,16 80,34 96,50 72,43" fill="#FF9800"/>
+          <text x="50" y="95" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">👑 GIANT BIRD</text>
+        </g>
       </svg>
-      <div class="slingshot-demo-text">
-        <b style="color:#ffeb3b; font-size:12px;">🎯 AIM & LAUNCH WITH SLINGSHOT:</b><br>
-        Touch or click bird on slingshot, <b>drag backwards</b> to set launch angle & power, then <b>release</b> to smash towers!
-      </div>
     </div>
 
-    <div class="rules-card" style="max-width: 540px; margin-bottom: 8px; background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4);">
+    <div class="rules-card" style="max-width: 580px; margin-bottom: 6px; background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4);">
       <b style="color:#00e5ff; font-size:12px;">📊 SCREEN HUD & ICONS EXPLAINED:</b>
       <div class="hud-legend-grid">
         <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
@@ -367,10 +472,10 @@
       </div>
     </div>
 
-    <div class="rules-card" style="max-width: 540px; margin-bottom: 10px; font-size: 11px; line-height: 1.45;">
+    <div class="rules-card" style="max-width: 580px; margin-bottom: 10px; font-size: 11px; line-height: 1.45;">
       🪵 <b>Materials:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
       ⭐ <b>Accuracy Bonus:</b> 1 Star (+100 pts) for every unused bird per level!<br>
-      🍔 <b>Objective:</b> Knock food to the ground to feed the hungry Giant Bird!
+      🍔 <b>Objective:</b> Touch bird on slingshot, pull backwards, and smash food into Giant Bird's mouth!
     </div>
 
     <button class="btn" id="close-help-btn" style="padding: 6px 24px; font-size: 14px;">RESUME GAME</button>
@@ -422,6 +527,48 @@ document.onkeydown = function(e) {
   if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) return false;
 };
 
+// ==================== FORCE ROTATE & FULLSCREEN HANDLER ====================
+const forceRotateBtn = document.getElementById("force-rotate-btn");
+if (forceRotateBtn) {
+  forceRotateBtn.addEventListener("click", async () => {
+    initAudioSystem();
+    try {
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) {
+        await docEl.requestFullscreen();
+      } else if (docEl.webkitRequestFullscreen) {
+        await docEl.webkitRequestFullscreen();
+      }
+
+      if (screen.orientation && screen.orientation.lock) {
+        await screen.orientation.lock("landscape").catch(() => {});
+      }
+    } catch (err) {
+      console.log("Orientation lock note:", err);
+    }
+  });
+}
+
+// ==================== GEO-LOCATION TRACKING VIA IP ====================
+let cachedGeo = { country: "Unknown", city: "Unknown", location: "Unknown" };
+
+async function fetchGeoLocation() {
+  try {
+    const res = await fetch("https://ipwho.is/");
+    const data = await res.json();
+    if (data.success) {
+      cachedGeo = {
+        country: data.country || "Unknown",
+        city: data.city || "Unknown",
+        location: `${data.city || 'Unknown'}, ${data.country || 'Unknown'}`
+      };
+    }
+  } catch (err) {
+    console.warn("Geo lookup bypassed:", err);
+  }
+}
+fetchGeoLocation();
+
 // ==================== FIREBASE CONFIG & ANALYTICS ====================
 const firebaseConfig = {
     apiKey: "AIzaSyCfUMBhfupMiTdG9gSxBmtScrY2LSVREvQ",
@@ -436,7 +583,6 @@ const db = firebase.firestore();
 
 let cachedTopScores = [];
 
-// Device & Browser Detection Engine
 function getDeviceInfo() {
   const ua = navigator.userAgent;
   let deviceType = "Desktop";
@@ -456,7 +602,7 @@ function getDeviceInfo() {
   let browser = "Unknown Browser";
   if (/SamsungBrowser/i.test(ua)) browser = "Samsung Browser";
   else if (/Edg/i.test(ua)) browser = "Edge";
-  else if (/Chrome/i.test(ua)) browser = "Chrome";
+  else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Chrome";
   else if (/Safari/i.test(ua)) browser = "Safari";
   else if (/Firefox/i.test(ua)) browser = "Firefox";
   else if (/OPR|Opera/i.test(ua)) browser = "Opera";
@@ -471,7 +617,6 @@ function getDeviceInfo() {
   };
 }
 
-// Track Game Start with Robust Increments and Error Catching
 async function incrementGlobalPlayCount() {
   try {
     const dev = getDeviceInfo();
@@ -484,6 +629,7 @@ async function incrementGlobalPlayCount() {
         devices: { [dev.type]: 1 },
         os: { [dev.os]: 1 },
         browsers: { [dev.browser]: 1 },
+        countries: { [cachedGeo.country]: 1 },
         lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
       });
     } else {
@@ -494,6 +640,9 @@ async function incrementGlobalPlayCount() {
       updateData[`devices.${dev.type}`] = firebase.firestore.FieldValue.increment(1);
       updateData[`os.${dev.os}`] = firebase.firestore.FieldValue.increment(1);
       updateData[`browsers.${dev.browser}`] = firebase.firestore.FieldValue.increment(1);
+      if (cachedGeo.country && cachedGeo.country !== "Unknown") {
+        updateData[`countries.${cachedGeo.country}`] = firebase.firestore.FieldValue.increment(1);
+      }
 
       await statsRef.update(updateData);
     }
@@ -505,6 +654,9 @@ async function incrementGlobalPlayCount() {
       os: dev.os,
       browser: dev.browser,
       screen: dev.screen,
+      city: cachedGeo.city,
+      country: cachedGeo.country,
+      location: cachedGeo.location,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
   } catch (err) {
@@ -522,6 +674,9 @@ async function submitScore(initials, finalScore) {
       device: dev.summary,
       deviceType: dev.type,
       screen: dev.screen,
+      city: cachedGeo.city,
+      country: cachedGeo.country,
+      location: cachedGeo.location,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
     await loadLeaderboard();
