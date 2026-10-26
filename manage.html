@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hungry Bird - Admin & Analytics Console</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+    body { background: #0f172a; color: #fff; padding: 25px 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; justify-content: center; }
+    
+    /* Login Modal Box */
+    #login-box {
+      background: #1e293b; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px; padding: 30px 25px; max-width: 380px; width: 100%;
+      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    #login-box h2 { color: #facc15; font-size: 20px; margin-bottom: 8px; }
+    #login-box p { color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
+    #pin-input {
+      width: 100%; padding: 12px; font-size: 18px; text-align: center;
+      background: #0f172a; border: 2px solid #38bdf8; border-radius: 8px;
+      color: #fff; letter-spacing: 4px; outline: none; margin-bottom: 15px;
+    }
+    #pin-input:focus { border-color: #facc15; }
+
+    /* Main Admin Container (Hidden until logged in) */
+    .container { max-width: 900px; width: 100%; display: none; flex-direction: column; gap: 20px; }
+    .card { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    h1 { color: #facc15; font-size: 22px; text-align: center; margin-bottom: 4px; }
+    h2 { font-size: 16px; color: #38bdf8; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    .badge { display: inline-block; background: #0284c7; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-left: 8px; text-transform: uppercase; }
+    
+    /* Stats Grid */
+    .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 10px; }
+    .stat-box { background: rgba(255,255,255,0.05); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); text-align: center; }
+    .stat-title { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; }
+    .stat-val { font-size: 22px; font-weight: bold; color: #facc15; }
+    
+    /* Device Breakdown Pills */
+    .pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .pill { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #e0f2fe; padding: 6px 12px; border-radius: 20px; font-size: 12px; }
+    .pill b { color: #facc15; }
+
+    /* Buttons */
+    .btn { border: none; padding: 10px 16px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+    .btn-primary { background: #0284c7; color: #fff; width: 100%; font-size: 15px; }
+    .btn-primary:hover { background: #0369a1; }
+    .btn-refresh { background: #06b6d4; color: #fff; width: 100%; margin-bottom: 12px; }
+    .btn-refresh:hover { background: #0891b2; }
+    .btn-danger { background: #ef4444; color: #fff; width: 100%; margin-top: 12px; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-logout { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 4px 10px; font-size: 11px; border-radius: 4px; float: right; cursor: pointer; }
+    .btn-logout:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* Tables & Lists */
+    .table-container { max-height: 320px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 6px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+    th { padding: 9px 10px; background: rgba(255,255,255,0.06); color: #94a3b8; font-size: 11px; text-transform: uppercase; }
+    td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .device-tag { display: inline-block; background: rgba(255,255,255,0.1); padding: 2px 7px; border-radius: 4px; font-size: 11px; color: #cbd5e1; }
+    
+    .status-msg { margin-top: 10px; text-align: center; font-size: 13px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<!-- Login Box -->
+<div id="login-box">
+  <h2>🔒 Admin Access</h2>
+  <p>Enter Master PIN to view analytics & controls</p>
+  <input type="password" id="pin-input" placeholder="••••" maxlength="10" autocomplete="off">
+  <button class="btn btn-primary" id="login-btn">Unlock Console</button>
+  <div id="login-error" style="color: #ef4444; font-size: 12px; margin-top: 10px; font-weight: bold;"></div>
+</div>
+
+<!-- Main Admin Console Container -->
+<div class="container" id="admin-container">
+  <!-- Header Card -->
+  <div class="card">
+    <button class="btn-logout" id="logout-btn">Logout</button>
+    <h1>Hungry Bird <span class="badge">Live Admin</span></h1>
+    <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 18px;">Real-time Device Analytics & Leaderboard Management</p>
+
+    <!-- Top Key Stats -->
+    <div class="grid-stats">
+      <div class="stat-box">
+        <div class="stat-title">Total Plays (Starts)</div>
+        <div class="stat-val" id="total-plays">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-title">Mobile Users</div>
+        <div class="stat-val" id="mobile-plays" style="color: #4ade80;">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-title">Desktop Users</div>
+        <div class="stat-val" id="desktop-plays" style="color: #60a5fa;">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-title">Leaderboard Entries</div>
+        <div class="stat-val" id="total-scores">0</div>
+      </div>
+    </div>
+
+    <!-- Operating System & Browser Breakdown -->
+    <div style="margin-top: 14px;">
+      <div class="stat-title">Platform & Browser Breakdown</div>
+      <div class="pill-group" id="tech-breakdown">
+        <span class="pill">Loading details...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Records Card -->
+  <div class="card">
+    <h2>
+      <span>🏆 Leaderboard Records (With Devices)</span>
+      <span style="font-size: 12px; color: #94a3b8;" id="db-status">Status: Ready</span>
+    </h2>
+
+    <button class="btn btn-refresh" id="refresh-btn">🔄 Refresh Data</button>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Device & OS</th>
+            <th>Screen</th>
+          </tr>
+        </thead>
+        <tbody id="scores-table-body">
+          <tr><td colspan="5" style="text-align:center; padding:15px; color:#94a3b8;">Fetching records...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button class="btn btn-danger" id="reset-btn">⚠️ Wipe Leaderboard Scores (Reset)</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <!-- Recent Live Play Sessions Log -->
+  <div class="card">
+    <h2><span>📱 Recent Live Play Sessions (Game Starts)</span></h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Device</th>
+            <th>OS / Browser</th>
+            <th>Resolution</th>
+          </tr>
+        </thead>
+        <tbody id="sessions-table-body">
+          <tr><td colspan="4" style="text-align:center; padding:15px; color:#94a3b8;">Loading sessions...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+// ==================== SECURITY PIN GATE ====================
+// अपना पिन यहाँ बदलें:
+const ADMIN_PIN = "4724"; 
+
+const loginBox = document.getElementById("login-box");
+const adminContainer = document.getElementById("admin-container");
+const pinInput = document.getElementById("pin-input");
+const loginBtn = document.getElementById("login-btn");
+const loginError = document.getElementById("login-error");
+const logoutBtn = document.getElementById("logout-btn");
+
+function checkAuth() {
+  if (sessionStorage.getItem("hb_admin_auth") === "true") {
+    loginBox.style.display = "none";
+    adminContainer.style.display = "flex";
+    document.body.style.justifyContent = "flex-start";
+    refreshAll();
+  } else {
+    loginBox.style.display = "block";
+    adminContainer.style.display = "none";
+    document.body.style.justifyContent = "center";
+  }
+}
+
+function handleLogin() {
+  const enteredPin = pinInput.value.trim();
+  if (enteredPin === ADMIN_PIN) {
+    sessionStorage.setItem("hb_admin_auth", "true");
+    loginError.innerText = "";
+    checkAuth();
+  } else {
+    loginError.innerText = "Incorrect PIN! Access Denied.";
+    pinInput.value = "";
+    pinInput.focus();
+  }
+}
+
+loginBtn.onclick = handleLogin;
+pinInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") handleLogin();
+});
+
+logoutBtn.onclick = () => {
+  sessionStorage.removeItem("hb_admin_auth");
+  pinInput.value = "";
+  checkAuth();
+};
+
+// ==================== FIREBASE BACKEND ====================
+const firebaseConfig = {
+    apiKey: "AIzaSyCfUMBhfupMiTdG9gSxBmtScrY2LSVREvQ",
+    authDomain: "hungrybirds-88404.firebaseapp.com",
+    projectId: "hungrybirds-88404",
+    storageBucket: "hungrybirds-88404.firebasestorage.app",
+    messagingSenderId: "266507044450",
+    appId: "1:266507044450:web:8136abefd5790f0fd4333b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// 1. Load Aggregated Analytics
+async function loadAnalytics() {
+  try {
+    const docSnap = await db.collection("analytics").doc("stats").get();
+    if (docSnap.exists) {
+      const data = docSnap.data();
+      document.getElementById("total-plays").innerText = (data.playCount || 0).toLocaleString();
+
+      const devices = data.devices || {};
+      document.getElementById("mobile-plays").innerText = (devices.Mobile || 0).toLocaleString();
+      document.getElementById("desktop-plays").innerText = (devices.Desktop || 0).toLocaleString();
+
+      const osData = data.os || {};
+      const browsersData = data.browsers || {};
+      let pillsHtml = "";
+
+      for (let [os, count] of Object.entries(osData)) {
+        pillsHtml += `<span class="pill">${os}: <b>${count}</b></span>`;
+      }
+      for (let [br, count] of Object.entries(browsersData)) {
+        pillsHtml += `<span class="pill" style="background:rgba(250,204,21,0.12); border-color:rgba(250,204,21,0.3); color:#fef08a;">${br}: <b>${count}</b></span>`;
+      }
+      if (!pillsHtml) pillsHtml = "<span class='pill'>No analytics data yet</span>";
+      document.getElementById("tech-breakdown").innerHTML = pillsHtml;
+    }
+  } catch(e) {
+    console.error("Error loading analytics:", e);
+  }
+}
+
+// 2. Load Leaderboard Scores
+async function loadScores() {
+  const tbody = document.getElementById("scores-table-body");
+  const countEl = document.getElementById("total-scores");
+  tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:15px; color:#94a3b8;'>Fetching latest records...</td></tr>";
+  
+  try {
+    const snap = await db.collection("leaderboard").orderBy("score", "desc").get();
+    countEl.innerText = snap.size;
+
+    if (snap.empty) {
+      tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:15px; color:#94a3b8;'>Leaderboard is empty.</td></tr>";
+      return;
+    }
+
+    let html = "";
+    let rank = 1;
+    snap.forEach(doc => {
+      const d = doc.data();
+      const devSummary = d.device || "Desktop (Web)";
+      const screenRes = d.screen || "N/A";
+
+      html += `<tr>
+        <td style="font-weight:bold; color:#facc15;">#${rank}</td>
+        <td><b>${d.initials || "ANON"}</b></td>
+        <td style="color:#4ade80; font-weight:bold;">${d.score || 0}</td>
+        <td><span class="device-tag">${devSummary}</span></td>
+        <td style="color:#94a3b8; font-size:12px;">${screenRes}</td>
+      </tr>`;
+      rank++;
+    });
+    tbody.innerHTML = html;
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan='5' style='color:#ef4444; padding:12px;'>Error: ${err.message}</td></tr>`;
+  }
+}
+
+// 3. Load Recent Live Sessions Log
+async function loadSessionsLog() {
+  const tbody = document.getElementById("sessions-table-body");
+  try {
+    const snap = await db.collection("analytics_logs").orderBy("timestamp", "desc").limit(15).get();
+    if (snap.empty) {
+      tbody.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:12px; color:#94a3b8;'>No recent session logs recorded yet.</td></tr>";
+      return;
+    }
+
+    let html = "";
+    snap.forEach(doc => {
+      const log = doc.data();
+      let timeStr = "Just now";
+      if (log.timestamp && log.timestamp.toDate) {
+        timeStr = log.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+
+      html += `<tr>
+        <td style="color:#94a3b8; font-size:12px;">${timeStr}</td>
+        <td><span class="device-tag" style="color:#38bdf8;">${log.deviceType || "Desktop"}</span></td>
+        <td>${log.os || "OS"} / ${log.browser || "Browser"}</td>
+        <td style="color:#94a3b8; font-size:12px;">${log.screen || "N/A"}</td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  } catch(e) {
+    tbody.innerHTML = "<tr><td colspan='4' style='color:#94a3b8; text-align:center;'>Session logs unavailable.</td></tr>";
+  }
+}
+
+async function refreshAll() {
+  await Promise.all([loadAnalytics(), loadScores(), loadSessionsLog()]);
+}
+
+document.getElementById("refresh-btn").onclick = refreshAll;
+
+// Wipe Scores Button
+document.getElementById("reset-btn").onclick = async () => {
+  const confirmAction = confirm("Kya aap waqayi tamaam scores delete karke leaderboard zero karna chahte hain?");
+  if (!confirmAction) return;
+
+  const statusEl = document.getElementById("status");
+  statusEl.style.color = "#facc15";
+  statusEl.innerText = "Deleting records from database...";
+
+  try {
+    const snap = await db.collection("leaderboard").get();
+    const batch = db.batch();
+
+    snap.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    statusEl.style.color = "#22c55e";
+    statusEl.innerText = "All scores deleted successfully!";
+    await refreshAll();
+  } catch(err) {
+    statusEl.style.color = "#ef4444";
+    statusEl.innerText = "Failed: " + err.message;
+  }
+};
+
+// Check on Page Load
+checkAuth();
+</script>
+</body>
+</html>
