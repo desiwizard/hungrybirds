@@ -50,7 +50,10 @@
     canvas { width: 100%; height: 100%; display: block; touch-action: none; background-color: #87CEEB; }
     
     .hud {
-      position: absolute; top: 10px; left: 12px; right: 12px;
+      position: absolute; 
+      top: calc(10px + env(safe-area-inset-top, 0px)); 
+      left: calc(12px + env(safe-area-inset-left, 0px)); 
+      right: calc(12px + env(safe-area-inset-right, 0px));
       display: flex; justify-content: space-between; align-items: center;
       pointer-events: none; z-index: 25; gap: 8px;
     }
@@ -104,6 +107,31 @@
     }
     .sound-btn:active { transform: scale(0.92); }
     .sound-btn.muted { background: #ffcdd2 !important; color: #d32f2f !important; }
+
+    /* Floating Standalone Fullscreen Button (Neeche Shifted, Address Bar Se Safe) */
+    #fs-btn {
+      position: absolute;
+      top: calc(56px + env(safe-area-inset-top, 0px));
+      right: calc(14px + env(safe-area-inset-right, 0px));
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 0, 0, 0.78);
+      border: 2px solid #ffeb3b;
+      color: #ffeb3b;
+      font-size: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 35;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    #fs-btn:active {
+      transform: scale(0.90);
+      background: rgba(0, 0, 0, 0.95);
+    }
 
     .overlay {
       position: absolute; inset: 0; background: rgba(0,0,0,0.88);
@@ -210,6 +238,10 @@
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
 
+  <!-- Fullscreen Button: Positioned Safely Below Top Bar & Address Bar -->
+  <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
+
+  <!-- Clean Top HUD -->
   <div class="hud">
     <div class="hud-pill">
       <span id="level-display" style="color: #ffeb3b;">Lv 1</span>
@@ -228,7 +260,6 @@
       <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
       <button id="lb-hud-btn" class="sound-btn" title="Leaderboard">🏆</button>
       <button id="help-hud-btn" class="sound-btn" title="Help" style="font-weight: bold;">❓</button>
-      <button id="fs-btn" class="sound-btn" title="Fullscreen">⛶</button>
     </div>
   </div>
 
@@ -604,10 +635,9 @@ const SLING_Y = 385;
 const MAX_DRAG = 85;
 const GROUND_Y = 470;
 
-// Cliff Geometry (Half Width: 75px instead of 145px)
 const CLIFF_SURFACE_Y = 220;
 const CLIFF_WIDTH = 75;
-const BIG_BIRD_BASE_X = 48; // Shifted backward onto the slimmer cliff
+const BIG_BIRD_BASE_X = 48;
 const BIG_BIRD_BASE_Y = 188;
 
 let bigBird = {
@@ -1178,7 +1208,7 @@ function drawScene() {
   ctx.fillStyle = "#9FA8DA";
   ctx.beginPath(); ctx.moveTo(420, GROUND_Y); ctx.lineTo(620, 200); ctx.lineTo(820, GROUND_Y); ctx.fill();
 
-  // Slim High Cliff (Half Width: 75px instead of 145px)
+  // Slim High Cliff (Half Width: 75px)
   ctx.fillStyle = '#4E342E';
   ctx.beginPath();
   ctx.moveTo(0, CLIFF_SURFACE_Y);
