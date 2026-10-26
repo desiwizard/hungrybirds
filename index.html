@@ -135,27 +135,27 @@
     .overlay {
       position: absolute; inset: 0; background: rgba(0,0,0,0.88);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: white; z-index: 100; text-align: center; padding: 12px 20px;
+      color: white; z-index: 100; text-align: center; padding: 10px 18px;
       overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
     .overlay.hidden { display: none !important; }
-    .overlay h1 { font-size: 22px; margin-bottom: 6px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
-    .overlay p { font-size: 13px; margin-bottom: 10px; color: #eee; white-space: pre-line; }
+    .overlay h1 { font-size: 21px; margin-bottom: 6px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
+    .overlay p { font-size: 13px; margin-bottom: 8px; color: #eee; white-space: pre-line; }
     
     .start-content-grid {
       display: flex; flex-direction: row; align-items: flex-start; justify-content: center;
-      gap: 18px; width: 100%; max-width: 820px; margin-top: 4px;
+      gap: 16px; width: 100%; max-width: 860px; margin-top: 2px;
     }
-    .start-col-left { flex: 1.1; display: flex; flex-direction: column; align-items: center; }
-    .start-col-right { flex: 0.9; display: flex; flex-direction: column; align-items: center; }
+    .start-col-left { flex: 1.15; display: flex; flex-direction: column; align-items: center; }
+    .start-col-right { flex: 0.85; display: flex; flex-direction: column; align-items: center; }
 
     .rules-card {
       background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px; padding: 10px 14px; margin-bottom: 10px;
-      text-align: left; font-size: 12px; line-height: 1.45; width: 100%;
+      border-radius: 10px; padding: 8px 12px; margin-bottom: 8px;
+      text-align: left; font-size: 11px; line-height: 1.45; width: 100%;
     }
     .rules-card b { color: #ffeb3b; }
-    .diff-container { display: flex; gap: 10px; margin-bottom: 12px; }
+    .diff-container { display: flex; gap: 10px; margin-bottom: 10px; }
     .diff-btn {
       background: rgba(255, 255, 255, 0.15); color: #fff; border: 2px solid rgba(255, 255, 255, 0.3);
       padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer;
@@ -163,7 +163,7 @@
     .diff-btn.active { background: #ffeb3b; color: #111; border-color: #fbc02d; }
     .btn {
       background: #4CAF50; color: white; border: none; padding: 8px 28px;
-      font-size: 16px; font-weight: bold; border-radius: 20px; cursor: pointer;
+      font-size: 15px; font-weight: bold; border-radius: 20px; cursor: pointer;
       box-shadow: 0 4px #2e7d32;
     }
     .btn:active { transform: translateY(2px); box-shadow: 0 2px #2e7d32; }
@@ -211,10 +211,10 @@
     .slingshot-demo-box {
       display: flex; align-items: center; justify-content: center; gap: 16px;
       background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 235, 59, 0.4);
-      border-radius: 10px; padding: 10px 16px; margin-bottom: 12px; width: 100%; max-width: 500px;
+      border-radius: 10px; padding: 8px 14px; margin-bottom: 8px; width: 100%; max-width: 540px;
     }
-    .slingshot-demo-svg { width: 120px; height: 70px; flex-shrink: 0; }
-    .slingshot-demo-text { font-size: 12px; text-align: left; line-height: 1.45; color: #eee; }
+    .slingshot-demo-svg { width: 110px; height: 60px; flex-shrink: 0; }
+    .slingshot-demo-text { font-size: 11px; text-align: left; line-height: 1.4; color: #eee; }
 
     #rotate-device-overlay {
       display: none; position: fixed; inset: 0; background: #111; color: #fff;
@@ -260,17 +260,28 @@
     </div>
   </div>
 
+  <!-- START OVERLAY: Updated with Full HUD & Icon Explanations -->
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="start-content-grid">
       <div class="start-col-left">
-        <div class="rules-card">
-          🎯 <b>Slingshot:</b> Pull back the bird on the slingshot & release to smash boxes!<br>
-          🪵 <b>Hit Durability:</b> Wood (1 Hit), Stone (2 Hits), Iron (3 Hits).<br>
-          ⭐ <b>Star Bonus:</b> Earn 1 Star (+100 pts) for every remaining bird per level!<br>
-          🏹 <b>Ammo Progression:</b> Levels 1–10 (8 Birds) | Levels 11+ (12 Birds & Double Steel)!<br>
-          🍔 <b>Mission:</b> Knock food down to feed the Giant Bird!
+        <!-- Screen HUD & Icons Quick Guide -->
+        <div class="rules-card" style="background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); margin-bottom: 6px;">
+          <b style="color:#00e5ff;">📊 SCREEN HUD & BUTTONS:</b><br>
+          • <b>Lv (Level):</b> Game stage | <b>🎯 Shots:</b> Remaining birds in queue<br>
+          • <b>⚡ Energy (15 → 0):</b> Giant Bird timer! Feed food before 0<br>
+          • <b>🎵 Music:</b> BGM On/Off | <b>🔊 Sound:</b> Hit SFX On/Off<br>
+          • <b>🏆 Trophy:</b> Top 10 Scores | <b>⛶:</b> Toggle Fullscreen mode
         </div>
+
+        <!-- Gameplay Rules -->
+        <div class="rules-card" style="margin-bottom: 8px;">
+          🎯 <b>Aim & Fire:</b> Drag bird backwards on slingshot to aim & smash towers!<br>
+          🪵 <b>Hit Durability:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
+          ⭐ <b>Star Bonus:</b> Earn 1 Star (+100 pts) per unused bird each round!<br>
+          🍔 <b>Mission:</b> Knock food to the ground to feed the hungry Giant Bird!
+        </div>
+
         <div class="diff-container">
           <button class="diff-btn" data-diff="novice">Novice</button>
           <button class="diff-btn active" data-diff="normal">Normal</button>
@@ -278,6 +289,7 @@
         </div>
         <button class="btn" id="start-game-btn">PLAY NOW</button>
       </div>
+
       <div class="start-col-right">
         <div id="leaderboard">
           <h3>TOP 10 SCORES</h3>
@@ -296,8 +308,9 @@
     <button class="btn" id="close-lb-btn">BACK TO GAME</button>
   </div>
 
+  <!-- HELP OVERLAY: Mid-game Help Card -->
   <div id="help-overlay" class="overlay hidden">
-    <h1>HOW TO PLAY</h1>
+    <h1 style="margin-bottom: 4px;">HOW TO PLAY</h1>
 
     <div class="slingshot-demo-box">
       <svg class="slingshot-demo-svg" viewBox="0 0 160 90">
@@ -315,21 +328,28 @@
         <polygon points="16,61 14,70 23,69" fill="#00e676"/>
       </svg>
       <div class="slingshot-demo-text">
-        <b style="color:#ffeb3b; font-size:13px;">🎯 AIM & LAUNCH WITH SLINGSHOT:</b><br>
-        Touch or click the bird loaded on the slingshot, <b>drag backwards</b> to set launch power and angle, then <b>release</b> to fire at the towers!
+        <b style="color:#ffeb3b; font-size:12px;">🎯 AIM & LAUNCH WITH SLINGSHOT:</b><br>
+        Touch or click bird on slingshot, <b>drag backwards</b> to set launch angle & power, then <b>release</b> to smash towers!
       </div>
     </div>
 
-    <div class="rules-card" style="max-width: 500px; margin-bottom: 14px;">
-      🪵 <b>Materials & Durability:</b><br>
-      • <b>Wood (Golden Yellow):</b> Collapses on impact (1 Hit).<br>
-      • <b>Stone (Dark Brown):</b> Solid rock pillars (2 Hits).<br>
-      • <b>Iron (Metallic Silver):</b> Reinforced heavy defense (3 Hits).<br><br>
-      ⭐ <b>Accuracy Stars:</b> Earn <b>1 Star (+100 Points)</b> for every bird remaining at the end of each round!<br>
-      🏹 <b>Ammo Progression:</b> Levels 1–10 (8 Birds per Level) | Levels 11+ (12 Birds per Level).<br>
-      🍔 <b>Goal:</b> Knock down food from towers to feed the Giant Bird before energy drains!
+    <div class="rules-card" style="max-width: 540px; margin-bottom: 8px; background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); font-size: 11px; line-height: 1.45;">
+      <b style="color:#00e5ff; font-size:12px;">📊 SCREEN HUD & ICONS EXPLAINED:</b><br>
+      • <b>Lv (Level):</b> Current game stage progress.<br>
+      • <b>🎯 Shots:</b> Number of ammo birds remaining in your slingshot queue.<br>
+      • <b>⚡ Energy (15 → 0):</b> Giant Bird stamina timer! Feed food before 0.<br>
+      • <b>🎵 Music:</b> BGM On/Off | <b>🔊 Sound:</b> Hit impacts On/Off.<br>
+      • <b>🏆 Trophy Button:</b> View Global Top 10 High Scores & Leaderboard.<br>
+      • <b>⛶ Fullscreen Button:</b> Toggle Fullscreen mode for full mobile view.
     </div>
-    <button class="btn" id="close-help-btn">RESUME GAME</button>
+
+    <div class="rules-card" style="max-width: 540px; margin-bottom: 10px; font-size: 11px; line-height: 1.45;">
+      🪵 <b>Materials:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
+      ⭐ <b>Accuracy Bonus:</b> 1 Star (+100 pts) for every unused bird per level!<br>
+      🍔 <b>Objective:</b> Knock food to the ground to feed the hungry Giant Bird!
+    </div>
+
+    <button class="btn" id="close-help-btn" style="padding: 6px 24px; font-size: 14px;">RESUME GAME</button>
   </div>
 
   <div id="lose-overlay" class="overlay hidden">
@@ -431,8 +451,6 @@ function getDeviceInfo() {
 async function incrementGlobalPlayCount() {
   try {
     const dev = getDeviceInfo();
-    console.log("Tracking session for device:", dev.summary);
-
     const statsRef = db.collection("analytics").doc("stats");
     const docSnap = await statsRef.get();
 
@@ -456,8 +474,6 @@ async function incrementGlobalPlayCount() {
       await statsRef.update(updateData);
     }
 
-    console.log("Analytics stats updated successfully!");
-
     await db.collection("analytics_logs").add({
       event: "game_start",
       device: dev.summary,
@@ -467,7 +483,6 @@ async function incrementGlobalPlayCount() {
       screen: dev.screen,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
-    console.log("Analytics log saved!");
   } catch (err) {
     console.error("Firestore Error in tracking:", err);
   }
