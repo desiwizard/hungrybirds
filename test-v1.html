@@ -108,7 +108,6 @@
     .sound-btn:active { transform: scale(0.92); }
     .sound-btn.muted { background: #ffcdd2 !important; color: #d32f2f !important; }
 
-    /* Floating Standalone Fullscreen Button (Shifted Below Address Bar) */
     #fs-btn {
       position: absolute;
       top: calc(56px + env(safe-area-inset-top, 0px));
@@ -393,7 +392,7 @@ const db = firebase.firestore();
 
 let cachedTopScores = [];
 
-// Device & Browser Detection Function
+// Device & Browser Detection Engine
 function getDeviceInfo() {
   const ua = navigator.userAgent;
   let deviceType = "Desktop";
@@ -428,22 +427,38 @@ function getDeviceInfo() {
   };
 }
 
-// Track Game Start with Detailed Device Analytics
+// Track Game Start with Robust Increments and Error Catching
 async function incrementGlobalPlayCount() {
   try {
     const dev = getDeviceInfo();
-    
-    // 1. Increment Aggregated Counters
-    await db.collection("analytics").doc("stats").set({
-      playCount: firebase.firestore.FieldValue.increment(1),
-      [`devices.${dev.type}`]: firebase.firestore.FieldValue.increment(1),
-      [`os.${dev.os}`]: firebase.firestore.FieldValue.increment(1),
-      [`browsers.${dev.browser}`]: firebase.firestore.FieldValue.increment(1),
-      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    console.log("Tracking session for device:", dev.summary);
 
-    // 2. Add an Individual Session Log Entry for Admin Inspector
-    db.collection("analytics_logs").add({
+    const statsRef = db.collection("analytics").doc("stats");
+    const docSnap = await statsRef.get();
+
+    if (!docSnap.exists) {
+      await statsRef.set({
+        playCount: 1,
+        devices: { [dev.type]: 1 },
+        os: { [dev.os]: 1 },
+        browsers: { [dev.browser]: 1 },
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      const updateData = {
+        playCount: firebase.firestore.FieldValue.increment(1),
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      updateData[`devices.${dev.type}`] = firebase.firestore.FieldValue.increment(1);
+      updateData[`os.${dev.os}`] = firebase.firestore.FieldValue.increment(1);
+      updateData[`browsers.${dev.browser}`] = firebase.firestore.FieldValue.increment(1);
+
+      await statsRef.update(updateData);
+    }
+
+    console.log("Analytics stats updated successfully!");
+
+    await db.collection("analytics_logs").add({
       event: "game_start",
       device: dev.summary,
       deviceType: dev.type,
@@ -451,8 +466,11 @@ async function incrementGlobalPlayCount() {
       browser: dev.browser,
       screen: dev.screen,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(() => {});
-  } catch(e) {}
+    });
+    console.log("Analytics log saved!");
+  } catch (err) {
+    console.error("Firestore Error in tracking:", err);
+  }
 }
 
 async function submitScore(initials, finalScore) {
