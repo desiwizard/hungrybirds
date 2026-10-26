@@ -155,6 +155,19 @@
       text-align: left; font-size: 11px; line-height: 1.45; width: 100%;
     }
     .rules-card b { color: #ffeb3b; }
+
+    /* Perfect 2-Column Equal Grid */
+    .hud-legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 14px;
+      margin-top: 5px;
+      font-size: 11px;
+    }
+    .hud-legend-grid div {
+      white-space: nowrap;
+    }
+
     .diff-container { display: flex; gap: 10px; margin-bottom: 10px; }
     .diff-btn {
       background: rgba(255, 255, 255, 0.15); color: #fff; border: 2px solid rgba(255, 255, 255, 0.3);
@@ -260,18 +273,27 @@
     </div>
   </div>
 
-  <!-- START OVERLAY: Updated with Full HUD & Icon Explanations -->
+  <!-- START OVERLAY: Perfectly Aligned 2-Column Grid -->
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="start-content-grid">
       <div class="start-col-left">
-        <!-- Screen HUD & Icons Quick Guide -->
+        <!-- Screen HUD & Buttons 2-Column Equal Grid -->
         <div class="rules-card" style="background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); margin-bottom: 6px;">
-          <b style="color:#00e5ff;">📊 SCREEN HUD & BUTTONS:</b><br>
-          • <b>Lv (Level):</b> Game stage | <b>🎯 Shots:</b> Remaining birds in queue<br>
-          • <b>⚡ Energy (15 → 0):</b> Giant Bird timer! Feed food before 0<br>
-          • <b>🎵 Music:</b> BGM On/Off | <b>🔊 Sound:</b> Hit SFX On/Off<br>
-          • <b>🏆 Trophy:</b> Top 10 Scores | <b>⛶:</b> Toggle Fullscreen mode
+          <b style="color:#00e5ff;">📊 SCREEN HUD & BUTTONS:</b>
+          <div class="hud-legend-grid">
+            <div>• <b>Lv (Level):</b> Game stage</div>
+            <div>• <b>🎯 Shots:</b> Birds in queue</div>
+            
+            <div>• <b>⚡ Energy:</b> Giant Bird timer</div>
+            <div>• <b>⛶ Fullscreen:</b> Toggle Screen</div>
+            
+            <div>• <b>🎵 Music:</b> BGM On/Off</div>
+            <div>• <b>🔊 Sound:</b> SFX On/Off</div>
+            
+            <div>• <b>🏆 Trophy:</b> Top 10 Scores</div>
+            <div></div>
+          </div>
         </div>
 
         <!-- Gameplay Rules -->
@@ -308,7 +330,7 @@
     <button class="btn" id="close-lb-btn">BACK TO GAME</button>
   </div>
 
-  <!-- HELP OVERLAY: Mid-game Help Card -->
+  <!-- HELP OVERLAY: Also perfectly aligned with the same grid -->
   <div id="help-overlay" class="overlay hidden">
     <h1 style="margin-bottom: 4px;">HOW TO PLAY</h1>
 
@@ -333,14 +355,21 @@
       </div>
     </div>
 
-    <div class="rules-card" style="max-width: 540px; margin-bottom: 8px; background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); font-size: 11px; line-height: 1.45;">
-      <b style="color:#00e5ff; font-size:12px;">📊 SCREEN HUD & ICONS EXPLAINED:</b><br>
-      • <b>Lv (Level):</b> Current game stage progress.<br>
-      • <b>🎯 Shots:</b> Number of ammo birds remaining in your slingshot queue.<br>
-      • <b>⚡ Energy (15 → 0):</b> Giant Bird stamina timer! Feed food before 0.<br>
-      • <b>🎵 Music:</b> BGM On/Off | <b>🔊 Sound:</b> Hit impacts On/Off.<br>
-      • <b>🏆 Trophy Button:</b> View Global Top 10 High Scores & Leaderboard.<br>
-      • <b>⛶ Fullscreen Button:</b> Toggle Fullscreen mode for full mobile view.
+    <div class="rules-card" style="max-width: 540px; margin-bottom: 8px; background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4);">
+      <b style="color:#00e5ff; font-size:12px;">📊 SCREEN HUD & ICONS EXPLAINED:</b>
+      <div class="hud-legend-grid">
+        <div>• <b>Lv (Level):</b> Game stage</div>
+        <div>• <b>🎯 Shots:</b> Birds in queue</div>
+        
+        <div>• <b>⚡ Energy:</b> Giant Bird timer</div>
+        <div>• <b>⛶ Fullscreen:</b> Toggle Screen</div>
+        
+        <div>• <b>🎵 Music:</b> BGM On/Off</div>
+        <div>• <b>🔊 Sound:</b> SFX On/Off</div>
+        
+        <div>• <b>🏆 Trophy:</b> Top 10 Scores</div>
+        <div></div>
+      </div>
     </div>
 
     <div class="rules-card" style="max-width: 540px; margin-bottom: 10px; font-size: 11px; line-height: 1.45;">
