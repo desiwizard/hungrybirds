@@ -108,7 +108,7 @@
     .sound-btn:active { transform: scale(0.92); }
     .sound-btn.muted { background: #ffcdd2 !important; color: #d32f2f !important; }
 
-    /* Floating Standalone Fullscreen Button (Neeche Shifted, Address Bar Se Safe) */
+    /* Floating Standalone Fullscreen Button (Shifted Below Address Bar) */
     #fs-btn {
       position: absolute;
       top: calc(56px + env(safe-area-inset-top, 0px));
@@ -238,10 +238,8 @@
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
 
-  <!-- Fullscreen Button: Positioned Safely Below Top Bar & Address Bar -->
   <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
-  <!-- Clean Top HUD -->
   <div class="hud">
     <div class="hud-pill">
       <span id="level-display" style="color: #ffeb3b;">Lv 1</span>
@@ -381,6 +379,7 @@ document.onkeydown = function(e) {
   if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) return false;
 };
 
+// ==================== FIREBASE CONFIG & ANALYTICS ====================
 const firebaseConfig = {
     apiKey: "AIzaSyCfUMBhfupMiTdG9gSxBmtScrY2LSVREvQ",
     authDomain: "hungrybirds-88404.firebaseapp.com",
@@ -394,17 +393,77 @@ const db = firebase.firestore();
 
 let cachedTopScores = [];
 
+// Device & Browser Detection Function
+function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  let deviceType = "Desktop";
+  if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+    deviceType = "Tablet";
+  } else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated/i.test(ua)) {
+    deviceType = "Mobile";
+  }
+
+  let os = "Unknown OS";
+  if (/Windows/i.test(ua)) os = "Windows";
+  else if (/Android/i.test(ua)) os = "Android";
+  else if (/iPhone|iPad|iPod/i.test(ua)) os = "iOS";
+  else if (/Mac/i.test(ua)) os = "MacOS";
+  else if (/Linux/i.test(ua)) os = "Linux";
+
+  let browser = "Unknown Browser";
+  if (/SamsungBrowser/i.test(ua)) browser = "Samsung Browser";
+  else if (/Edg/i.test(ua)) browser = "Edge";
+  else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Chrome";
+  else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = "Safari";
+  else if (/Firefox/i.test(ua)) browser = "Firefox";
+  else if (/OPR|Opera/i.test(ua)) browser = "Opera";
+
+  const screenRes = `${window.screen.width}x${window.screen.height}`;
+  return {
+    type: deviceType,
+    os: os,
+    browser: browser,
+    screen: screenRes,
+    summary: `${deviceType} (${os} / ${browser})`
+  };
+}
+
+// Track Game Start with Detailed Device Analytics
 async function incrementGlobalPlayCount() {
   try {
-    await db.collection("analytics").doc("stats").set({ playCount: firebase.firestore.FieldValue.increment(1) }, { merge: true });
-  } catch(e){}
+    const dev = getDeviceInfo();
+    
+    // 1. Increment Aggregated Counters
+    await db.collection("analytics").doc("stats").set({
+      playCount: firebase.firestore.FieldValue.increment(1),
+      [`devices.${dev.type}`]: firebase.firestore.FieldValue.increment(1),
+      [`os.${dev.os}`]: firebase.firestore.FieldValue.increment(1),
+      [`browsers.${dev.browser}`]: firebase.firestore.FieldValue.increment(1),
+      lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    // 2. Add an Individual Session Log Entry for Admin Inspector
+    db.collection("analytics_logs").add({
+      event: "game_start",
+      device: dev.summary,
+      deviceType: dev.type,
+      os: dev.os,
+      browser: dev.browser,
+      screen: dev.screen,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(() => {});
+  } catch(e) {}
 }
 
 async function submitScore(initials, finalScore) {
   try {
+    const dev = getDeviceInfo();
     await db.collection("leaderboard").add({
       initials: initials.toUpperCase().substring(0, 5),
       score: finalScore,
+      device: dev.summary,
+      deviceType: dev.type,
+      screen: dev.screen,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
     await loadLeaderboard();
@@ -587,7 +646,7 @@ document.getElementById('sfx-btn').addEventListener('click', (e) => {
   else { sBtn.classList.add('muted'); stopRubberStretch(); }
 });
 
-// ==================== DIFFICULTY CONFIG ====================
+// ==================== CONFIGS ====================
 let currentDifficulty = 'normal';
 const DIFFICULTY_CONFIG = {
   novice: { drainMult: 0.50, label: 'Novice' },
@@ -1208,7 +1267,7 @@ function drawScene() {
   ctx.fillStyle = "#9FA8DA";
   ctx.beginPath(); ctx.moveTo(420, GROUND_Y); ctx.lineTo(620, 200); ctx.lineTo(820, GROUND_Y); ctx.fill();
 
-  // Slim High Cliff (Half Width: 75px)
+  // Slim High Cliff (75px Width)
   ctx.fillStyle = '#4E342E';
   ctx.beginPath();
   ctx.moveTo(0, CLIFF_SURFACE_Y);
@@ -1378,6 +1437,7 @@ function drawGiantBird() {
   ctx.restore();
 }
 
+// Button Events
 document.getElementById('start-game-btn').onclick = () => {
   initAudioSystem(); startBackgroundMusic(); incrementGlobalPlayCount();
   document.getElementById('start-overlay').classList.add('hidden');
