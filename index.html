@@ -220,7 +220,7 @@
       display: none;
     }
 
-    /* VISUAL GUIDE CARD (USED IN START & HELP SCREENS) */
+    /* VISUAL GUIDE CARD (START & HELP SCREENS) */
     .visual-guide-container {
       display: flex; flex-direction: column; align-items: center;
       background: rgba(0, 0, 0, 0.55); border: 1.5px solid #ffeb3b;
@@ -549,22 +549,47 @@ if (forceRotateBtn) {
   });
 }
 
-// ==================== GEO-LOCATION TRACKING VIA IP ====================
-let cachedGeo = { country: "Unknown", city: "Unknown", location: "Unknown" };
+// ==================== ROBUST GEO-LOCATION TRACKING VIA IP ====================
+let cachedGeo = {
+  country: localStorage.getItem("hb_geo_country") || "Unknown",
+  city: localStorage.getItem("hb_geo_city") || "Unknown",
+  location: localStorage.getItem("hb_geo_loc") || "Unknown"
+};
 
 async function fetchGeoLocation() {
   try {
     const res = await fetch("https://ipwho.is/");
     const data = await res.json();
-    if (data.success) {
+    if (data && data.success) {
       cachedGeo = {
         country: data.country || "Unknown",
         city: data.city || "Unknown",
         location: `${data.city || 'Unknown'}, ${data.country || 'Unknown'}`
       };
+      localStorage.setItem("hb_geo_country", cachedGeo.country);
+      localStorage.setItem("hb_geo_city", cachedGeo.city);
+      localStorage.setItem("hb_geo_loc", cachedGeo.location);
+      return;
     }
   } catch (err) {
-    console.warn("Geo lookup bypassed:", err);
+    console.warn("Primary geo lookup failed, trying fallback...", err);
+  }
+
+  try {
+    const res2 = await fetch("https://ipapi.co/json/");
+    const data2 = await res2.json();
+    if (data2 && data2.country_name) {
+      cachedGeo = {
+        country: data2.country_name || "Unknown",
+        city: data2.city || "Unknown",
+        location: `${data2.city || 'Unknown'}, ${data2.country_name || 'Unknown'}`
+      };
+      localStorage.setItem("hb_geo_country", cachedGeo.country);
+      localStorage.setItem("hb_geo_city", cachedGeo.city);
+      localStorage.setItem("hb_geo_loc", cachedGeo.location);
+    }
+  } catch (e) {
+    console.warn("Geo lookup fallback bypassed:", e);
   }
 }
 fetchGeoLocation();
@@ -582,6 +607,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let cachedTopScores = [];
+let currentSessionDocId = null; // Single active session document ID
 
 function getDeviceInfo() {
   const ua = navigator.userAgent;
@@ -617,6 +643,7 @@ function getDeviceInfo() {
   };
 }
 
+// 1. Global Aggregated Counts
 async function incrementGlobalPlayCount() {
   try {
     const dev = getDeviceInfo();
@@ -664,11 +691,65 @@ async function incrementGlobalPlayCount() {
   }
 }
 
-async function submitScore(initials, finalScore) {
+// 2. IMMEDIATE GAME START SESSION LOGGER (Creates Document on Play Now / Restart)
+async function startSilentSession() {
   try {
     const dev = getDeviceInfo();
+    const docRef = await db.collection("game_sessions").add({
+      initials: "-",
+      score: 0,
+      level: 1,
+      difficulty: currentDifficulty,
+      status: "playing",
+      city: cachedGeo.city || "Unknown",
+      country: cachedGeo.country || "Unknown",
+      location: cachedGeo.location || "Unknown",
+      device: dev.summary,
+      deviceType: dev.type,
+      screen: dev.screen,
+      startedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastActive: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    currentSessionDocId = docRef.id;
+  } catch (err) {
+    console.warn("Could not create instant session:", err);
+  }
+}
+
+// 3. SILENT SESSION PROGRESS & GAME OVER UPDATER (Updates Same Line)
+async function updateSilentSession(finalScore, reachedLevel, isFinished = false) {
+  if (!currentSessionDocId) return;
+  try {
+    await db.collection("game_sessions").doc(currentSessionDocId).update({
+      score: finalScore,
+      level: reachedLevel,
+      status: isFinished ? "game_over" : "playing",
+      lastActive: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (err) {
+    console.warn("Could not update session:", err);
+  }
+}
+
+// 4. Hall of Fame Leaderboard Submission (Same Line Update in game_sessions, No Extra Duplicate)
+async function submitScore(initials, finalScore) {
+  try {
+    const formattedInitials = initials.toUpperCase().substring(0, 5);
+
+    // Update same session document with player initials
+    if (currentSessionDocId) {
+      await db.collection("game_sessions").doc(currentSessionDocId).update({
+        initials: formattedInitials,
+        score: finalScore,
+        status: "submitted",
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    // Official Leaderboard record for Top 10 rankings
+    const dev = getDeviceInfo();
     await db.collection("leaderboard").add({
-      initials: initials.toUpperCase().substring(0, 5),
+      initials: formattedInitials,
       score: finalScore,
       difficulty: currentDifficulty,
       device: dev.summary,
@@ -679,8 +760,11 @@ async function submitScore(initials, finalScore) {
       location: cachedGeo.location,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     });
+
     await loadLeaderboard();
-  } catch(e){}
+  } catch(e) {
+    console.warn("Score submission note:", e);
+  }
 }
 
 async function loadLeaderboard() {
@@ -1366,6 +1450,9 @@ function checkAllFoodFinished() {
       const starBonusPts = earnedStars * 100;
       score += Math.floor(energy * 30) + starBonusPts;
 
+      // Update same session document silently on level win
+      updateSilentSession(score, level, false);
+
       const milestoneBadge = document.getElementById('win-milestone-badge');
       if (milestoneBadge) milestoneBadge.style.display = 'none';
 
@@ -1401,6 +1488,10 @@ function gameOver(title, desc) {
   if (isWinningTransition) return;
   stopRubberStretch();
   gameState = 'LOSE';
+
+  // Mark same session finished
+  updateSilentSession(score, level, true);
+
   document.getElementById('lose-title').innerText = title;
   document.getElementById('lose-desc').innerText = desc;
   document.getElementById('playerInitials').value = '';
@@ -1652,35 +1743,53 @@ function drawGiantBird() {
   ctx.restore();
 }
 
-// Button Events
+// ==================== BUTTON EVENTS ====================
 document.getElementById('start-game-btn').onclick = () => {
-  initAudioSystem(); startBackgroundMusic(); incrementGlobalPlayCount();
+  initAudioSystem(); 
+  startBackgroundMusic(); 
+  incrementGlobalPlayCount(); // Aggregated stats
+  startSilentSession();        // Single session entry created instantly!
+  
   document.getElementById('start-overlay').classList.add('hidden');
   gameState = 'PLAY';
   level = 1;
   score = 0;
   initLevel();
 };
+
 document.getElementById('restart-btn').onclick = () => {
-  initAudioSystem(); level = 1; score = 0; incrementGlobalPlayCount();
+  initAudioSystem(); 
+  level = 1; 
+  score = 0; 
+  incrementGlobalPlayCount();
+  startSilentSession();        // Fresh session for new round!
+  
   document.getElementById('lose-overlay').classList.add('hidden');
   gameState = 'PLAY';
   initLevel();
 };
+
 document.getElementById('next-level-btn').onclick = () => {
-  level++; document.getElementById('win-overlay').classList.add('hidden');
-  gameState = 'PLAY'; initLevel();
+  level++; 
+  document.getElementById('win-overlay').classList.add('hidden');
+  gameState = 'PLAY'; 
+  initLevel();
 };
+
 document.getElementById('evolve-btn').onclick = () => {
-  level++; document.getElementById('evolve-overlay').classList.add('hidden');
-  gameState = 'PLAY'; initLevel();
+  level++; 
+  document.getElementById('evolve-overlay').classList.add('hidden');
+  gameState = 'PLAY'; 
+  initLevel();
 };
+
 document.getElementById('saveScoreBtn').onclick = async () => {
   const inp = document.getElementById('playerInitials');
   let initials = inp.value.trim() || "AAA";
   const btn = document.getElementById('saveScoreBtn');
-  btn.disabled = true; btn.innerText = "Saving...";
-  await submitScore(initials, score);
+  btn.disabled = true; 
+  btn.innerText = "Saving...";
+  await submitScore(initials, score); // Updates same session line with initials
   btn.innerText = "Saved!";
 };
 
