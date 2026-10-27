@@ -36,6 +36,7 @@
       display: block;
       z-index: 1;
     }
+    /* Top HUD */
     #top-hud {
       position: absolute;
       top: max(8px, env(safe-area-inset-top));
@@ -84,6 +85,7 @@
       border: 2px solid #ca8a04;
       font-weight: bold;
     }
+    /* 1-Tap Overlay */
     #start-overlay {
       position: absolute;
       top: 0;
@@ -117,9 +119,10 @@
 </head>
 <body>
 
+  <!-- Ek hi click par screen landscape aur fullscreen karne ka layer -->
   <div id="start-overlay">
     <div class="play-badge">TAP TO PLAY</div>
-    <p style="margin-top: 12px; font-size: 13px; color: #cbd5e1;">📱 Tap once to rotate & play full-screen</p>
+    <p style="margin-top: 12px; font-size: 13px; color: #cbd5e1;">📱 Tap once to rotate & enter full screen</p>
   </div>
 
   <div id="game-container">
@@ -168,6 +171,7 @@
       window.addEventListener('resize', () => setTimeout(resizeCanvas, 150));
       resizeCanvas();
 
+      // Immediate 1st Tap Fullscreen & Landscape
       function enterFullscreenDirectly() {
         startOverlay.style.display = 'none';
 
@@ -191,13 +195,13 @@
         enterFullscreenDirectly();
       });
 
-      // --- V2 UNIQUE BOSS BIRD (Crest + Heavy Eyebrows + Raptor Hook Beak) ---
+      // --- V2 UNIQUE BOSS BIRD (Crest Spikes + Angry Brows + Hooked Beak) ---
       const bigBird = {
         stateIndex: 0,
         states: [
-          { name: 'Rage',     body: '#dc2626', belly: '#f87171', glow: 'rgba(220, 38, 38, 0.4)' },
-          { name: 'Craving',  body: '#ea580c', belly: '#fb923c', glow: 'rgba(234, 88, 12, 0.4)' },
-          { name: 'Starving', body: '#475569', belly: '#94a3b8', glow: 'rgba(71, 85, 105, 0.4)' }
+          { name: 'Rage',     body: '#dc2626', belly: '#f87171', glow: 'rgba(220, 38, 38, 0.4)' }, // 1. Fiery Red
+          { name: 'Craving',  body: '#ea580c', belly: '#fb923c', glow: 'rgba(234, 88, 12, 0.4)' }, // 2. Hungry Orange
+          { name: 'Starving', body: '#475569', belly: '#94a3b8', glow: 'rgba(71, 85, 105, 0.4)' }  // 3. Weak Slate Grey
         ],
         getState() {
           return this.states[this.stateIndex];
@@ -210,17 +214,18 @@
 
           ctx.save();
 
-          // Glow Aura
+          // 1. Glow Aura
           ctx.beginPath();
           ctx.arc(cx, cy, r + 8, 0, Math.PI * 2);
           ctx.fillStyle = state.glow;
           ctx.fill();
 
-          // Spikes/Crest on top
+          // 2. Head Crest / Spikes
           ctx.fillStyle = state.body;
           ctx.strokeStyle = '#000';
           ctx.lineWidth = 2.5;
 
+          // Spike 1
           ctx.beginPath();
           ctx.moveTo(cx - 10, cy - r + 4);
           ctx.lineTo(cx - 24, cy - r - 16);
@@ -229,6 +234,7 @@
           ctx.fill();
           ctx.stroke();
 
+          // Spike 2
           ctx.beginPath();
           ctx.moveTo(cx - 4, cy - r + 2);
           ctx.lineTo(cx - 12, cy - r - 22);
@@ -237,35 +243,35 @@
           ctx.fill();
           ctx.stroke();
 
-          // Main Body
+          // 3. Main Body
           ctx.beginPath();
           ctx.ellipse(cx, cy, r + 6, r, 0, 0, Math.PI * 2);
           ctx.fillStyle = state.body;
           ctx.fill();
           ctx.stroke();
 
-          // Belly plate
+          // 4. Belly Plate
           ctx.beginPath();
           ctx.ellipse(cx + 10, cy + 8, r * 0.55, r * 0.65, 0.2, 0, Math.PI * 2);
           ctx.fillStyle = state.belly;
           ctx.fill();
 
-          // Eye
+          // 5. Angry Boss Eye
           const eyeX = cx + 16;
           const eyeY = cy - 6;
+
           ctx.beginPath();
           ctx.arc(eyeX, eyeY, 7, 0, Math.PI * 2);
           ctx.fillStyle = '#ffffff';
           ctx.fill();
           ctx.stroke();
 
-          // Pupil
           ctx.beginPath();
           ctx.arc(eyeX + 3, eyeY, 3, 0, Math.PI * 2);
           ctx.fillStyle = '#000000';
           ctx.fill();
 
-          // Eyebrow
+          // Sharp Eyebrow
           ctx.strokeStyle = '#000000';
           ctx.lineWidth = 3.5;
           ctx.beginPath();
@@ -273,7 +279,7 @@
           ctx.lineTo(eyeX + 10, eyeY - 4);
           ctx.stroke();
 
-          // Hooked beak
+          // 6. Hooked Raptor Beak
           ctx.lineWidth = 2;
           ctx.fillStyle = '#f59e0b';
           ctx.beginPath();
@@ -288,64 +294,59 @@
         }
       };
 
-      // --- SUSPENDED FLOATING PLATFORM (HAWA MEIN TANGI SLAB) ---
-      function drawFloatingPlatform(groundY) {
-        // Center-Right side par rakha hai
+      // --- SUSPENDED FLOATING PLATFORM (Hawa mein latakti slab) ---
+      function drawFloatingPlatform() {
         const fx = width * 0.50;
-        const fy = height * 0.38; // Zameen se kaafi upar hawa mein
+        const fy = height * 0.38;
         const fw = 110;
         const fh = 14;
 
         ctx.save();
 
-        // 1. Hanging Steel Cables/Ropes from Sky ceiling
+        // 1. Hanging Steel Ropes from Sky ceiling
         ctx.strokeStyle = '#1e293b';
         ctx.lineWidth = 3;
 
-        // Left Rope
         ctx.beginPath();
         ctx.moveTo(fx - (fw / 2) + 12, 0);
         ctx.lineTo(fx - (fw / 2) + 12, fy);
         ctx.stroke();
 
-        // Right Rope
         ctx.beginPath();
         ctx.moveTo(fx + (fw / 2) - 12, 0);
         ctx.lineTo(fx + (fw / 2) - 12, fy);
         ctx.stroke();
 
-        // Rope Rings / Anchors
+        // Anchors
         ctx.fillStyle = '#f59e0b';
         ctx.beginPath();
         ctx.arc(fx - (fw / 2) + 12, fy, 4, 0, Math.PI * 2);
         ctx.arc(fx + (fw / 2) - 12, fy, 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // 2. Heavy Floating Wooden Slab
+        // 2. Hanging Wooden Slab
         ctx.fillStyle = '#854d0e';
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2.5;
         ctx.fillRect(fx - (fw / 2), fy, fw, fh);
         ctx.strokeRect(fx - (fw / 2), fy, fw, fh);
 
-        // Slab Highlights/Textures
         ctx.fillStyle = '#a16207';
         ctx.fillRect(fx - (fw / 2) + 4, fy + 2, fw - 8, 3);
 
-        // 3. Floating Target (Suspended Target Ball on Slab)
+        // 3. Floating Target (Cyan Target Ball)
         const tr = 17;
         const tx = fx;
         const ty = fy - tr;
 
         ctx.beginPath();
         ctx.arc(tx, ty, tr, 0, Math.PI * 2);
-        ctx.fillStyle = '#38bdf8'; // Cyan Target Ball
+        ctx.fillStyle = '#38bdf8';
         ctx.fill();
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Target shine
         ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.beginPath();
         ctx.arc(tx - 5, ty - 5, 4, 0, Math.PI * 2);
@@ -365,7 +366,7 @@
         ctx.fillStyle = '#89cbf8';
         ctx.fillRect(0, 0, width, height);
 
-        // 2. Sun
+        // 2. Sun (Right Corner)
         ctx.fillStyle = '#fef08a';
         ctx.beginPath();
         ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
@@ -388,7 +389,7 @@
         ctx.closePath();
         ctx.fill();
 
-        // 4. Ground
+        // 4. Ground (Brown + Green grass strip)
         ctx.fillStyle = '#42281d';
         ctx.fillRect(0, groundY, width, groundH);
         ctx.fillStyle = '#55a234';
@@ -409,7 +410,7 @@
         ctx.fillStyle = '#55a234';
         ctx.fillRect(0, cliffY, cliffW + 4, 10);
 
-        // 6. Draw V2 Boss Bird
+        // 6. Draw V2 Unique Boss Bird
         bigBird.draw(cliffW, cliffY);
 
         // 7. Small Birds Queue
@@ -467,11 +468,11 @@
         ctx.closePath();
         ctx.fill();
 
-        // 9. --- FLOATING SUSPENDED PLATFORM (Foreground) ---
-        drawFloatingPlatform(groundY);
+        // 9. Floating Suspended Platform
+        drawFloatingPlatform();
 
         // 10. Ground Targets (Right Towers)
-        // Tower 1
+        // Tower 1 (Single Story)
         const t1X = width * 0.68;
         ctx.fillStyle = '#d99a38';
         ctx.fillRect(t1X - 26, groundY - 46, 10, 46);
@@ -487,7 +488,7 @@
         ctx.fill();
         ctx.stroke();
 
-        // Tower 2
+        // Tower 2 (Double Story)
         const t2X = width * 0.84;
         ctx.fillRect(t2X - 26, groundY - 46, 10, 46);
         ctx.strokeRect(t2X - 26, groundY - 46, 10, 46);
@@ -517,6 +518,7 @@
       }
       render();
 
+      // Screen Tap: Big Bird color cycle (Red -> Orange -> Grey -> Red)
       window.addEventListener('pointerup', () => {
         if (startOverlay.style.display === 'none') {
           bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
