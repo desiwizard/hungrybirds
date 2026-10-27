@@ -8,11 +8,17 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- Screen rotation warning for portrait mode -->
+  <div id="rotate-warning">
+    <div class="icon">📱🔄</div>
+    <h2>Please Rotate Your Phone</h2>
+    <p style="color: #9ca3af; margin-top: 8px; font-size: 14px;">Hungry Birds is designed for landscape mode</p>
+  </div>
+
   <div id="game-container">
-    <!-- Game Canvas -->
     <canvas id="gameCanvas"></canvas>
 
-    <!-- Clean Minimalistic HUD Overlay -->
     <header id="top-hud">
       <div class="hud-left">
         <button id="btn-pause" class="hud-btn" aria-label="Pause Game">⏸</button>
@@ -31,15 +37,143 @@
       </div>
     </header>
 
-    <!-- Bottom Tray for Birds (Subtle & Clean) -->
     <footer id="bottom-hud">
-      <div id="bird-queue" class="queue-container">
-        <!-- Javascript dynamically injects available birds here -->
-      </div>
-      <div id="action-hint" class="hint-text">Pull slingshot to feed</div>
+      <div id="bird-queue" class="queue-container"></div>
+      <div id="action-hint" class="hint-text">Screen par tap karein color aur full screen ke liye</div>
     </footer>
   </div>
 
-  <script src="game.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.resetTransform ? ctx.resetTransform() : ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      // Fullscreen & Auto-Rotate to Landscape
+      async function triggerFullScreenAndRotate() {
+        const el = document.documentElement;
+        const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+        if (rfs) {
+          try {
+            await rfs.call(el);
+          } catch(e) {}
+        }
+        if (screen.orientation && screen.orientation.lock) {
+          try {
+            await screen.orientation.lock('landscape');
+          } catch(e) {}
+        }
+        setTimeout(resizeCanvas, 300);
+      }
+
+      window.addEventListener('click', triggerFullScreenAndRotate, { once: true });
+      window.addEventListener('touchstart', triggerFullScreenAndRotate, { once: true });
+
+      // Dynamic Color Big Bird
+      const bigBird = {
+        energy: 100,
+        getColor() {
+          if (this.energy >= 70) return '#ff2e55';
+          if (this.energy >= 30) return '#ff922b';
+          return '#6b7280';
+        },
+        draw() {
+          const bx = width * 0.82;
+          const by = height * 0.55;
+          const r = Math.min(width, height) * 0.12;
+
+          ctx.save();
+          // Glow
+          ctx.beginPath();
+          ctx.arc(bx, by, r + 8, 0, Math.PI * 2);
+          ctx.fillStyle = this.getColor() + '33';
+          ctx.fill();
+
+          // Body
+          ctx.beginPath();
+          ctx.arc(bx, by, r, 0, Math.PI * 2);
+          ctx.fillStyle = this.getColor();
+          ctx.fill();
+
+          // Eye
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(bx - r * 0.3, by - r * 0.2, r * 0.2, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Pupil
+          ctx.fillStyle = '#111827';
+          ctx.beginPath();
+          ctx.arc(bx - r * 0.35, by - r * 0.2, r * 0.08, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Beak
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.moveTo(bx - r * 0.5, by - r * 0.05);
+          ctx.lineTo(bx - r * 0.9, by + r * 0.1);
+          ctx.lineTo(bx - r * 0.5, by + r * 0.25);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.restore();
+        }
+      };
+
+      // Slingshot
+      function drawSlingshot() {
+        const sx = width * 0.18;
+        const sy = height * 0.65;
+        ctx.strokeStyle = '#8b5a2b';
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx, height);
+        ctx.moveTo(sx - 16, sy - 28);
+        ctx.lineTo(sx, sy);
+        ctx.lineTo(sx + 16, sy - 28);
+        ctx.stroke();
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, width, height);
+
+        const bg = ctx.createLinearGradient(0, 0, 0, height);
+        bg.addColorStop(0, '#1e293b');
+        bg.addColorStop(1, '#0f172a');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, width, height);
+
+        drawSlingshot();
+        bigBird.draw();
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+
+      // Tap screen to switch color
+      window.addEventListener('pointerup', () => {
+        bigBird.energy -= 35;
+        if (bigBird.energy < 0) bigBird.energy = 100;
+      });
+    });
+  </script>
 </body>
 </html>
