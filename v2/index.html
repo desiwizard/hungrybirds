@@ -1,10 +1,203 @@
-// --- V2 UNIQUE BOSS BIRD (Crest + Angry Brows + Fierce Beak) ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Hungry Birds v2</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #80c8f8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #game-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+    #gameCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+    }
+    #top-hud {
+      position: absolute;
+      top: max(8px, env(safe-area-inset-top));
+      left: max(12px, env(safe-area-inset-left));
+      right: max(12px, env(safe-area-inset-right));
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+    .hud-badge {
+      background: rgba(15, 23, 42, 0.85);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .hud-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+    }
+    .circle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    #btn-fs {
+      background: #fef08a;
+      border: 2px solid #ca8a04;
+      font-weight: bold;
+    }
+    #start-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      cursor: pointer;
+    }
+    .play-badge {
+      background: #ff2e55;
+      padding: 14px 32px;
+      font-size: 19px;
+      font-weight: bold;
+      border-radius: 30px;
+      box-shadow: 0 4px 18px rgba(255, 46, 85, 0.6);
+      animation: pulseBtn 1.2s infinite alternate;
+    }
+    @keyframes pulseBtn {
+      from { transform: scale(1); }
+      to { transform: scale(1.06); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="start-overlay">
+    <div class="play-badge">TAP TO PLAY</div>
+    <p style="margin-top: 12px; font-size: 13px; color: #cbd5e1;">📱 Tap once to rotate & play full-screen</p>
+  </div>
+
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <header id="top-hud">
+      <div class="hud-badge">
+        <span>Lv 1 • Normal</span> | <span>🎯 8</span> | <span style="color:#fde047;">⚡ 15</span>
+      </div>
+
+      <div class="hud-badge">
+        <span>Score: <span id="score-val">0</span></span>
+      </div>
+
+      <div class="hud-controls">
+        <button class="circle-btn" title="Music">🎵</button>
+        <button class="circle-btn" title="Sound">🔊</button>
+        <button class="circle-btn" title="Rank">🏆</button>
+        <button class="circle-btn" title="Help">❓</button>
+        <button id="btn-fs" class="circle-btn" title="Fullscreen">⛶</button>
+      </div>
+    </header>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      const startOverlay = document.getElementById('start-overlay');
+      const fsBtn = document.getElementById('btn-fs');
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.resetTransform ? ctx.resetTransform() : ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+      }
+      window.addEventListener('resize', () => setTimeout(resizeCanvas, 150));
+      resizeCanvas();
+
+      function enterFullscreenDirectly() {
+        startOverlay.style.display = 'none';
+
+        const docEl = document.documentElement;
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen().catch(() => {});
+        } else if (docEl.webkitRequestFullscreen) {
+          docEl.webkitRequestFullscreen();
+        }
+
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(() => {});
+        }
+
+        setTimeout(resizeCanvas, 250);
+      }
+
+      startOverlay.addEventListener('pointerdown', enterFullscreenDirectly, { once: true });
+      fsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        enterFullscreenDirectly();
+      });
+
+      // --- V2 UNIQUE BOSS BIRD (Crest + Heavy Eyebrows + Raptor Hook Beak) ---
       const bigBird = {
         stateIndex: 0,
         states: [
-          { name: 'Rage',     body: '#dc2626', belly: '#f87171', glow: 'rgba(220, 38, 38, 0.4)' }, // Fiery Red
-          { name: 'Craving',  body: '#ea580c', belly: '#fb923c', glow: 'rgba(234, 88, 12, 0.4)' }, // Hungry Orange
-          { name: 'Starving', body: '#475569', belly: '#94a3b8', glow: 'rgba(71, 85, 105, 0.4)' }  // Weak Slate Grey
+          { name: 'Rage',     body: '#dc2626', belly: '#f87171', glow: 'rgba(220, 38, 38, 0.4)' },
+          { name: 'Craving',  body: '#ea580c', belly: '#fb923c', glow: 'rgba(234, 88, 12, 0.4)' },
+          { name: 'Starving', body: '#475569', belly: '#94a3b8', glow: 'rgba(71, 85, 105, 0.4)' }
         ],
         getState() {
           return this.states[this.stateIndex];
@@ -17,18 +210,17 @@
 
           ctx.save();
 
-          // 1. Aura Glow (Energy State)
+          // Glow Aura
           ctx.beginPath();
           ctx.arc(cx, cy, r + 8, 0, Math.PI * 2);
           ctx.fillStyle = state.glow;
           ctx.fill();
 
-          // 2. Head Crest / Feathers (Back/Top Spikes)
+          // Spikes/Crest on top
           ctx.fillStyle = state.body;
           ctx.strokeStyle = '#000';
           ctx.lineWidth = 2.5;
 
-          // Spike 1
           ctx.beginPath();
           ctx.moveTo(cx - 10, cy - r + 4);
           ctx.lineTo(cx - 24, cy - r - 16);
@@ -37,7 +229,6 @@
           ctx.fill();
           ctx.stroke();
 
-          // Spike 2 (Taller)
           ctx.beginPath();
           ctx.moveTo(cx - 4, cy - r + 2);
           ctx.lineTo(cx - 12, cy - r - 22);
@@ -46,37 +237,35 @@
           ctx.fill();
           ctx.stroke();
 
-          // 3. Main Body (Chubby Heavy Shape)
+          // Main Body
           ctx.beginPath();
           ctx.ellipse(cx, cy, r + 6, r, 0, 0, Math.PI * 2);
           ctx.fillStyle = state.body;
           ctx.fill();
           ctx.stroke();
 
-          // 4. Belly Plate (Soft Inner Tone)
+          // Belly plate
           ctx.beginPath();
           ctx.ellipse(cx + 10, cy + 8, r * 0.55, r * 0.65, 0.2, 0, Math.PI * 2);
           ctx.fillStyle = state.belly;
           ctx.fill();
 
-          // 5. Angry Boss Eyes
+          // Eye
           const eyeX = cx + 16;
           const eyeY = cy - 6;
-
-          // White eyeball
           ctx.beginPath();
           ctx.arc(eyeX, eyeY, 7, 0, Math.PI * 2);
           ctx.fillStyle = '#ffffff';
           ctx.fill();
           ctx.stroke();
 
-          // Pupil looking right
+          // Pupil
           ctx.beginPath();
           ctx.arc(eyeX + 3, eyeY, 3, 0, Math.PI * 2);
           ctx.fillStyle = '#000000';
           ctx.fill();
 
-          // Sharp Angry Eyebrow
+          // Eyebrow
           ctx.strokeStyle = '#000000';
           ctx.lineWidth = 3.5;
           ctx.beginPath();
@@ -84,12 +273,12 @@
           ctx.lineTo(eyeX + 10, eyeY - 4);
           ctx.stroke();
 
-          // 6. Hooked Raptor Beak (Sharp & Boss Look)
+          // Hooked beak
           ctx.lineWidth = 2;
           ctx.fillStyle = '#f59e0b';
           ctx.beginPath();
           ctx.moveTo(cx + 26, cy - 8);
-          ctx.quadraticCurveTo(cx + 46, cy, cx + 44, cy + 12); // Curved hooked tip
+          ctx.quadraticCurveTo(cx + 46, cy, cx + 44, cy + 12);
           ctx.lineTo(cx + 26, cy + 8);
           ctx.closePath();
           ctx.fill();
@@ -98,3 +287,242 @@
           ctx.restore();
         }
       };
+
+      // --- SUSPENDED FLOATING PLATFORM (HAWA MEIN TANGI SLAB) ---
+      function drawFloatingPlatform(groundY) {
+        // Center-Right side par rakha hai
+        const fx = width * 0.50;
+        const fy = height * 0.38; // Zameen se kaafi upar hawa mein
+        const fw = 110;
+        const fh = 14;
+
+        ctx.save();
+
+        // 1. Hanging Steel Cables/Ropes from Sky ceiling
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 3;
+
+        // Left Rope
+        ctx.beginPath();
+        ctx.moveTo(fx - (fw / 2) + 12, 0);
+        ctx.lineTo(fx - (fw / 2) + 12, fy);
+        ctx.stroke();
+
+        // Right Rope
+        ctx.beginPath();
+        ctx.moveTo(fx + (fw / 2) - 12, 0);
+        ctx.lineTo(fx + (fw / 2) - 12, fy);
+        ctx.stroke();
+
+        // Rope Rings / Anchors
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.arc(fx - (fw / 2) + 12, fy, 4, 0, Math.PI * 2);
+        ctx.arc(fx + (fw / 2) - 12, fy, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 2. Heavy Floating Wooden Slab
+        ctx.fillStyle = '#854d0e';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2.5;
+        ctx.fillRect(fx - (fw / 2), fy, fw, fh);
+        ctx.strokeRect(fx - (fw / 2), fy, fw, fh);
+
+        // Slab Highlights/Textures
+        ctx.fillStyle = '#a16207';
+        ctx.fillRect(fx - (fw / 2) + 4, fy + 2, fw - 8, 3);
+
+        // 3. Floating Target (Suspended Target Ball on Slab)
+        const tr = 17;
+        const tx = fx;
+        const ty = fy - tr;
+
+        ctx.beginPath();
+        ctx.arc(tx, ty, tr, 0, Math.PI * 2);
+        ctx.fillStyle = '#38bdf8'; // Cyan Target Ball
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Target shine
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.beginPath();
+        ctx.arc(tx - 5, ty - 5, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      // --- Main Game Render Loop ---
+      function render() {
+        ctx.clearRect(0, 0, width, height);
+
+        const groundH = Math.max(height * 0.12, 42);
+        const groundY = height - groundH;
+
+        // 1. Blue Sky
+        ctx.fillStyle = '#89cbf8';
+        ctx.fillRect(0, 0, width, height);
+
+        // 2. Sun
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3. Mountains
+        ctx.fillStyle = '#9aa0d9';
+        ctx.beginPath();
+        ctx.moveTo(width * 0.20, groundY);
+        ctx.lineTo(width * 0.38, height * 0.44);
+        ctx.lineTo(width * 0.56, groundY);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#b3b8eb';
+        ctx.beginPath();
+        ctx.moveTo(width * 0.44, groundY);
+        ctx.lineTo(width * 0.64, height * 0.38);
+        ctx.lineTo(width * 0.84, groundY);
+        ctx.closePath();
+        ctx.fill();
+
+        // 4. Ground
+        ctx.fillStyle = '#42281d';
+        ctx.fillRect(0, groundY, width, groundH);
+        ctx.fillStyle = '#55a234';
+        ctx.fillRect(0, groundY, width, 14);
+
+        // 5. Left Cliff
+        const cliffW = width * 0.12;
+        const cliffY = height * 0.40;
+        ctx.fillStyle = '#4a2c20';
+        ctx.beginPath();
+        ctx.moveTo(0, cliffY);
+        ctx.lineTo(cliffW, cliffY);
+        ctx.lineTo(cliffW + 18, groundY);
+        ctx.lineTo(0, groundY);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#55a234';
+        ctx.fillRect(0, cliffY, cliffW + 4, 10);
+
+        // 6. Draw V2 Boss Bird
+        bigBird.draw(cliffW, cliffY);
+
+        // 7. Small Birds Queue
+        const qStartX = cliffW + 28;
+        for (let i = 0; i < 7; i++) {
+          const qx = qStartX + (i * 18);
+          const qy = groundY - 8;
+          ctx.beginPath();
+          ctx.arc(qx, qy, 8, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444';
+          ctx.fill();
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // 8. Slingshot
+        const sx = width * 0.24;
+        const sy = groundY - 55;
+        ctx.strokeStyle = '#3e2316';
+        ctx.lineWidth = 9;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx, groundY);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(sx - 16, sy - 24);
+        ctx.lineTo(sx, sy);
+        ctx.lineTo(sx + 16, sy - 24);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(sx, sy - 14, 12, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(sx + 4, sy - 16, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(sx + 5, sy - 16, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(sx + 9, sy - 15);
+        ctx.lineTo(sx + 16, sy - 12);
+        ctx.lineTo(sx + 9, sy - 9);
+        ctx.closePath();
+        ctx.fill();
+
+        // 9. --- FLOATING SUSPENDED PLATFORM (Foreground) ---
+        drawFloatingPlatform(groundY);
+
+        // 10. Ground Targets (Right Towers)
+        // Tower 1
+        const t1X = width * 0.68;
+        ctx.fillStyle = '#d99a38';
+        ctx.fillRect(t1X - 26, groundY - 46, 10, 46);
+        ctx.strokeRect(t1X - 26, groundY - 46, 10, 46);
+        ctx.fillRect(t1X + 16, groundY - 46, 10, 46);
+        ctx.strokeRect(t1X + 16, groundY - 46, 10, 46);
+        ctx.fillRect(t1X - 30, groundY - 56, 60, 10);
+        ctx.strokeRect(t1X - 30, groundY - 56, 60, 10);
+
+        ctx.beginPath();
+        ctx.arc(t1X, groundY - 18, 17, 0, Math.PI * 2);
+        ctx.fillStyle = '#f97316';
+        ctx.fill();
+        ctx.stroke();
+
+        // Tower 2
+        const t2X = width * 0.84;
+        ctx.fillRect(t2X - 26, groundY - 46, 10, 46);
+        ctx.strokeRect(t2X - 26, groundY - 46, 10, 46);
+        ctx.fillRect(t2X + 16, groundY - 46, 10, 46);
+        ctx.strokeRect(t2X + 16, groundY - 46, 10, 46);
+        ctx.fillRect(t2X - 30, groundY - 56, 60, 10);
+        ctx.strokeRect(t2X - 30, groundY - 56, 60, 10);
+        ctx.beginPath();
+        ctx.arc(t2X, groundY - 18, 17, 0, Math.PI * 2);
+        ctx.fillStyle = '#ec4899';
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillRect(t2X - 26, groundY - 102, 10, 46);
+        ctx.strokeRect(t2X - 26, groundY - 102, 10, 46);
+        ctx.fillRect(t2X + 16, groundY - 102, 10, 46);
+        ctx.strokeRect(t2X + 16, groundY - 102, 10, 46);
+        ctx.fillRect(t2X - 30, groundY - 112, 60, 10);
+        ctx.strokeRect(t2X - 30, groundY - 112, 60, 10);
+        ctx.beginPath();
+        ctx.arc(t2X, groundY - 74, 17, 0, Math.PI * 2);
+        ctx.fillStyle = '#22c55e';
+        ctx.fill();
+        ctx.stroke();
+
+        requestAnimationFrame(render);
+      }
+      render();
+
+      window.addEventListener('pointerup', () => {
+        if (startOverlay.style.display === 'none') {
+          bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
