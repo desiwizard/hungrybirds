@@ -9,21 +9,16 @@
 </head>
 <body>
 
-  <!-- Screen rotation warning for portrait mode -->
-  <div id="rotate-warning">
-    <div class="icon">📱🔄</div>
-    <h2>Please Rotate Your Phone</h2>
-    <p style="color: #9ca3af; margin-top: 8px; font-size: 14px;">Hungry Birds is designed for landscape mode</p>
+  <!-- Clickable Overlay: Screen seedhi ho ya tedi, tap karte hi rotate + fullscreen ho jayegi -->
+  <div id="start-overlay">
+    <div class="play-badge">TAP TO PLAY</div>
+    <div id="rotate-hint" style="margin-top: 14px; font-size: 13px; color: #cbd5e1;">
+      📱 Tap to rotate & enter full screen
+    </div>
   </div>
 
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
-
-    <!-- Tap to Start Fullscreen Overlay -->
-    <div id="start-overlay">
-      <div class="play-badge">TAP TO PLAY</div>
-      <p style="font-size: 12px; color: #9ca3af; margin-top: 10px;">Tap to go full-screen</p>
-    </div>
 
     <header id="top-hud">
       <div class="hud-left">
@@ -45,7 +40,7 @@
 
     <footer id="bottom-hud">
       <div id="bird-queue" class="queue-container"></div>
-      <div id="action-hint" class="hint-text">Tap anywhere to test energy switch</div>
+      <div id="action-hint" class="hint-text">Tap screen: Red ➔ Orange ➔ Grey</div>
     </footer>
   </div>
 
@@ -69,36 +64,37 @@
         ctx.resetTransform ? ctx.resetTransform() : ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(dpr, dpr);
       }
-      window.addEventListener('resize', () => {
-        setTimeout(resizeCanvas, 150);
-      });
+      window.addEventListener('resize', () => setTimeout(resizeCanvas, 150));
       resizeCanvas();
 
-      // Tap to Start & Enter Fullscreen
-      async function startGame() {
+      // Tap to Rotate and Enter Fullscreen
+      async function launchGame() {
         startOverlay.style.display = 'none';
 
         const el = document.documentElement;
         const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
         if (rfs) {
-          try {
-            await rfs.call(el);
-          } catch(e) {}
+          try { await rfs.call(el); } catch(e) {}
         }
+
+        // Screen ko zabardasti landscape rotate karwana
         if (screen.orientation && screen.orientation.lock) {
           try {
             await screen.orientation.lock('landscape');
-          } catch(e) {}
+          } catch(e) {
+            console.log("Orientation lock handled:", e);
+          }
         }
+
         setTimeout(resizeCanvas, 300);
       }
 
-      startOverlay.addEventListener('click', startGame);
-      startOverlay.addEventListener('touchstart', startGame);
+      startOverlay.addEventListener('click', launchGame);
+      startOverlay.addEventListener('touchstart', launchGame);
 
-      // Slingshot Position (Left Side)
+      // --- Left Slingshot & Projectile Bird ---
       const slingshot = {
-        getX() { return width * 0.18; },
+        getX() { return width * 0.16; },
         getY() { return height * 0.65; },
         draw() {
           const sx = this.getX();
@@ -116,61 +112,143 @@
 
           // Fork
           ctx.beginPath();
-          ctx.moveTo(sx - 16, sy - 28);
+          ctx.moveTo(sx - 14, sy - 26);
           ctx.lineTo(sx, sy);
-          ctx.lineTo(sx + 16, sy - 28);
+          ctx.lineTo(sx + 14, sy - 26);
           ctx.stroke();
+
+          // Small Red Bird in Sling
+          const br = 12;
+          const bx = sx;
+          const by = sy - 14;
+
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath();
+          ctx.arc(bx, by, br, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Eye looking right
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(bx + 4, by - 3, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#000';
+          ctx.beginPath();
+          ctx.arc(bx + 5, by - 3, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Beak pointing right
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.moveTo(bx + 8, by - 2);
+          ctx.lineTo(bx + 16, by + 1);
+          ctx.lineTo(bx + 8, by + 5);
+          ctx.closePath();
+          ctx.fill();
         }
       };
 
-      // Player Bird (Seated on Slingshot on Left)
-      const playerBird = {
-        energy: 100,
+      // --- Suspended Slab in Air ---
+      function drawSuspendedPlatform() {
+        const px = width * 0.50;
+        const py = height * 0.45;
+        const pw = 110;
+        const ph = 12;
+
+        // Ropes from top ceiling
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(px - pw/2 + 12, 0);
+        ctx.lineTo(px - pw/2 + 12, py);
+        ctx.moveTo(px + pw/2 - 12, 0);
+        ctx.lineTo(px + pw/2 - 12, py);
+        ctx.stroke();
+
+        // Wooden Platform Slab
+        ctx.fillStyle = '#78350f';
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(px - pw/2, py, pw, ph, 4) : ctx.rect(px - pw/2, py, pw, ph);
+        ctx.fill();
+
+        // Target box sitting on top
+        ctx.fillStyle = '#eab308';
+        ctx.fillRect(px - 14, py - 26, 26, 26);
+        ctx.strokeStyle = '#a16207';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(px - 14, py - 26, 26, 26);
+      }
+
+      // --- Right Cliff & Big Hungry Bird ---
+      const bigBird = {
+        stateIndex: 0,
+        states: [
+          { name: 'Hungry Rage', color: '#ff2e55' }, // 1. Bright Red
+          { name: 'Craving',     color: '#ff922b' }, // 2. Warm Orange
+          { name: 'Starving',    color: '#64748b' }  // 3. Dull Slate Grey
+        ],
         getColor() {
-          if (this.energy >= 70) return '#ff2e55'; // Full Energy: Hot Red
-          if (this.energy >= 30) return '#ff922b'; // Medium: Energetic Orange
-          return '#6b7280';                       // Low: Dull Grey
+          return this.states[this.stateIndex].color;
         },
         draw() {
-          // Exactly resting on the slingshot fork
-          const bx = slingshot.getX();
-          const by = slingshot.getY() - 18;
-          const r = Math.min(width, height) * 0.055;
+          const cliffW = width * 0.22;
+          const cliffX = width - cliffW;
+          const cliffY = height * 0.52;
 
-          ctx.save();
-          // Glow Aura based on energy
+          // 1. Rocky Cliff on Right
+          ctx.fillStyle = '#334155';
           ctx.beginPath();
-          ctx.arc(bx, by, r + 6, 0, Math.PI * 2);
-          ctx.fillStyle = this.getColor() + '44';
+          ctx.moveTo(cliffX, cliffY);
+          ctx.lineTo(width, cliffY);
+          ctx.lineTo(width, height);
+          ctx.lineTo(cliffX - 18, height);
+          ctx.closePath();
           ctx.fill();
 
-          // Main Body
+          // Green grass top on cliff
+          ctx.fillStyle = '#16a34a';
+          ctx.fillRect(cliffX - 4, cliffY, cliffW + 10, 8);
+
+          // 2. Big Bird Sitting on Cliff
+          const bx = cliffX + 45;
+          const r = Math.min(width, height) * 0.11;
+          const by = cliffY - r + 3;
+
+          ctx.save();
+
+          // Glow Aura
+          ctx.beginPath();
+          ctx.arc(bx, by, r + 8, 0, Math.PI * 2);
+          ctx.fillStyle = this.getColor() + '33';
+          ctx.fill();
+
+          // Body
           ctx.beginPath();
           ctx.arc(bx, by, r, 0, Math.PI * 2);
           ctx.fillStyle = this.getColor();
-          ctx.shadowColor = 'rgba(0,0,0,0.3)';
-          ctx.shadowBlur = 8;
+          ctx.shadowColor = 'rgba(0,0,0,0.4)';
+          ctx.shadowBlur = 10;
           ctx.fill();
           ctx.shadowBlur = 0;
 
-          // Eye (facing RIGHT towards target)
+          // Eye looking LEFT
           ctx.fillStyle = '#ffffff';
           ctx.beginPath();
-          ctx.arc(bx + r * 0.35, by - r * 0.2, r * 0.28, 0, Math.PI * 2);
+          ctx.arc(bx - r * 0.35, by - r * 0.22, r * 0.25, 0, Math.PI * 2);
           ctx.fill();
 
-          // Pupil (looking right)
+          // Pupil
           ctx.fillStyle = '#111827';
           ctx.beginPath();
-          ctx.arc(bx + r * 0.45, by - r * 0.2, r * 0.1, 0, Math.PI * 2);
+          ctx.arc(bx - r * 0.42, by - r * 0.22, r * 0.09, 0, Math.PI * 2);
           ctx.fill();
 
-          // Beak (pointing RIGHT)
+          // Open Hungry Beak facing LEFT
           ctx.fillStyle = '#f59e0b';
           ctx.beginPath();
-          ctx.moveTo(bx + r * 0.55, by - r * 0.1);
-          ctx.lineTo(bx + r * 1.05, by + r * 0.05);
-          ctx.lineTo(bx + r * 0.55, by + r * 0.2);
+          ctx.moveTo(bx - r * 0.55, by - r * 0.1);
+          ctx.lineTo(bx - r * 1.05, by + r * 0.08);
+          ctx.lineTo(bx - r * 0.55, by + r * 0.26);
           ctx.closePath();
           ctx.fill();
 
@@ -178,54 +256,33 @@
         }
       };
 
-      // Floating Platform Demo on Right Side
-      function drawFloatingTargetArea() {
-        const px = width * 0.78;
-        const py = height * 0.55;
-        const pw = 120;
-        const ph = 14;
-
-        // Floating plank
-        ctx.fillStyle = '#92400e';
-        ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(px - pw/2, py, pw, ph, 4) : ctx.rect(px - pw/2, py, pw, ph);
-        ctx.fill();
-
-        // Target box on top of platform
-        ctx.fillStyle = '#ca8a04';
-        ctx.fillRect(px - 15, py - 30, 30, 30);
-      }
-
       function loop() {
         ctx.clearRect(0, 0, width, height);
 
-        // Edge-to-edge dark background
+        // Dark sky background
         const bg = ctx.createLinearGradient(0, 0, 0, height);
-        bg.addColorStop(0, '#1e293b');
-        bg.addColorStop(1, '#0f172a');
+        bg.addColorStop(0, '#0f172a');
+        bg.addColorStop(1, '#1e293b');
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, width, height);
 
-        // Ground line
-        ctx.fillStyle = '#15803d';
+        // Ground Floor
+        ctx.fillStyle = '#166534';
         ctx.fillRect(0, height - 12, width, 12);
 
-        // Draw Slingshot & Left Bird
+        // Game Objects
         slingshot.draw();
-        playerBird.draw();
-
-        // Draw Right Suspended Platform
-        drawFloatingTargetArea();
+        drawSuspendedPlatform();
+        bigBird.draw();
 
         requestAnimationFrame(loop);
       }
       loop();
 
-      // Screen Tap to cycle color
+      // Screen Tap: Red -> Orange -> Grey -> Red
       window.addEventListener('pointerup', () => {
         if (startOverlay.style.display === 'none') {
-          playerBird.energy -= 35;
-          if (playerBird.energy < 0) playerBird.energy = 100;
+          bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
         }
       });
     });
