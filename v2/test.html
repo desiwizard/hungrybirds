@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hungry Birds v2 - Multi Levels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#89cbf8">
+  <!-- Social & Meta Tags -->
+  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/v2/">
+  <meta property="og:site_name" content="Hungry Birds v2">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hungry Birds v2 - Multi Levels">
+  <meta property="og:logo" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg" />
+  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+
+  <!-- Open Graph Images -->
+  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+  <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+
+  <!-- Schema.org Microdata -->
+  <link rel="image_src" href="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+  <meta itemprop="name" content="Hungry Birds v2 - Multi Levels">
+  <meta itemprop="description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+  <meta itemprop="image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hungry Birds v2 - Multi Levels">
+  <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
+  <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+  <link rel="apple-touch-icon" href="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: #89cbf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      touch-action: none;
+      position: fixed;
+      inset: 0;
+    }
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #89cbf8;
+      overflow: hidden;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      background-color: #89cbf8;
+    }
+
+    #rotate-device-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.98);
+      color: #fff;
+      z-index: 99999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 25px;
+    }
+    
+    .phone-anim-box {
+      width: 70px;
+      height: 120px;
+      border: 4px solid #38bdf8;
+      border-radius: 14px;
+      position: relative;
+      margin-bottom: 25px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      animation: phoneRotate 2.6s infinite ease-in-out;
+      background: rgba(255,255,255,0.06);
+    }
+    .phone-anim-box::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 3px;
+      background: #38bdf8;
+      border-radius: 2px;
+    }
+    .phone-anim-box::after {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      border: 2px solid #38bdf8;
+      border-radius: 50%;
+    }
+    @keyframes phoneRotate {
+      0% { transform: rotate(0deg) scale(1); }
+      20% { transform: rotate(0deg) scale(1); }
+      60% { transform: rotate(-90deg) scale(1.1); }
+      80% { transform: rotate(-90deg) scale(1.1); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    .force-play-btn {
+      background: #22c55e;
+      color: #fff;
+      border: 2px solid #fff;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 900;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+      animation: pulseBtn 1.2s infinite alternate;
+      margin-top: 15px;
+    }
+    @keyframes pulseBtn {
+      from { transform: scale(1); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5); }
+      to { transform: scale(1.06); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.9); }
+    }
+
+    @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+      #rotate-device-overlay { display: flex !important; }
+    }
+
+    /* HUD */
+    .hud {
+      position: absolute; 
+      top: calc(8px + env(safe-area-inset-top, 0px)); 
+      left: calc(12px + env(safe-area-inset-left, 0px)); 
+      right: calc(12px + env(safe-area-inset-right, 0px));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 25;
+      gap: 8px;
+    }
+    .hud-pill {
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .energy-digit-box {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 900;
+      font-size: 15px;
+      min-width: 24px;
+      text-align: center;
+      transition: color 0.2s ease;
+    }
+    .energy-high { color: #2ed573; }
+    .energy-mid  { color: #ffa502; }
+    .energy-low  { color: #ff4757; animation: pulseAlert 0.7s infinite alternate; }
+
+    @keyframes pulseAlert {
+      from { transform: scale(1); }
+      to { transform: scale(1.15); }
+    }
+
+    .hud-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: auto;
+    }
+    .circle-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1.5px solid #ffeb3b;
+      color: #ffeb3b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: transform 0.1s ease;
+    }
+    .circle-btn:active { transform: scale(0.92); }
+
+    /* Modals */
+    #level-modal {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 10000;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+    }
+    .modal-box {
+      background: #1e293b;
+      border: 2px solid #facc15;
+      padding: 24px 36px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .modal-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #facc15;
+    }
+    .modal-btn {
+      background: #22c55e;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    }
+    .modal-btn:active { transform: scale(0.96); }
+  </style>
+</head>
+<body>
+
+  <div id="rotate-device-overlay">
+    <div class="phone-anim-box"></div>
+    <h1 style="color: #ffeb3b; font-size: 22px; margin-bottom: 8px;">ROTATE YOUR PHONE</h1>
+    <p style="color: #cbd5e1; font-size: 14px; max-width: 300px; line-height: 1.5;">
+      Please rotate your phone sideways into <b>Landscape</b> mode to start playing.
+    </p>
+    <button id="force-rotate-btn" class="force-play-btn">
+      🔄 TAP TO ROTATE & PLAY
+    </button>
+  </div>
+
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="hud">
+      <div class="hud-pill">
+        <span>Lv <span id="level-num-hud" style="color:#ffeb3b;">1</span></span>
+        <span>|</span>
+        <span>🎯 <span id="target-count-hud">4</span></span>
+        <span>|</span>
+        <span>⚡ <span id="energy-hud-val" class="energy-digit-box energy-high">100</span></span>
+      </div>
+
+      <div class="hud-pill">
+        <span>Score: <span id="score-val" style="color:#ffeb3b;">0</span></span>
+      </div>
+
+      <div class="hud-controls">
+        <button class="circle-btn" id="btn-restart" title="Restart Level">🔄</button>
+        <button class="circle-btn" id="btn-fs" title="Fullscreen">⛶</button>
+      </div>
+    </div>
+
+    <div id="level-modal">
+      <div class="modal-box">
+        <div id="modal-title" class="modal-title">Level Cleared!</div>
+        <p id="modal-desc" style="font-size: 14px; color: #cbd5e1;">All targets destroyed!</p>
+        <button id="modal-action-btn" class="modal-btn">Next Level ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const fsBtn = document.getElementById('btn-fs');
+    const restartBtn = document.getElementById('btn-restart');
+    const targetCountEl = document.getElementById('target-count-hud');
+    const scoreValEl = document.getElementById('score-val');
+    const levelNumHud = document.getElementById('level-num-hud');
+    const energyHudVal = document.getElementById('energy-hud-val');
+
+    const modal = document.getElementById('level-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalActionBtn = document.getElementById('modal-action-btn');
+
+    const forceRotateBtn = document.getElementById("force-rotate-btn");
+    if (forceRotateBtn) {
+      forceRotateBtn.addEventListener("click", async () => {
+        try {
+          const docEl = document.documentElement;
+          if (docEl.requestFullscreen) {
+            await docEl.requestFullscreen();
+          } else if (docEl.webkitRequestFullscreen) {
+            await docEl.webkitRequestFullscreen();
+          }
+
+          if (screen.orientation && screen.orientation.lock) {
+            await screen.orientation.lock("landscape").catch(() => {});
+          }
+        } catch (err) {
+          console.log("Orientation lock note:", err);
+        }
+      });
+    }
+
+    function toggleFullscreen() {
+      const elem = document.documentElement;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen().then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock("landscape").catch(() => {});
+            }
+          }).catch(() => {});
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    }
+    fsBtn.addEventListener('click', toggleFullscreen);
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let animTick = 0;
+    let score = 0;
+    let currentLevel = 1;
+    const totalLevels = 3;
+
+    let birdTypes = [];
+    let selectedBirdIndex = 0;
+    let birdHitboxes = [];
+
+    const maxDragDist = 100;
+    const launchPower = 0.32;
+    const gravity = 0.30;
+    const woodGravity = 0.58;
+
+    let isDragging = false;
+    let dragPos = { x: 0, y: 0 };
+    let flyingBirds = [];
+    let particles = [];
+    let floatingScores = [];
+    let structures = [];
+    let targets = [];
+    let floatingPlatforms = [];
+    let isLevelReady = false;
+    let isLevelCompleted = false;
+    let hasFirstFired = false;
+
+    let bigBirdEnergy = 100;
+    let bigBirdFalling = false;
+    let bigBirdFallY = 0;
+    let bigBirdFallVy = 0;
+
+    function updateEnergyHUD() {
+      const currentVal = Math.max(0, Math.ceil(bigBirdEnergy));
+      if (energyHudVal) {
+        energyHudVal.textContent = currentVal;
+        if (currentVal > 60) {
+          energyHudVal.className = 'energy-digit-box energy-high';
+        } else if (currentVal > 25) {
+          energyHudVal.className = 'energy-digit-box energy-mid';
+        } else {
+          energyHudVal.className = 'energy-digit-box energy-low';
+        }
+      }
+    }
+
+    function resetBirdsForLevel() {
+      birdTypes = [
+        { id: 'red',    name: 'Red',    color: '#ef4444', count: 7, r: 15 },
+        { id: 'yellow', name: 'Yellow', color: '#eab308', count: 7, r: 15 },
+        { id: 'blue',   name: 'Blue',   color: '#38bdf8', count: 8, r: 14 },
+        { id: 'black',  name: 'Bomb',   color: '#1e293b', count: 8, r: 16 }
+      ];
+      selectedBirdIndex = 0;
+      bigBirdEnergy = 100;
+      bigBirdFalling = false;
+      bigBirdFallY = 0;
+      bigBirdFallVy = 0;
+      hasFirstFired = false;
+      updateEnergyHUD();
+    }
+
+    function ensureAvailableBirdSelected() {
+      if (birdTypes[selectedBirdIndex].count <= 0) {
+        const nextIdx = birdTypes.findIndex(b => b.count > 0);
+        if (nextIdx !== -1) selectedBirdIndex = nextIdx;
+      }
+    }
+
+    function addScore(pts) {
+      score += pts;
+      if (scoreValEl) scoreValEl.textContent = score;
+    }
+
+    function updateTargetCountHud() {
+      const aliveCount = targets.filter(t => t.alive).length;
+      if (targetCountEl) targetCountEl.textContent = aliveCount;
+    }
+
+    function createPiece(x, y, w, h, isVertical, color, isRoof = false) {
+      return {
+        x, y, w, h,
+        vx: 0, vy: 0,
+        angle: 0, va: 0,
+        collapsed: false,
+        isVertical,
+        isRoof,
+        color,
+        hp: 2,
+        alpha: 1.0,
+        restTimer: 0
+      };
+    }
+
+    function loadLevel(lvl) {
+      currentLevel = lvl;
+      isLevelReady = false;
+      isLevelCompleted = false;
+      modal.style.display = 'none';
+
+      if (levelNumHud) levelNumHud.textContent = lvl;
+
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+
+      structures = [];
+      targets = [];
+      floatingPlatforms = [];
+      flyingBirds = [];
+      particles = [];
+      floatingScores = [];
+      resetBirdsForLevel();
+
+      if (lvl === 1) {
+        const t1X = width * 0.74;
+        structures.push(createPiece(t1X - 22, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece(t1X + 12, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece(t1X - 26, groundY - 56, 52, 10, false, '#b45309', true));
+        targets.push({ x: t1X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f97316', alive: true, falling: false });
+
+        const t2X = width * 0.88;
+        structures.push(createPiece(t2X - 22, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece(t2X + 12, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece(t2X - 26, groundY - 56, 52, 10, false, '#b45309', true));
+        targets.push({ x: t2X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
+
+        structures.push(createPiece(t2X - 22, groundY - 102, 10, 46, true, '#d99a38'));
+        structures.push(createPiece(t2X + 12, groundY - 102, 10, 46, true, '#d99a38'));
+        structures.push(createPiece(t2X - 26, groundY - 112, 52, 10, false, '#b45309', true));
+        targets.push({ x: t2X, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#22c55e', alive: true, falling: false });
+
+        floatingPlatforms.push({ id: 'p1', x: width * 0.60, y: height * 0.35, w: 100, h: 14, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+        targets.push({ platformId: 'p1', x: width * 0.60, y: height * 0.35 - 16, vx: 0, vy: 0, r: 16, color: '#38bdf8', alive: true, falling: false });
+
+      } else if (lvl === 2) {
+        const fx = width * 0.76;
+        structures.push(createPiece(fx - 36, groundY - 50, 10, 50, true, '#d99a38'));
+        structures.push(createPiece(fx + 26, groundY - 50, 10, 50, true, '#d99a38'));
+        structures.push(createPiece(fx - 42, groundY - 60, 84, 10, false, '#b45309', true));
+        targets.push({ x: fx - 5, y: groundY - 20, vx: 0, vy: 0, r: 16, color: '#ef4444', alive: true, falling: false });
+
+        structures.push(createPiece(fx - 36, groundY - 110, 10, 50, true, '#d99a38'));
+        structures.push(createPiece(fx + 26, groundY - 110, 10, 50, true, '#d99a38'));
+        structures.push(createPiece(fx - 42, groundY - 120, 84, 10, false, '#b45309', true));
+        targets.push({ x: fx - 5, y: groundY - 80, vx: 0, vy: 0, r: 16, color: '#eab308', alive: true, falling: false });
+
+        floatingPlatforms.push({ id: 'p2_1', x: width * 0.52, y: height * 0.38, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+        targets.push({ platformId: 'p2_1', x: width * 0.52, y: height * 0.38 - 14, vx: 0, vy: 0, r: 14, color: '#a855f7', alive: true, falling: false });
+
+        floatingPlatforms.push({ id: 'p2_2', x: width * 0.63, y: height * 0.22, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+        targets.push({ platformId: 'p2_2', x: width * 0.63, y: height * 0.22 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
+
+      } else if (lvl === 3) {
+        const sx = width * 0.80;
+        for (let fl = 0; fl < 3; fl++) {
+          const by = groundY - (fl * 52);
+          structures.push(createPiece(sx - 20, by - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece(sx + 12, by - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece(sx - 26, by - 56, 52, 10, false, '#b45309', true));
+          targets.push({ x: sx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 2 ? '#ec4899' : '#10b981', alive: true, falling: false });
+        }
+
+        const wallX = width * 0.68;
+        structures.push(createPiece(wallX, groundY - 60, 16, 60, true, '#78350f'));
+
+        floatingPlatforms.push({ id: 'p3_1', x: width * 0.50, y: height * 0.30, w: 90, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+        targets.push({ platformId: 'p3_1', x: width * 0.50, y: height * 0.30 - 14, vx: 0, vy: 0, r: 15, color: '#f59e0b', alive: true, falling: false });
+      }
+
+      updateTargetCountHud();
+      setTimeout(() => { isLevelReady = true; }, 400);
+    }
+
+    function checkLevelState() {
+      if (!isLevelReady || isLevelCompleted) return;
+
+      const remainingTargets = targets.filter(t => t.alive).length;
+      const totalBirds = birdTypes.reduce((sum, b) => sum + b.count, 0);
+
+      if (targets.length > 0 && remainingTargets === 0) {
+        isLevelCompleted = true;
+        setTimeout(() => {
+          if (currentLevel < totalLevels) {
+            modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
+            modalDesc.textContent = `Excellent Shot! Ready for Level ${currentLevel + 1}?`;
+            modalActionBtn.textContent = 'Next Level ➔';
+            modalActionBtn.onclick = () => loadLevel(currentLevel + 1);
+          } else {
+            modalTitle.textContent = `Champion! All Levels Won! 🏆`;
+            modalDesc.textContent = `Final Score: ${score}`;
+            modalActionBtn.textContent = 'Play Again 🔄';
+            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
+          }
+          modal.style.display = 'flex';
+        }, 1000);
+      }
+      else if (bigBirdEnergy <= 0 && !isLevelCompleted) {
+        isLevelCompleted = true;
+        setTimeout(() => {
+          modalTitle.textContent = `Giant Bird Starved! 💀`;
+          modalDesc.textContent = `Energy depleted! Keep the giant bird fed.`;
+          modalActionBtn.textContent = 'Retry Level 🔄';
+          modalActionBtn.onclick = () => loadLevel(currentLevel);
+          modal.style.display = 'flex';
+        }, 1200);
+      }
+      else if (totalBirds === 0 && flyingBirds.length === 0 && remainingTargets > 0) {
+        isLevelCompleted = true;
+        setTimeout(() => {
+          modalTitle.textContent = `Level Failed! 😢`;
+          modalDesc.textContent = `${remainingTargets} targets remained unbroken.`;
+          modalActionBtn.textContent = 'Retry Level 🔄';
+          modalActionBtn.onclick = () => loadLevel(currentLevel);
+          modal.style.display = 'flex';
+        }, 1200);
+      }
+    }
+
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      loadLevel(currentLevel);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function spawnExplosion(x, y, color, count = 18) {
+      for (let i = 0; i < count; i++) {
+        const speed = Math.random() * 5 + 1.5;
+        const angle = Math.random() * Math.PI * 2;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1,
+          size: Math.random() * 4 + 2,
+          color,
+          alpha: 1,
+          decay: Math.random() * 0.04 + 0.02
+        });
+      }
+    }
+
+    function addFloatingScore(x, y, text) {
+      floatingScores.push({ x, y, text, alpha: 1 });
+    }
+
+    // ==================== BOMB BIRD MEGA EXPLOSION ====================
+    function triggerBombExplosion(bombX, bombY) {
+      const blastRadius = 140;
+
+      for (let i = 0; i < 48; i++) {
+        const speed = Math.random() * 9 + 2;
+        const angle = Math.random() * Math.PI * 2;
+        particles.push({
+          x: bombX,
+          y: bombY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          size: Math.random() * 8 + 4,
+          color: (i % 3 === 0) ? '#f97316' : ((i % 3 === 1) ? '#ef4444' : '#1e293b'),
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.015
+        });
+      }
+      addFloatingScore(bombX, bombY - 30, 'BOOOM! +500');
+      addScore(500);
+
+      // आस-पास के ब्लॉक उड़ाएँ
+      for (let i = structures.length - 1; i >= 0; i--) {
+        const p = structures[i];
+        const dist = Math.hypot((p.x + p.w / 2) - bombX, (p.y + p.h / 2) - bombY);
+        if (dist < blastRadius) {
+          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 16);
+          structures.splice(i, 1);
+          addScore(150);
+        }
+      }
+
+      // टारगेट नष्ट करें
+      targets.forEach(t => {
+        if (t.alive) {
+          const dist = Math.hypot(t.x - bombX, t.y - bombY);
+          if (dist < blastRadius) {
+            t.alive = false;
+            spawnExplosion(t.x, t.y, t.color, 28);
+            addFloatingScore(t.x, t.y - 20, '+1000');
+            addScore(1000);
+            updateTargetCountHud();
+            bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
+            updateEnergyHUD();
+          }
+        }
+      });
+
+      // झूले और रस्सियों को ध्वस्त करें
+      floatingPlatforms.forEach(fp => {
+        if (!fp.collapsed) {
+          const distPlat = Math.hypot(fp.x - bombX, fp.y - bombY);
+          const leftRopeX = fp.x - (fp.w / 2) + 10;
+          const rightRopeX = fp.x + (fp.w / 2) - 10;
+          const distRope = Math.min(Math.abs(bombX - leftRopeX), Math.abs(bombX - rightRopeX));
+
+          if (distPlat < blastRadius + 20 || (distRope < 45 && bombY <= fp.y + fp.h + 20)) {
+            collapseFloatingPlatform(fp, 5);
+          }
+        }
+      });
+    }
+
+    function breakStructureNear(hitX, hitY, hitPower) {
+      for (let i = structures.length - 1; i >= 0; i--) {
+        const p = structures[i];
+        const dist = Math.hypot(p.x + p.w / 2 - hitX, p.y + p.h / 2 - hitY);
+        if (dist < 80) {
+          p.hp--;
+          if (p.hp <= 0 || hitPower > 4.5) {
+            spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 14);
+            structures.splice(i, 1);
+            addScore(100);
+            continue;
+          }
+          p.collapsed = true;
+          p.vx = (hitPower * 0.6) + (Math.random() * 2 - 1);
+          p.vy = 2.8;
+          p.va = p.isVertical ? (Math.random() * 0.12 + 0.08) : (Math.random() * 0.08 - 0.04);
+        }
+      }
+
+      targets.forEach(t => {
+        if (t.alive) {
+          const dist = Math.hypot(t.x - hitX, t.y - hitY);
+          if (dist < 65) {
+            t.alive = false;
+            spawnExplosion(t.x, t.y, t.color, 24);
+            addFloatingScore(t.x, t.y - 20, '+1000');
+            addScore(1000);
+            updateTargetCountHud();
+          }
+        }
+      });
+    }
+
+    function collapseFloatingPlatform(fp, hitPower = 3) {
+      if (!fp.collapsed) {
+        fp.collapsed = true;
+        fp.vx = (hitPower * 0.4) + (Math.random() * 2 - 1);
+        fp.vy = 2.2;
+        fp.va = (Math.random() * 0.1) - 0.05;
+        spawnExplosion(fp.x, fp.y, '#854d0e', 14);
+        addFloatingScore(fp.x, fp.y - 15, 'Platform Cut!');
+        addScore(250);
+
+        targets.forEach(t => {
+          if (t.platformId === fp.id && t.alive) {
+            t.falling = true;
+            t.vx = fp.vx;
+            t.vy = fp.vy + 1.2;
+          }
+        });
+      }
+    }
+
+    function checkStructuralIntegrity() {
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+
+      structures.forEach(piece => {
+        if (!piece.collapsed) {
+          const isOnGround = Math.abs((piece.y + piece.h) - groundY) < 14;
+
+          if (piece.isRoof) {
+            let leftSupport = false;
+            let rightSupport = false;
+
+            structures.forEach(other => {
+              if (other !== piece && !other.collapsed) {
+                const isUnder = Math.abs(other.y - (piece.y + piece.h)) < 18;
+                if (isUnder) {
+                  if (Math.abs(other.x - piece.x) < 26) leftSupport = true;
+                  if (Math.abs((other.x + other.w) - (piece.x + piece.w)) < 26) rightSupport = true;
+                }
+              }
+            });
+
+            if (!leftSupport || !rightSupport) {
+              piece.collapsed = true;
+              piece.vy = 3.0;
+              piece.vx = leftSupport ? 1.6 : -1.6;
+              piece.va = leftSupport ? 0.11 : -0.11;
+
+              targets.forEach(t => {
+                if (t.alive) {
+                  const dist = Math.hypot(t.x - (piece.x + piece.w / 2), t.y - (piece.y + piece.h / 2));
+                  if (dist < 60) {
+                    t.alive = false;
+                    spawnExplosion(t.x, t.y, t.color, 24);
+                    addFloatingScore(t.x, t.y - 20, '+1000');
+                    addScore(1000);
+                    updateTargetCountHud();
+                  }
+                }
+              });
+            }
+          }
+          else if (piece.isVertical && !isOnGround) {
+            const hasSupportDirectlyBelow = structures.some(other => {
+              if (other !== piece && !other.collapsed) {
+                const xMatch = (piece.x < other.x + other.w + 6) && (piece.x + piece.w > other.x - 6);
+                const isUnderneath = Math.abs(other.y - (piece.y + piece.h)) < 18;
+                return xMatch && isUnderneath;
+              }
+              return false;
+            });
+
+            if (!hasSupportDirectlyBelow) {
+              piece.collapsed = true;
+              piece.vy = 2.8;
+              piece.vx = (Math.random() * 2 - 1);
+              piece.va = (Math.random() * 0.12 - 0.06);
+            }
+          }
+        }
+      });
+    }
+
+    const bigBird = {
+      draw(cliffW, cliffY, groundY) {
+        let isCritical = (bigBirdEnergy <= 25 && bigBirdEnergy > 0);
+        let flickerRed = Math.floor(animTick / 6) % 2 === 0;
+
+        let mainColor = '#ef4444';
+        let armorColor = '#991b1b';
+        let eyeColor = '#fef08a';
+        let glowColor = 'rgba(239, 68, 68, 0.45)';
+
+        if (bigBirdEnergy <= 0) {
+          mainColor = '#475569';
+          armorColor = '#1e293b';
+          eyeColor = '#94a3b8';
+          glowColor = 'rgba(71, 85, 105, 0.2)';
+        } else if (isCritical) {
+          mainColor = flickerRed ? '#ef4444' : '#475569';
+          armorColor = flickerRed ? '#991b1b' : '#1e293b';
+          eyeColor = flickerRed ? '#fef08a' : '#cbd5e1';
+          glowColor = flickerRed ? 'rgba(239, 68, 68, 0.75)' : 'rgba(71, 85, 105, 0.3)';
+        } else if (bigBirdEnergy <= 65) {
+          mainColor = '#f97316';
+          armorColor = '#9a3412';
+          eyeColor = '#fef08a';
+          glowColor = 'rgba(249, 115, 22, 0.45)';
+        }
+
+        const tremble = isCritical ? (Math.random() * 2.5 - 1.25) : 0;
+        const cx = cliffW * 0.46 + tremble;
+        let cy = (cliffY - 36);
+
+        if (bigBirdFalling) {
+          cy += bigBirdFallY;
+        }
+
+        ctx.save();
+        ctx.fillStyle = glowColor;
+        ctx.beginPath();
+        ctx.moveTo(cx - 36, cy + 18);
+        ctx.lineTo(cx - 24, cy - 38);
+        ctx.lineTo(cx + 20, cy - 32);
+        ctx.lineTo(cx + 42, cy);
+        ctx.lineTo(cx + 18, cy + 28);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = armorColor;
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cx - 8, cy - 24);
+        ctx.lineTo(cx - 34, cy - 42);
+        ctx.lineTo(cx - 18, cy - 14);
+        ctx.lineTo(cx - 40, cy - 20);
+        ctx.lineTo(cx - 14, cy);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = mainColor;
+        ctx.beginPath();
+        ctx.moveTo(cx - 26, cy - 12);
+        ctx.lineTo(cx - 10, cy - 30);
+        ctx.lineTo(cx + 18, cy - 22);
+        ctx.lineTo(cx + 30, cy + 4);
+        ctx.lineTo(cx + 12, cy + 26);
+        ctx.lineTo(cx - 22, cy + 24);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = armorColor;
+        ctx.beginPath();
+        ctx.moveTo(cx - 4, cy - 10);
+        ctx.lineTo(cx + 16, cy - 6);
+        ctx.lineTo(cx + 22, cy + 8);
+        ctx.lineTo(cx + 8, cy + 22);
+        ctx.lineTo(cx - 8, cy + 12);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(cx + 24, cy - 14);
+        ctx.lineTo(cx + 52, cy - 2);
+        ctx.lineTo(cx + 28, cy + 14);
+        ctx.lineTo(cx + 26, cy + 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx + 26, cy - 2);
+        ctx.lineTo(cx + 44, cy - 1);
+        ctx.stroke();
+
+        if (bigBirdEnergy <= 0) {
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(cx + 8, cy - 16); ctx.lineTo(cx + 16, cy - 8);
+          ctx.moveTo(cx + 16, cy - 16); ctx.lineTo(cx + 8, cy - 8);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.moveTo(cx + 4, cy - 20);
+          ctx.lineTo(cx + 22, cy - 16);
+          ctx.lineTo(cx + 16, cy - 6);
+          ctx.lineTo(cx + 2, cy - 10);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = eyeColor;
+          ctx.beginPath();
+          ctx.moveTo(cx + 8, cy - 16);
+          ctx.lineTo(cx + 19, cy - 13);
+          ctx.lineTo(cx + 13, cy - 8);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    };
+
+    function drawFloatingPlatforms(groundY) {
+      for (let i = floatingPlatforms.length - 1; i >= 0; i--) {
+        const fp = floatingPlatforms[i];
+
+        if (fp.collapsed) {
+          fp.x += fp.vx;
+          fp.y += fp.vy;
+          fp.vy += woodGravity;
+          fp.angle += fp.va;
+
+          if (fp.x + fp.w / 2 >= width - 6) {
+            fp.x = width - 6 - fp.w / 2;
+            fp.vx = -Math.abs(fp.vx) * 0.4;
+          }
+
+          structures.forEach(p => {
+            if (!p.collapsed) {
+              const hitDist = Math.hypot((p.x + p.w / 2) - fp.x, (p.y + p.h / 2) - fp.y);
+              if (hitDist < 45) {
+                p.collapsed = true;
+                p.vy = fp.vy * 0.8 + 2.0;
+                p.vx = fp.vx * 0.8 + (Math.random() * 2 - 1);
+                p.va = (Math.random() * 0.15) - 0.07;
+                spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 12);
+                addScore(100);
+              }
+            }
+          });
+
+          if (fp.y + fp.h >= groundY) {
+            fp.y = groundY - fp.h;
+            fp.vy = -fp.vy * 0.15;
+            fp.vx *= 0.70;
+            fp.va *= 0.60;
+            if (Math.abs(fp.vy) < 0.3) fp.vy = 0;
+            if (Math.abs(fp.vx) < 0.1) fp.vx = 0;
+            if (Math.abs(fp.va) < 0.01) fp.va = 0;
+
+            fp.restTimer++;
+            if (fp.restTimer > 60) {
+              fp.alpha -= 0.035;
+              if (fp.alpha <= 0) {
+                spawnExplosion(fp.x, fp.y, '#854d0e', 6);
+                floatingPlatforms.splice(i, 1);
+                continue;
+              }
+            }
+          }
+        }
+
+        ctx.save();
+        ctx.globalAlpha = fp.alpha;
+
+        if (!fp.collapsed) {
+          ctx.strokeStyle = '#1e293b';
+          ctx.lineWidth = 3.5;
+
+          ctx.beginPath();
+          ctx.moveTo(fp.x - (fp.w / 2) + 10, 0);
+          ctx.lineTo(fp.x - (fp.w / 2) + 10, fp.y);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(fp.x + (fp.w / 2) - 10, 0);
+          ctx.lineTo(fp.x + (fp.w / 2) - 10, fp.y);
+          ctx.stroke();
+
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(fp.x - (fp.w / 2) + 10, fp.y, 4, 0, Math.PI * 2);
+          ctx.arc(fp.x + (fp.w / 2) - 10, fp.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.translate(fp.x, fp.y + (fp.h / 2));
+        ctx.rotate(fp.angle);
+        ctx.fillStyle = '#854d0e';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2.5;
+        ctx.fillRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
+        ctx.strokeRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
+        ctx.restore();
+      }
+    }
+
+    function drawBirdGridDeck(cliffW, groundY) {
+      birdHitboxes = [];
+      const gridX = cliffW + 12;
+      const boxW = 58;
+      const boxH = 46;
+      const gap = 8;
+      const totalW = (boxW * 2) + gap;
+      const totalH = (boxH * 2) + gap;
+      const gridY = groundY - totalH - 10;
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(22, 101, 52, 0.88)';
+      ctx.strokeStyle = '#14532d';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.rect(gridX - 6, gridY - 6, totalW + 12, totalH + 12);
+      ctx.fill();
+      ctx.stroke();
+
+      birdTypes.forEach((b, i) => {
+        const col = i % 2;
+        const row = Math.floor(i / 2);
+        const bx = gridX + (col * (boxW + gap));
+        const by = gridY + (row * (boxH + gap));
+        const isSelected = (i === selectedBirdIndex);
+        const isEmpty = (b.count <= 0);
+
+        birdHitboxes.push({ x: bx + (boxW / 2), y: by + (boxH / 2), w: boxW, h: boxH, index: i });
+
+        if (isSelected) {
+          ctx.fillStyle = '#bbf7d0';
+          ctx.strokeStyle = '#f59e0b';
+          ctx.lineWidth = 3;
+        } else {
+          ctx.fillStyle = '#dcfce7';
+          ctx.strokeStyle = '#86efac';
+          ctx.lineWidth = 1.5;
+        }
+
+        ctx.beginPath();
+        ctx.rect(bx, by, boxW, boxH);
+        ctx.fill();
+        ctx.stroke();
+
+        const birdCx = bx + 22;
+        const birdCy = by + 26;
+
+        ctx.beginPath();
+        ctx.arc(birdCx, birdCy, b.r, 0, Math.PI * 2);
+        ctx.fillStyle = isEmpty ? '#94a3b8' : b.color;
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(birdCx + 3, birdCy - 3, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(birdCx + 4.2, birdCy - 3, 1.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(birdCx + b.r - 2, birdCy - 3);
+        ctx.lineTo(birdCx + b.r + 8, birdCy);
+        ctx.lineTo(birdCx + b.r - 2, birdCy + 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        const badgeW = 24;
+        const badgeH = 16;
+        const badgeX = bx + boxW - badgeW - 3;
+        const badgeY = by + 4;
+
+        ctx.fillStyle = isSelected ? '#15803d' : '#14532d';
+        ctx.fillRect(badgeX, badgeY, badgeW, badgeH);
+        ctx.strokeStyle = isSelected ? '#f59e0b' : '#166534';
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(badgeX, badgeY, badgeW, badgeH);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`×${b.count}`, badgeX + (badgeW / 2), badgeY + (badgeH / 2) + 0.5);
+      });
+      ctx.restore();
+    }
+
+    function renderBirdAt(bx, by, birdObj, rotation = 0) {
+      ctx.save();
+      ctx.translate(bx, by);
+      if (rotation) ctx.rotate(rotation);
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 15, 0, Math.PI * 2);
+      ctx.fillStyle = birdObj.color;
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(4, -2, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(5.5, -2, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.moveTo(10, -2);
+      ctx.lineTo(19, 1);
+      ctx.lineTo(10, 4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawTrajectory(anchorX, anchorY, birdX, birdY, groundY) {
+      const vx = (anchorX - birdX) * launchPower;
+      const vy = (anchorY - birdY) * launchPower;
+      let simX = birdX;
+      let simY = birdY;
+      let simVx = vx;
+      let simVy = vy;
+
+      ctx.save();
+      for (let step = 0; step < 30; step++) {
+        simX += simVx;
+        simY += simVy;
+        simVy += gravity;
+        if (simY > groundY) break;
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.15, 0.95 - (step * 0.03))})`;
+        ctx.beginPath();
+        ctx.arc(simX, simY, Math.max(2, 4.5 - (step * 0.08)), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function render() {
+      animTick++;
+      ctx.clearRect(0, 0, width, height);
+
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+
+      if (hasFirstFired && !isLevelCompleted) {
+        bigBirdEnergy = Math.max(0, bigBirdEnergy - 0.024);
+        updateEnergyHUD();
+
+        if (bigBirdEnergy <= 0 && !bigBirdFalling) {
+          bigBirdFalling = true;
+          bigBirdFallVy = -3;
+        }
+      }
+
+      if (bigBirdFalling) {
+        bigBirdFallVy += 0.35;
+        bigBirdFallY += bigBirdFallVy;
+        const cliffY = height * 0.40;
+        if ((cliffY - 36) + bigBirdFallY >= groundY - 20) {
+          bigBirdFallY = groundY - 20 - (cliffY - 36);
+          bigBirdFallVy = 0;
+        }
+      }
+
+      ctx.fillStyle = '#89cbf8';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#9aa0d9';
+      ctx.beginPath();
+      ctx.moveTo(width * 0.20, groundY);
+      ctx.lineTo(width * 0.38, height * 0.44);
+      ctx.lineTo(width * 0.56, groundY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#b3b8eb';
+      ctx.beginPath();
+      ctx.moveTo(width * 0.44, groundY);
+      ctx.lineTo(width * 0.64, height * 0.38);
+      ctx.lineTo(width * 0.84, groundY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#42281d';
+      ctx.fillRect(0, groundY, width, groundH);
+      ctx.fillStyle = '#55a234';
+      ctx.fillRect(0, groundY, width, 14);
+
+      const cliffW = width * 0.11;
+      const cliffY = height * 0.40;
+      ctx.fillStyle = '#4a2c20';
+      ctx.beginPath();
+      ctx.moveTo(0, cliffY);
+      ctx.lineTo(cliffW, cliffY);
+      ctx.lineTo(cliffW + 18, groundY);
+      ctx.lineTo(0, groundY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#55a234';
+      ctx.fillRect(0, cliffY, cliffW + 4, 10);
+
+      bigBird.draw(cliffW, cliffY, groundY);
+      drawBirdGridDeck(cliffW, groundY);
+
+      const sx = cliffW + 168;
+      const sy = groundY - 105;
+      const leftForkX = sx - 18;
+      const leftForkY = sy - 34;
+      const rightForkX = sx + 18;
+      const rightForkY = sy - 34;
+      const centerAnchorX = sx;
+      const centerAnchorY = sy - 20;
+
+      ctx.strokeStyle = '#3e2316';
+      ctx.lineWidth = 11;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx, groundY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(leftForkX, leftForkY);
+      ctx.stroke();
+
+      const currentBird = birdTypes[selectedBirdIndex];
+      const hasBirds = currentBird && currentBird.count > 0;
+      let birdX = centerAnchorX;
+      let birdY = centerAnchorY;
+
+      if (isDragging) {
+        birdX = dragPos.x;
+        birdY = dragPos.y;
+      } else if (hasBirds) {
+        birdY += Math.sin(animTick * 0.08) * 1.5;
+      }
+
+      if (hasBirds) {
+        ctx.strokeStyle = '#1e1b18';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.moveTo(leftForkX, leftForkY);
+        ctx.lineTo(birdX - 6, birdY);
+        ctx.stroke();
+      }
+
+      if (isDragging && hasBirds) {
+        drawTrajectory(centerAnchorX, centerAnchorY, birdX, birdY, groundY);
+      }
+
+      if (hasBirds) {
+        renderBirdAt(birdX, birdY, currentBird);
+      }
+
+      ctx.strokeStyle = '#3e2316';
+      ctx.lineWidth = 11;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(rightForkX, rightForkY);
+      ctx.stroke();
+
+      if (hasBirds) {
+        ctx.strokeStyle = '#292524';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.moveTo(rightForkX, rightForkY);
+        ctx.lineTo(birdX + 6, birdY);
+        ctx.stroke();
+      }
+
+      drawFloatingPlatforms(groundY);
+      checkStructuralIntegrity();
+
+      // ==================== FLYING BIRDS COLLISION ====================
+      for (let i = flyingBirds.length - 1; i >= 0; i--) {
+        const fb = flyingBirds[i];
+        fb.x += fb.vx;
+        fb.y += fb.vy;
+        fb.vy += gravity;
+
+        const angle = Math.atan2(fb.vy, fb.vx);
+        renderBirdAt(fb.x, fb.y, fb, angle);
+
+        let birdExploded = false;
+
+        // Targets Collision
+        for (let t of targets) {
+          if (t.alive) {
+            const dist = Math.hypot(fb.x - t.x, fb.y - t.y);
+            if (dist < 15 + t.r) {
+              if (fb.id === 'black') {
+                triggerBombExplosion(fb.x, fb.y);
+                flyingBirds.splice(i, 1);
+                birdExploded = true;
+                break;
+              }
+
+              t.alive = false;
+              spawnExplosion(t.x, t.y, t.color, 24);
+              addFloatingScore(t.x, t.y - 20, '+1000');
+              addScore(1000);
+              updateTargetCountHud();
+
+              bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
+              updateEnergyHUD();
+
+              if (t.platformId) {
+                const plat = floatingPlatforms.find(p => p.id === t.platformId);
+                if (plat) collapseFloatingPlatform(plat, 4);
+              }
+
+              breakStructureNear(t.x, t.y, 4);
+              fb.vx *= 0.6;
+            }
+          }
+        }
+        if (birdExploded) continue;
+
+        // ==================== रस्सियों और झूले पर सटीक टक्कर ====================
+        for (let fp of floatingPlatforms) {
+          if (!fp.collapsed) {
+            const leftRopeX = fp.x - (fp.w / 2) + 10;
+            const rightRopeX = fp.x + (fp.w / 2) - 10;
+
+            // छत (y=0) से लेकर झूले के बेस तक पूरी रस्सी की हिटबॉक्स
+            const hitLeftRope = Math.abs(fb.x - leftRopeX) < 18 && (fb.y >= 0 && fb.y <= fp.y + fp.h);
+            const hitRightRope = Math.abs(fb.x - rightRopeX) < 18 && (fb.y >= 0 && fb.y <= fp.y + fp.h);
+
+            // अगर बॉम्ब बर्ड रस्सी को छूता है तो तुरंत फटेगा
+            if (hitLeftRope || hitRightRope) {
+              if (fb.id === 'black') {
+                triggerBombExplosion(fb.x, fb.y);
+                flyingBirds.splice(i, 1);
+                birdExploded = true;
+                break;
+              }
+              collapseFloatingPlatform(fp, Math.abs(fb.vx));
+              spawnExplosion(fb.x, fb.y, '#94a3b8', 12);
+              fb.vx *= -0.3;
+              fb.vy = 1.0;
+            }
+
+            const nearestX = Math.max(fp.x - fp.w / 2, Math.min(fb.x, fp.x + fp.w / 2));
+            const nearestY = Math.max(fp.y, Math.min(fb.y, fp.y + fp.h));
+            const dist = Math.hypot(fb.x - nearestX, fb.y - nearestY);
+            if (dist < 18) {
+              if (fb.id === 'black') {
+                triggerBombExplosion(fb.x, fb.y);
+                flyingBirds.splice(i, 1);
+                birdExploded = true;
+                break;
+              }
+              collapseFloatingPlatform(fp, Math.abs(fb.vx));
+              fb.vx *= 0.75;
+            }
+          }
+        }
+        if (birdExploded) continue;
+
+        // Structures Collision
+        for (let k = structures.length - 1; k >= 0; k--) {
+          const p = structures[k];
+          const nearestX = Math.max(p.x, Math.min(fb.x, p.x + p.w));
+          const nearestY = Math.max(p.y, Math.min(fb.y, p.y + p.h));
+          const dist = Math.hypot(fb.x - nearestX, fb.y - nearestY);
+
+          if (dist < 16) {
+            if (fb.id === 'black') {
+              triggerBombExplosion(fb.x, fb.y);
+              flyingBirds.splice(i, 1);
+              birdExploded = true;
+              break;
+            }
+
+            p.hp--;
+            spawnExplosion(nearestX, nearestY, p.color, 12);
+            addScore(150);
+
+            if (p.hp <= 0 || Math.hypot(fb.vx, fb.vy) > 4) {
+              spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 16);
+              structures.splice(k, 1);
+            } else {
+              breakStructureNear(nearestX, nearestY, Math.abs(fb.vx));
+            }
+
+            fb.vx *= -0.25;
+            fb.vy = 0.8;
+            break;
+          }
+        }
+        if (birdExploded) continue;
+
+        // Ground Collision
+        if (fb.y >= groundY - 12) {
+          if (fb.id === 'black') {
+            triggerBombExplosion(fb.x, groundY - 12);
+            flyingBirds.splice(i, 1);
+            continue;
+          }
+          fb.y = groundY - 12;
+          fb.vy = -fb.vy * 0.35;
+          fb.vx *= 0.7;
+          fb.bounces = (fb.bounces || 0) + 1;
+          if (fb.bounces > 4 || Math.abs(fb.vx) < 0.3) {
+            flyingBirds.splice(i, 1);
+          }
+        } else if (fb.x > width + 60) {
+          flyingBirds.splice(i, 1);
+        }
+      }
+
+      // Structures physics
+      for (let i = structures.length - 1; i >= 0; i--) {
+        const p = structures[i];
+
+        if (p.collapsed) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += woodGravity;
+          p.angle += p.va;
+
+          if (p.x + p.w >= width - 6) {
+            p.x = width - 6 - p.w;
+            p.vx = -Math.abs(p.vx) * 0.3;
+          }
+
+          if (p.y + p.h >= groundY) {
+            p.y = groundY - p.h;
+            p.vy = -p.vy * 0.15;
+            p.vx *= 0.70;
+            p.va *= 0.60;
+            if (Math.abs(p.vy) < 0.3) p.vy = 0;
+            if (Math.abs(p.vx) < 0.1) p.vx = 0;
+            if (Math.abs(p.va) < 0.01) p.va = 0;
+          }
+
+          p.restTimer++;
+          if (p.restTimer > 55) {
+            p.alpha -= 0.035;
+            if (p.alpha <= 0) {
+              spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 6);
+              structures.splice(i, 1);
+              continue;
+            }
+          }
+
+          for (let t of targets) {
+            if (t.alive) {
+              const dist = Math.hypot(t.x - (p.x + p.w / 2), t.y - (p.y + p.h / 2));
+              if (dist < t.r + 20) {
+                t.alive = false;
+                spawnExplosion(t.x, t.y, t.color, 24);
+                addFloatingScore(t.x, t.y - 20, '+1000');
+                addScore(1000);
+                updateTargetCountHud();
+
+                bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
+                updateEnergyHUD();
+              }
+            }
+          }
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+        ctx.rotate(p.angle);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+
+      // Targets
+      for (let t of targets) {
+        if (t.alive) {
+          if (t.falling) {
+            t.x += t.vx;
+            t.y += t.vy;
+            t.vy += woodGravity;
+
+            if (t.y + t.r >= groundY - 4 || t.x + t.r >= width - 12) {
+              t.alive = false;
+              spawnExplosion(Math.min(t.x, width - 20), groundY - 10, t.color, 24);
+              addFloatingScore(Math.min(t.x, width - 30), groundY - 24, '+1000');
+              addScore(1000);
+              updateTargetCountHud();
+
+              bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
+              updateEnergyHUD();
+              continue;
+            }
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
+          ctx.fillStyle = t.color;
+          ctx.fill();
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(t.x - 4, t.y - 3, 3.5, 0, Math.PI * 2);
+          ctx.arc(t.x + 4, t.y - 3, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#000000';
+          ctx.beginPath();
+          ctx.arc(t.x - 3.5, t.y - 3, 1.8, 0, Math.PI * 2);
+          ctx.arc(t.x + 4.5, t.y - 3, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(t.x, t.y + 4, 5, 0, Math.PI);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      // Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += gravity * 0.4;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+          ctx.restore();
+        }
+      }
+
+      // Floating Scores
+      for (let i = floatingScores.length - 1; i >= 0; i--) {
+        const fs = floatingScores[i];
+        fs.y -= 1.2;
+        fs.alpha -= 0.02;
+
+        if (fs.alpha <= 0) {
+          floatingScores.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.globalAlpha = fs.alpha;
+          ctx.fillStyle = '#fde047';
+          ctx.font = 'bold 18px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(fs.text, fs.x, fs.y);
+          ctx.restore();
+        }
+      }
+
+      checkLevelState();
+      requestAnimationFrame(render);
+    }
+
+    // Touch & Pointer Events
+    function getCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (cx - rect.left) * (width / rect.width),
+        y: (cy - rect.top) * (height / rect.height)
+      };
+    }
+
+    window.addEventListener('pointerdown', (e) => {
+      if (modal.style.display === 'flex' || bigBirdFalling) return;
+      if (e.target.closest('.hud')) return;
+
+      const pos = getCoords(e);
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+      const cliffW = width * 0.11;
+      const anchorX = cliffW + 168;
+      const anchorY = groundY - 125;
+
+      let gridClicked = false;
+      for (let hb of birdHitboxes) {
+        if (pos.x >= hb.x - (hb.w / 2) && pos.x <= hb.x + (hb.w / 2) &&
+            pos.y >= hb.y - (hb.h / 2) && pos.y <= hb.y + (hb.h / 2)) {
+          gridClicked = true;
+          if (birdTypes[hb.index].count > 0) {
+            selectedBirdIndex = hb.index;
+          }
+          break;
+        }
+      }
+      if (gridClicked) return;
+
+      const distToSling = Math.hypot(pos.x - anchorX, pos.y - anchorY);
+      const currentBird = birdTypes[selectedBirdIndex];
+
+      if (distToSling < 52 && currentBird && currentBird.count > 0) {
+        isDragging = true;
+        dragPos = { x: pos.x, y: pos.y };
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+
+      const pos = getCoords(e);
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+      const cliffW = width * 0.11;
+      const anchorX = cliffW + 168;
+      const anchorY = groundY - 125;
+
+      const dx = pos.x - anchorX;
+      const dy = pos.y - anchorY;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > maxDragDist) {
+        const angle = Math.atan2(dy, dx);
+        dragPos.x = anchorX + Math.cos(angle) * maxDragDist;
+        dragPos.y = anchorY + Math.sin(angle) * maxDragDist;
+      } else {
+        dragPos.x = pos.x;
+        dragPos.y = pos.y;
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+      const cliffW = width * 0.11;
+      const anchorX = cliffW + 168;
+      const anchorY = groundY - 125;
+
+      const dx = anchorX - dragPos.x;
+      const dy = anchorY - dragPos.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > 14) {
+        const activeBird = birdTypes[selectedBirdIndex];
+        if (activeBird && activeBird.count > 0) {
+          hasFirstFired = true;
+          flyingBirds.push({
+            id: activeBird.id,
+            x: dragPos.x,
+            y: dragPos.y,
+            vx: dx * launchPower,
+            vy: dy * launchPower,
+            color: activeBird.color,
+            name: activeBird.name
+          });
+
+          activeBird.count--;
+          ensureAvailableBirdSelected();
+        }
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      loadLevel(currentLevel);
+    });
+
+    resizeCanvas();
+    render();
+  </script>
+</body>
+</html>
