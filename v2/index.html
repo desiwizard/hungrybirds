@@ -36,6 +36,7 @@
       display: block;
       z-index: 1;
     }
+    /* Top HUD */
     #top-hud {
       position: absolute;
       top: max(8px, env(safe-area-inset-top));
@@ -84,6 +85,7 @@
       border: 2px solid #ca8a04;
       font-weight: bold;
     }
+    /* 1-Tap Overlay */
     #start-overlay {
       position: absolute;
       top: 0;
@@ -192,7 +194,7 @@
         enterFullscreenDirectly();
       });
 
-      // --- V2 اینگولر شکاری باس ایگل (Angular Mecha-Eagle) ---
+      // --- V2 اینگولر شکاری باس ایگل (Big Bird) ---
       const bigBird = {
         stateIndex: 0,
         states: [
@@ -221,7 +223,7 @@
           ctx.closePath();
           ctx.fill();
 
-          // 2. نوکیلے کریسٹ پر / اسپلٹرز
+          // 2. نوکیلے پر (Spikes)
           ctx.fillStyle = s.armor;
           ctx.strokeStyle = '#0f172a';
           ctx.lineWidth = 2.5;
@@ -236,7 +238,7 @@
           ctx.fill();
           ctx.stroke();
 
-          // 3. اینگولر باڈی (گولائی ختم)
+          // 3. اینگولر باڈی
           ctx.fillStyle = s.main;
           ctx.beginPath();
           ctx.moveTo(cx - 26, cy - 12);
@@ -277,7 +279,7 @@
           ctx.lineTo(cx + 44, cy - 1);
           ctx.stroke();
 
-          // 6. غصے والی اینگولر آنکھ
+          // 6. اینگولر آنکھ
           ctx.fillStyle = '#0f172a';
           ctx.beginPath();
           ctx.moveTo(cx + 4, cy - 20);
@@ -299,16 +301,17 @@
         }
       };
 
-      // --- ہوا میں معلق پلیٹ فارم (Suspended Slab) ---
+      // --- ہوا میں معلق جھولا / سلیب (دائیں جانب ایڈجسٹڈ) ---
       function drawFloatingPlatform() {
-        const fx = width * 0.50;
-        const fy = height * 0.38;
-        const fw = 110;
+        // سینٹر (0.50) کے بجائے دائیں جانب (0.60) کر دیا ہے
+        const fx = width * 0.60;
+        const fy = height * 0.35;
+        const fw = 100;
         const fh = 14;
 
         ctx.save();
 
-        // لٹکتی ہوئی کیبلز
+        // اوپر سے لٹکتی کیبلز
         ctx.strokeStyle = '#1e293b';
         ctx.lineWidth = 3;
 
@@ -328,7 +331,7 @@
         ctx.arc(fx + (fw / 2) - 12, fy, 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // لکڑی کا تختہ
+        // لٹکتی لکڑی کی سلیب
         ctx.fillStyle = '#854d0e';
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2.5;
@@ -338,8 +341,8 @@
         ctx.fillStyle = '#a16207';
         ctx.fillRect(fx - (fw / 2) + 4, fy + 2, fw - 8, 3);
 
-        // تختے کے اوپر ٹارگٹ
-        const tr = 17;
+        // جھولے کے اوپر ٹارگٹ
+        const tr = 16;
         const tx = fx;
         const ty = fy - tr;
 
@@ -472,12 +475,12 @@
         ctx.closePath();
         ctx.fill();
 
-        // 9. معلق لکڑی کا تختہ
+        // 9. دائیں طرف کھسکایا گیا ہوا میں لٹکتا جھولا
         drawFloatingPlatform();
 
-        // 10. دائیں طرف کے ٹارگٹس
+        // 10. زمین کے ٹارگٹس (دائیں جانب ایڈجسٹڈ)
         // ٹاور 1
-        const t1X = width * 0.68;
+        const t1X = width * 0.74;
         ctx.fillStyle = '#d99a38';
         ctx.fillRect(t1X - 26, groundY - 46, 10, 46);
         ctx.strokeRect(t1X - 26, groundY - 46, 10, 46);
@@ -493,7 +496,7 @@
         ctx.stroke();
 
         // ٹاور 2
-        const t2X = width * 0.84;
+        const t2X = width * 0.88;
         ctx.fillRect(t2X - 26, groundY - 46, 10, 46);
         ctx.strokeRect(t2X - 26, groundY - 46, 10, 46);
         ctx.fillRect(t2X + 16, groundY - 46, 10, 46);
@@ -522,7 +525,7 @@
       }
       render();
 
-      // اسکرین پر ٹیپ کرنے سے رنگ بدلنا
+      // ٹیپ کرنے پر کلر سائیکل
       window.addEventListener('pointerup', () => {
         if (startOverlay.style.display === 'none') {
           bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
