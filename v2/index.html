@@ -3,45 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0d0f18">
   <title>Hungry Birds v2</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #80c8f8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #game-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+    #gameCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+    }
+    /* Top HUD matching V1 */
+    #top-hud {
+      position: absolute;
+      top: max(8px, env(safe-area-inset-top));
+      left: max(12px, env(safe-area-inset-left));
+      right: max(12px, env(safe-area-inset-right));
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+    .hud-badge {
+      background: rgba(15, 23, 42, 0.85);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .hud-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+    }
+    .circle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    #btn-fs {
+      background: #fef08a;
+      border: 2px solid #ca8a04;
+      font-weight: bold;
+    }
+    /* Start Banner */
+    #start-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      cursor: pointer;
+    }
+    .play-badge {
+      background: #ff2e55;
+      padding: 12px 28px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(255, 46, 85, 0.5);
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Fullscreen Tap Layer -->
   <div id="start-overlay">
-    <div class="play-badge">TAP TO PLAY</div>
-    <div id="rotate-hint" style="margin-top: 14px; font-size: 13px; color: #cbd5e1;">
-      📱 Tap to auto-rotate & go full screen
-    </div>
+    <div class="play-badge">TAP TO START</div>
+    <p style="margin-top: 10px; font-size: 13px; color: #cbd5e1;">Tap anywhere to enter full-screen</p>
   </div>
 
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
 
     <header id="top-hud">
-      <div class="hud-left">
-        <button id="btn-pause" class="hud-btn" aria-label="Pause Game">⏸</button>
-        <button id="btn-sound" class="hud-btn" aria-label="Toggle Sound">🔊</button>
+      <div class="hud-badge">
+        <span>Lv 1 • Normal</span> | <span>🎯 8</span> | <span style="color:#fde047;">⚡ 15</span>
       </div>
 
-      <div class="hud-right">
-        <div class="score-badge">
-          <span class="score-label">SCORE</span>
-          <span id="score-val">0</span>
-        </div>
-        <div class="level-badge">
-          <span class="level-label">LVL</span>
-          <span id="level-val">1</span>
-        </div>
+      <div class="hud-badge">
+        <span>Score: <span id="score-val">0</span></span>
+      </div>
+
+      <div class="hud-controls">
+        <button class="circle-btn" title="Music">🎵</button>
+        <button class="circle-btn" title="Sound">🔊</button>
+        <button class="circle-btn" title="Rank">🏆</button>
+        <button class="circle-btn" title="Help">❓</button>
+        <button id="btn-fs" class="circle-btn" title="Fullscreen">⛶</button>
       </div>
     </header>
-
-    <footer id="bottom-hud">
-      <div id="bird-queue" class="queue-container"></div>
-      <div id="action-hint" class="hint-text">Tap anywhere: Red ➔ Orange ➔ Grey</div>
-    </footer>
   </div>
 
   <script>
@@ -49,7 +146,7 @@
       const canvas = document.getElementById('gameCanvas');
       const ctx = canvas.getContext('2d');
       const startOverlay = document.getElementById('start-overlay');
-      const container = document.getElementById('game-container');
+      const fsBtn = document.getElementById('btn-fs');
 
       let width = window.innerWidth;
       let height = window.innerHeight;
@@ -68,219 +165,259 @@
       window.addEventListener('resize', () => setTimeout(resizeCanvas, 150));
       resizeCanvas();
 
-      // Reliable Fullscreen & Landscape for Mobile/Brave
-      function triggerMobileFullscreen() {
+      // Fullscreen & Orientation function
+      function goFullscreen() {
         startOverlay.style.display = 'none';
-
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen().catch(() => {});
-        } else if (elem.webkitRequestFullscreen) {
-          elem.webkitRequestFullscreen();
+        const docEl = document.documentElement;
+        const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (req) {
+          req.call(docEl).then(() => {
+            if (screen.orientation && screen.orientation.lock) {
+              screen.orientation.lock('landscape').catch(() => {});
+            }
+          }).catch(() => {});
         }
-
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock('landscape').catch(() => {});
-        }
-
-        setTimeout(resizeCanvas, 350);
+        setTimeout(resizeCanvas, 300);
       }
 
+      startOverlay.addEventListener('click', goFullscreen);
       startOverlay.addEventListener('touchend', (e) => {
         e.preventDefault();
-        triggerMobileFullscreen();
+        goFullscreen();
       }, { passive: false });
 
-      startOverlay.addEventListener('click', triggerMobileFullscreen);
+      fsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        goFullscreen();
+      });
 
-      // --- Left Cliff & Left Big Bird ---
+      // --- Big Bird on Cliff (V1 Oval Style with 3 Energy States) ---
       const bigBird = {
         stateIndex: 0,
         states: [
-          { name: 'Hungry Rage', color: '#ff2e55' },
-          { name: 'Craving',     color: '#ff922b' },
-          { name: 'Starving',    color: '#64748b' }
+          { name: 'Rage', color: '#e62e2d' },    // 1. Red
+          { name: 'Craving', color: '#f97316' }, // 2. Orange
+          { name: 'Starving', color: '#64748b' } // 3. Slate Grey
         ],
         getColor() {
           return this.states[this.stateIndex].color;
         },
-        draw() {
-          const cliffW = width * 0.22;
-          const cliffX = 0;
-          const cliffY = height * 0.52;
-
-          // 1. Rocky Cliff on LEFT
-          ctx.fillStyle = '#334155';
-          ctx.beginPath();
-          ctx.moveTo(0, cliffY);
-          ctx.lineTo(cliffW, cliffY);
-          ctx.lineTo(cliffW + 18, height);
-          ctx.lineTo(0, height);
-          ctx.closePath();
-          ctx.fill();
-
-          // Green grass top on cliff
-          ctx.fillStyle = '#16a34a';
-          ctx.fillRect(0, cliffY, cliffW + 5, 8);
-
-          // 2. Big Bird Sitting on Left Cliff (Looking RIGHT towards target)
-          const r = Math.min(width, height) * 0.11;
-          const bx = cliffW * 0.55;
-          const by = cliffY - r + 3;
+        draw(cliffW, cliffY) {
+          const rx = 40;
+          const ry = 28;
+          const cx = cliffW * 0.45;
+          const cy = cliffY - ry + 2;
 
           ctx.save();
 
-          // Glow Aura
+          // Body (Oval/Capsule like V1)
           ctx.beginPath();
-          ctx.arc(bx, by, r + 8, 0, Math.PI * 2);
-          ctx.fillStyle = this.getColor() + '33';
-          ctx.fill();
-
-          // Main Big Body
-          ctx.beginPath();
-          ctx.arc(bx, by, r, 0, Math.PI * 2);
+          ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
           ctx.fillStyle = this.getColor();
-          ctx.shadowColor = 'rgba(0,0,0,0.4)';
-          ctx.shadowBlur = 10;
           ctx.fill();
-          ctx.shadowBlur = 0;
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
 
-          // Eye looking RIGHT
+          // White Cheek/Face patch
+          ctx.beginPath();
+          ctx.ellipse(cx + 14, cy + 4, 18, 16, 0, 0, Math.PI * 2);
           ctx.fillStyle = '#ffffff';
+          ctx.fill();
+          ctx.stroke();
+
+          // Eye
           ctx.beginPath();
-          ctx.arc(bx + r * 0.35, by - r * 0.22, r * 0.25, 0, Math.PI * 2);
+          ctx.arc(cx + 18, cy - 2, 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#000000';
           ctx.fill();
 
-          // Pupil
-          ctx.fillStyle = '#111827';
+          // Beak (Facing Right)
           ctx.beginPath();
-          ctx.arc(bx + r * 0.42, by - r * 0.22, r * 0.09, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Open Hungry Beak facing RIGHT
-          ctx.fillStyle = '#f59e0b';
-          ctx.beginPath();
-          ctx.moveTo(bx + r * 0.55, by - r * 0.1);
-          ctx.lineTo(bx + r * 1.05, by + r * 0.08);
-          ctx.lineTo(bx + r * 0.55, by + r * 0.26);
+          ctx.moveTo(cx + 30, cy - 3);
+          ctx.lineTo(cx + 44, cy + 4);
+          ctx.lineTo(cx + 28, cy + 10);
           ctx.closePath();
+          ctx.fillStyle = '#f59e0b';
           ctx.fill();
+          ctx.stroke();
 
           ctx.restore();
         }
       };
 
-      // --- Slingshot in front of Cliff on Left ---
-      const slingshot = {
-        getX() { return width * 0.30; },
-        getY() { return height * 0.65; },
-        draw() {
-          const sx = this.getX();
-          const sy = this.getY();
-          
-          ctx.strokeStyle = '#8b5a2b';
-          ctx.lineWidth = 6;
-          ctx.lineCap = 'round';
-
-          // Base Pole
-          ctx.beginPath();
-          ctx.moveTo(sx, sy);
-          ctx.lineTo(sx, height);
-          ctx.stroke();
-
-          // Fork
-          ctx.beginPath();
-          ctx.moveTo(sx - 14, sy - 26);
-          ctx.lineTo(sx, sy);
-          ctx.lineTo(sx + 14, sy - 26);
-          ctx.stroke();
-
-          // Small Red Bird in Sling
-          const br = 12;
-          const bx = sx;
-          const by = sy - 14;
-
-          ctx.fillStyle = '#ef4444';
-          ctx.beginPath();
-          ctx.arc(bx, by, br, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Eye looking right
-          ctx.fillStyle = '#fff';
-          ctx.beginPath();
-          ctx.arc(bx + 4, by - 3, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#000';
-          ctx.beginPath();
-          ctx.arc(bx + 5, by - 3, 1.5, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Beak pointing right
-          ctx.fillStyle = '#f59e0b';
-          ctx.beginPath();
-          ctx.moveTo(bx + 8, by - 2);
-          ctx.lineTo(bx + 16, by + 1);
-          ctx.lineTo(bx + 8, by + 5);
-          ctx.closePath();
-          ctx.fill();
-        }
-      };
-
-      // --- Suspended Slab shifted to the RIGHT Side (Target Area) ---
-      function drawSuspendedPlatform() {
-        const px = width * 0.72;
-        const py = height * 0.45;
-        const pw = 120;
-        const ph = 12;
-
-        // Ropes from top ceiling
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(px - pw/2 + 12, 0);
-        ctx.lineTo(px - pw/2 + 12, py);
-        ctx.moveTo(px + pw/2 - 12, 0);
-        ctx.lineTo(px + pw/2 - 12, py);
-        ctx.stroke();
-
-        // Wooden Platform Slab
-        ctx.fillStyle = '#78350f';
-        ctx.beginPath();
-        ctx.roundRect ? ctx.roundRect(px - pw/2, py, pw, ph, 4) : ctx.rect(px - pw/2, py, pw, ph);
-        ctx.fill();
-
-        // Target box on suspended slab
-        ctx.fillStyle = '#eab308';
-        ctx.fillRect(px - 14, py - 26, 26, 26);
-        ctx.strokeStyle = '#a16207';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(px - 14, py - 26, 26, 26);
-      }
-
-      function loop() {
+      // --- Main Render Loop ---
+      function render() {
         ctx.clearRect(0, 0, width, height);
 
-        // Dark sky background
-        const bg = ctx.createLinearGradient(0, 0, 0, height);
-        bg.addColorStop(0, '#0f172a');
-        bg.addColorStop(1, '#1e293b');
-        ctx.fillStyle = bg;
+        const groundH = Math.max(height * 0.12, 42);
+        const groundY = height - groundH;
+
+        // 1. Sky
+        ctx.fillStyle = '#89cbf8';
         ctx.fillRect(0, 0, width, height);
 
-        // Ground Floor
-        ctx.fillStyle = '#166534';
-        ctx.fillRect(0, height - 12, width, 12);
+        // 2. Sun (Right corner)
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
+        ctx.fill();
 
-        // Render Entities
-        bigBird.draw();
-        slingshot.draw();
-        drawSuspendedPlatform();
+        // 3. Mountains in Background
+        ctx.fillStyle = '#9aa0d9';
+        // Mountain 1
+        ctx.beginPath();
+        ctx.moveTo(width * 0.22, groundY);
+        ctx.lineTo(width * 0.40, height * 0.44);
+        ctx.lineTo(width * 0.58, groundY);
+        ctx.closePath();
+        ctx.fill();
+        // Mountain 2
+        ctx.fillStyle = '#b3b8eb';
+        ctx.beginPath();
+        ctx.moveTo(width * 0.46, groundY);
+        ctx.lineTo(width * 0.66, height * 0.38);
+        ctx.lineTo(width * 0.85, groundY);
+        ctx.closePath();
+        ctx.fill();
 
-        requestAnimationFrame(loop);
+        // 4. Ground (Brown with green grass strip)
+        ctx.fillStyle = '#42281d';
+        ctx.fillRect(0, groundY, width, groundH);
+        ctx.fillStyle = '#55a234';
+        ctx.fillRect(0, groundY, width, 14);
+
+        // 5. Left Cliff
+        const cliffW = width * 0.11;
+        const cliffY = height * 0.40;
+        ctx.fillStyle = '#4a2c20';
+        ctx.beginPath();
+        ctx.moveTo(0, cliffY);
+        ctx.lineTo(cliffW, cliffY);
+        ctx.lineTo(cliffW + 18, groundY);
+        ctx.lineTo(0, groundY);
+        ctx.closePath();
+        ctx.fill();
+        // Grass top on cliff
+        ctx.fillStyle = '#55a234';
+        ctx.fillRect(0, cliffY, cliffW + 4, 10);
+
+        // 6. Draw Big Bird on Cliff
+        bigBird.draw(cliffW, cliffY);
+
+        // 7. Small Birds Queue on Ground
+        const qStartX = cliffW + 28;
+        for (let i = 0; i < 7; i++) {
+          const qx = qStartX + (i * 18);
+          const qy = groundY - 8;
+          ctx.beginPath();
+          ctx.arc(qx, qy, 8, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444';
+          ctx.fill();
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // 8. Slingshot
+        const sx = width * 0.24;
+        const sy = groundY - 55;
+        ctx.strokeStyle = '#3e2316';
+        ctx.lineWidth = 9;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx, groundY);
+        ctx.stroke();
+        // Sling Fork
+        ctx.beginPath();
+        ctx.moveTo(sx - 16, sy - 24);
+        ctx.lineTo(sx, sy);
+        ctx.lineTo(sx + 16, sy - 24);
+        ctx.stroke();
+
+        // Bird in Sling
+        ctx.beginPath();
+        ctx.arc(sx, sy - 14, 12, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // Eye & Beak
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(sx + 4, sy - 16, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(sx + 5, sy - 16, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(sx + 9, sy - 15);
+        ctx.lineTo(sx + 16, sy - 12);
+        ctx.lineTo(sx + 9, sy - 9);
+        ctx.closePath();
+        ctx.fill();
+
+        // 9. Targets on Right Side (Matching V1 exact placement)
+        // Tower 1 (Single Story)
+        const t1X = width * 0.54;
+        ctx.fillStyle = '#d99a38';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        // Legs
+        ctx.fillRect(t1X - 28, groundY - 48, 10, 48);
+        ctx.strokeRect(t1X - 28, groundY - 48, 10, 48);
+        ctx.fillRect(t1X + 18, groundY - 48, 10, 48);
+        ctx.strokeRect(t1X + 18, groundY - 48, 10, 48);
+        // Roof Plank
+        ctx.fillRect(t1X - 32, groundY - 58, 64, 10);
+        ctx.strokeRect(t1X - 32, groundY - 58, 64, 10);
+        // Orange Target Ball
+        ctx.beginPath();
+        ctx.arc(t1X, groundY - 20, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#f97316';
+        ctx.fill();
+        ctx.stroke();
+
+        // Tower 2 (Double Story)
+        const t2X = width * 0.70;
+        // Level 1 Legs & Roof
+        ctx.fillStyle = '#d99a38';
+        ctx.fillRect(t2X - 28, groundY - 48, 10, 48);
+        ctx.strokeRect(t2X - 28, groundY - 48, 10, 48);
+        ctx.fillRect(t2X + 18, groundY - 48, 10, 48);
+        ctx.strokeRect(t2X + 18, groundY - 48, 10, 48);
+        ctx.fillRect(t2X - 32, groundY - 58, 64, 10);
+        ctx.strokeRect(t2X - 32, groundY - 58, 64, 10);
+        // Level 1 Pink Ball
+        ctx.beginPath();
+        ctx.arc(t2X, groundY - 20, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#ec4899';
+        ctx.fill();
+        ctx.stroke();
+
+        // Level 2 Legs & Roof
+        ctx.fillRect(t2X - 28, groundY - 106, 10, 48);
+        ctx.strokeRect(t2X - 28, groundY - 106, 10, 48);
+        ctx.fillRect(t2X + 18, groundY - 106, 10, 48);
+        ctx.strokeRect(t2X + 18, groundY - 106, 10, 48);
+        ctx.fillRect(t2X - 32, groundY - 116, 64, 10);
+        ctx.strokeRect(t2X - 32, groundY - 116, 64, 10);
+        // Level 2 Green Ball
+        ctx.beginPath();
+        ctx.arc(t2X, groundY - 78, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#22c55e';
+        ctx.fill();
+        ctx.stroke();
+
+        requestAnimationFrame(render);
       }
-      loop();
+      render();
 
-      // Screen Tap: Red -> Orange -> Grey -> Red
+      // Screen Tap: Big Bird color switch (Red -> Orange -> Grey -> Red)
       window.addEventListener('pointerup', () => {
         if (startOverlay.style.display === 'none') {
           bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
