@@ -17,7 +17,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: #80c8f8;
+      background: #89cbf8;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     #game-container {
@@ -36,7 +36,6 @@
       display: block;
       z-index: 1;
     }
-    /* Top HUD */
     #top-hud {
       position: absolute;
       top: max(8px, env(safe-area-inset-top));
@@ -85,51 +84,16 @@
       border: 2px solid #ca8a04;
       font-weight: bold;
     }
-    /* 1-Tap Overlay */
-    #start-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(4px);
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      cursor: pointer;
-    }
-    .play-badge {
-      background: #ff2e55;
-      padding: 14px 32px;
-      font-size: 19px;
-      font-weight: bold;
-      border-radius: 30px;
-      box-shadow: 0 4px 18px rgba(255, 46, 85, 0.6);
-      animation: pulseBtn 1.2s infinite alternate;
-    }
-    @keyframes pulseBtn {
-      from { transform: scale(1); }
-      to { transform: scale(1.06); }
-    }
   </style>
 </head>
 <body>
-
-  <div id="start-overlay">
-    <div class="play-badge">TAP TO PLAY</div>
-    <p style="margin-top: 12px; font-size: 13px; color: #cbd5e1;">📱 ایک بار ٹیپ کریں، فل اسکرین اور روٹیٹ ہو جائے گا</p>
-  </div>
 
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
 
     <header id="top-hud">
       <div class="hud-badge">
-        <span>Lv 1 • Normal</span> | <span>🎯 8</span> | <span style="color:#fde047;">⚡ 15</span>
+        <span>Lv 1 • Normal</span> | <span>🎯 <span id="target-count-hud">4</span></span> | <span style="color:#fde047;">⚡ <span id="total-birds-count">15</span></span>
       </div>
 
       <div class="hud-badge">
@@ -147,390 +111,797 @@
   </div>
 
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const canvas = document.getElementById('gameCanvas');
-      const ctx = canvas.getContext('2d');
-      const startOverlay = document.getElementById('start-overlay');
-      const fsBtn = document.getElementById('btn-fs');
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const fsBtn = document.getElementById('btn-fs');
+    const totalBirdsEl = document.getElementById('total-birds-count');
+    const targetCountEl = document.getElementById('target-count-hud');
+    const scoreValEl = document.getElementById('score-val');
 
-      let width = window.innerWidth;
-      let height = window.innerHeight;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let animTick = 0;
+    let score = 0;
 
-      function resizeCanvas() {
-        const dpr = window.devicePixelRatio || 1;
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        canvas.style.width = width + 'px';
-        canvas.style.height = height + 'px';
-        ctx.resetTransform ? ctx.resetTransform() : ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.scale(dpr, dpr);
+    const birdTypes = [
+      { id: 'red',    name: 'Red',    color: '#ef4444', count: 4, r: 15 },
+      { id: 'yellow', name: 'Yellow', color: '#eab308', count: 4, r: 15 },
+      { id: 'blue',   name: 'Blue',   color: '#38bdf8', count: 4, r: 14 },
+      { id: 'black',  name: 'Bomb',   color: '#1e293b', count: 3, r: 16 }
+    ];
+
+    let selectedBirdIndex = 0;
+    let birdHitboxes = [];
+
+    const maxDragDist = 100;
+    const launchPower = 0.32;
+    const gravity = 0.30;
+
+    let isDragging = false;
+    let dragPos = { x: 0, y: 0 };
+    let flyingBirds = [];
+    let particles = [];
+    let floatingScores = [];
+    let blocks = [];
+    let targets = [];
+
+    function updateTotalHudCount() {
+      const total = birdTypes.reduce((sum, b) => sum + b.count, 0);
+      if (totalBirdsEl) totalBirdsEl.textContent = total;
+    }
+
+    function ensureAvailableBirdSelected() {
+      if (birdTypes[selectedBirdIndex].count <= 0) {
+        const nextIdx = birdTypes.findIndex(b => b.count > 0);
+        if (nextIdx !== -1) selectedBirdIndex = nextIdx;
       }
-      window.addEventListener('resize', () => setTimeout(resizeCanvas, 150));
-      resizeCanvas();
+    }
 
-      // پہلی ہی ٹیپ پر فل اسکرین اور لینڈ اسکیپ
-      function enterFullscreenDirectly() {
-        startOverlay.style.display = 'none';
+    function addScore(pts) {
+      score += pts;
+      if (scoreValEl) scoreValEl.textContent = score;
+    }
 
-        const docEl = document.documentElement;
-        if (docEl.requestFullscreen) {
-          docEl.requestFullscreen().catch(() => {});
-        } else if (docEl.webkitRequestFullscreen) {
-          docEl.webkitRequestFullscreen();
-        }
+    function updateTargetCountHud() {
+      const aliveCount = targets.filter(t => t.alive).length;
+      if (targetCountEl) targetCountEl.textContent = aliveCount;
+    }
 
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock('landscape').catch(() => {});
-        }
+    function initStructures() {
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
 
-        setTimeout(resizeCanvas, 250);
+      blocks = [];
+      targets = [];
+
+      const t1X = width * 0.74;
+      blocks.push({ x: t1X - 26, y: groundY - 46, w: 12, h: 46, vx: 0, vy: 0, angle: 0, va: 0, color: '#d99a38' });
+      blocks.push({ x: t1X + 14, y: groundY - 46, w: 12, h: 46, vx: 0, vy: 0, angle: 0, va: 0, color: '#d99a38' });
+      blocks.push({ x: t1X - 30, y: groundY - 56, w: 60, h: 10, vx: 0, vy: 0, angle: 0, va: 0, color: '#b45309' });
+      targets.push({ x: t1X, y: groundY - 18, r: 17, color: '#f97316', alive: true });
+
+      const t2X = width * 0.88;
+      blocks.push({ x: t2X - 26, y: groundY - 46, w: 12, h: 46, vx: 0, vy: 0, angle: 0, va: 0, color: '#d99a38' });
+      blocks.push({ x: t2X + 14, y: groundY - 46, w: 12, h: 46, vx: 0, vy: 0, angle: 0, va: 0, color: '#d99a38' });
+      blocks.push({ x: t2X - 30, y: groundY - 56, w: 60, h: 10, vx: 0, vy: 0, angle: 0, va: 0, color: '#b45309' });
+      targets.push({ x: t2X, y: groundY - 18, r: 17, color: '#ec4899', alive: true });
+
+      blocks.push({ x: t2X - 26, y: groundY - 102, w: 12, h: 46, vx: 0, vy: 0, angle: 0, va: 0, color: '#d99a38' });
+      blocks.push({ x: t2X + 14, y: groundY - 102, w: 12, h: 46, vx: 0, vy: 0, angle: 0, va: 0, color: '#d99a38' });
+      blocks.push({ x: t2X - 30, y: groundY - 112, w: 60, h: 10, vx: 0, vy: 0, angle: 0, va: 0, color: '#b45309' });
+      targets.push({ x: t2X, y: groundY - 74, r: 17, color: '#22c55e', alive: true });
+
+      const fx = width * 0.60;
+      const fy = height * 0.35;
+      targets.push({ x: fx, y: fy - 16, r: 16, color: '#38bdf8', alive: true });
+
+      updateTargetCountHud();
+    }
+
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      initStructures();
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function spawnExplosion(x, y, color, count = 16) {
+      for (let i = 0; i < count; i++) {
+        const speed = Math.random() * 6 + 2;
+        const angle = Math.random() * Math.PI * 2;
+        particles.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          size: Math.random() * 5 + 3,
+          color: color,
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.02
+        });
       }
+    }
 
-      startOverlay.addEventListener('pointerdown', enterFullscreenDirectly, { once: true });
-      fsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        enterFullscreenDirectly();
-      });
+    function addFloatingScore(x, y, text) {
+      floatingScores.push({ x, y, text, alpha: 1 });
+    }
 
-      // --- V2 اینگولر شکاری باس ایگل (Big Bird) ---
-      const bigBird = {
-        stateIndex: 0,
-        states: [
-          { name: 'Rage',     main: '#ef4444', armor: '#991b1b', eye: '#fef08a', glow: 'rgba(239, 68, 68, 0.45)' },
-          { name: 'Craving',  main: '#f97316', armor: '#9a3412', eye: '#fef08a', glow: 'rgba(249, 115, 22, 0.45)' },
-          { name: 'Starving', main: '#64748b', armor: '#334155', eye: '#cbd5e1', glow: 'rgba(100, 116, 139, 0.45)' }
-        ],
-        getState() {
-          return this.states[this.stateIndex];
-        },
-        draw(cliffW, cliffY) {
-          const s = this.getState();
-          const cx = cliffW * 0.46;
-          const cy = cliffY - 36;
-
-          ctx.save();
-
-          // 1. اورا گلو
-          ctx.fillStyle = s.glow;
-          ctx.beginPath();
-          ctx.moveTo(cx - 36, cy + 18);
-          ctx.lineTo(cx - 24, cy - 38);
-          ctx.lineTo(cx + 20, cy - 32);
-          ctx.lineTo(cx + 42, cy);
-          ctx.lineTo(cx + 18, cy + 28);
-          ctx.closePath();
-          ctx.fill();
-
-          // 2. نوکیلے پر (Spikes)
-          ctx.fillStyle = s.armor;
-          ctx.strokeStyle = '#0f172a';
-          ctx.lineWidth = 2.5;
-
-          ctx.beginPath();
-          ctx.moveTo(cx - 8, cy - 24);
-          ctx.lineTo(cx - 34, cy - 42);
-          ctx.lineTo(cx - 18, cy - 14);
-          ctx.lineTo(cx - 40, cy - 20);
-          ctx.lineTo(cx - 14, cy);
-          ctx.closePath();
-          ctx.fill();
-          ctx.stroke();
-
-          // 3. اینگولر باڈی
-          ctx.fillStyle = s.main;
-          ctx.beginPath();
-          ctx.moveTo(cx - 26, cy - 12);
-          ctx.lineTo(cx - 10, cy - 30);
-          ctx.lineTo(cx + 18, cy - 22);
-          ctx.lineTo(cx + 30, cy + 4);
-          ctx.lineTo(cx + 12, cy + 26);
-          ctx.lineTo(cx - 22, cy + 24);
-          ctx.closePath();
-          ctx.fill();
-          ctx.stroke();
-
-          // 4. سینے کی آرمر پلیٹ
-          ctx.fillStyle = s.armor;
-          ctx.beginPath();
-          ctx.moveTo(cx - 4, cy - 10);
-          ctx.lineTo(cx + 16, cy - 6);
-          ctx.lineTo(cx + 22, cy + 8);
-          ctx.lineTo(cx + 8, cy + 22);
-          ctx.lineTo(cx - 8, cy + 12);
-          ctx.closePath();
-          ctx.fill();
-          ctx.stroke();
-
-          // 5. نوکیلی شکاری چونچ
-          ctx.fillStyle = '#f59e0b';
-          ctx.beginPath();
-          ctx.moveTo(cx + 24, cy - 14);
-          ctx.lineTo(cx + 52, cy - 2);
-          ctx.lineTo(cx + 28, cy + 14);
-          ctx.lineTo(cx + 26, cy + 2);
-          ctx.closePath();
-          ctx.fill();
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.moveTo(cx + 26, cy - 2);
-          ctx.lineTo(cx + 44, cy - 1);
-          ctx.stroke();
-
-          // 6. اینگولر آنکھ
-          ctx.fillStyle = '#0f172a';
-          ctx.beginPath();
-          ctx.moveTo(cx + 4, cy - 20);
-          ctx.lineTo(cx + 22, cy - 16);
-          ctx.lineTo(cx + 16, cy - 6);
-          ctx.lineTo(cx + 2, cy - 10);
-          ctx.closePath();
-          ctx.fill();
-
-          ctx.fillStyle = s.eye;
-          ctx.beginPath();
-          ctx.moveTo(cx + 8, cy - 16);
-          ctx.lineTo(cx + 19, cy - 13);
-          ctx.lineTo(cx + 13, cy - 8);
-          ctx.closePath();
-          ctx.fill();
-
-          ctx.restore();
-        }
-      };
-
-      // --- ہوا میں معلق جھولا / سلیب (دائیں جانب ایڈجسٹڈ) ---
-      function drawFloatingPlatform() {
-        // سینٹر (0.50) کے بجائے دائیں جانب (0.60) کر دیا ہے
-        const fx = width * 0.60;
-        const fy = height * 0.35;
-        const fw = 100;
-        const fh = 14;
+    const bigBird = {
+      stateIndex: 0,
+      states: [
+        { name: 'Rage',     main: '#ef4444', armor: '#991b1b', eye: '#fef08a', glow: 'rgba(239, 68, 68, 0.45)' },
+        { name: 'Craving',  main: '#f97316', armor: '#9a3412', eye: '#fef08a', glow: 'rgba(249, 115, 22, 0.45)' },
+        { name: 'Starving', main: '#64748b', armor: '#334155', eye: '#cbd5e1', glow: 'rgba(100, 116, 139, 0.45)' }
+      ],
+      draw(cliffW, cliffY) {
+        const s = this.states[this.stateIndex];
+        const breathe = Math.sin(animTick * 0.05) * 2;
+        const cx = cliffW * 0.46;
+        const cy = (cliffY - 36) + breathe;
 
         ctx.save();
-
-        // اوپر سے لٹکتی کیبلز
-        ctx.strokeStyle = '#1e293b';
-        ctx.lineWidth = 3;
-
+        ctx.fillStyle = s.glow;
         ctx.beginPath();
-        ctx.moveTo(fx - (fw / 2) + 12, 0);
-        ctx.lineTo(fx - (fw / 2) + 12, fy);
+        ctx.moveTo(cx - 36, cy + 18);
+        ctx.lineTo(cx - 24, cy - 38);
+        ctx.lineTo(cx + 20, cy - 32);
+        ctx.lineTo(cx + 42, cy);
+        ctx.lineTo(cx + 18, cy + 28);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = s.armor;
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cx - 8, cy - 24);
+        ctx.lineTo(cx - 34, cy - 42);
+        ctx.lineTo(cx - 18, cy - 14);
+        ctx.lineTo(cx - 40, cy - 20);
+        ctx.lineTo(cx - 14, cy);
+        ctx.closePath();
+        ctx.fill();
         ctx.stroke();
 
+        ctx.fillStyle = s.main;
         ctx.beginPath();
-        ctx.moveTo(fx + (fw / 2) - 12, 0);
-        ctx.lineTo(fx + (fw / 2) - 12, fy);
+        ctx.moveTo(cx - 26, cy - 12);
+        ctx.lineTo(cx - 10, cy - 30);
+        ctx.lineTo(cx + 18, cy - 22);
+        ctx.lineTo(cx + 30, cy + 4);
+        ctx.lineTo(cx + 12, cy + 26);
+        ctx.lineTo(cx - 22, cy + 24);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = s.armor;
+        ctx.beginPath();
+        ctx.moveTo(cx - 4, cy - 10);
+        ctx.lineTo(cx + 16, cy - 6);
+        ctx.lineTo(cx + 22, cy + 8);
+        ctx.lineTo(cx + 8, cy + 22);
+        ctx.lineTo(cx - 8, cy + 12);
+        ctx.closePath();
+        ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = '#f59e0b';
         ctx.beginPath();
-        ctx.arc(fx - (fw / 2) + 12, fy, 4, 0, Math.PI * 2);
-        ctx.arc(fx + (fw / 2) - 12, fy, 4, 0, Math.PI * 2);
+        ctx.moveTo(cx + 24, cy - 14);
+        ctx.lineTo(cx + 52, cy - 2);
+        ctx.lineTo(cx + 28, cy + 14);
+        ctx.lineTo(cx + 26, cy + 2);
+        ctx.closePath();
         ctx.fill();
-
-        // لٹکتی لکڑی کی سلیب
-        ctx.fillStyle = '#854d0e';
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2.5;
-        ctx.fillRect(fx - (fw / 2), fy, fw, fh);
-        ctx.strokeRect(fx - (fw / 2), fy, fw, fh);
-
-        ctx.fillStyle = '#a16207';
-        ctx.fillRect(fx - (fw / 2) + 4, fy + 2, fw - 8, 3);
-
-        // جھولے کے اوپر ٹارگٹ
-        const tr = 16;
-        const tx = fx;
-        const ty = fy - tr;
-
-        ctx.beginPath();
-        ctx.arc(tx, ty, tr, 0, Math.PI * 2);
-        ctx.fillStyle = '#38bdf8';
-        ctx.fill();
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
         ctx.beginPath();
-        ctx.arc(tx - 5, ty - 5, 4, 0, Math.PI * 2);
+        ctx.moveTo(cx + 26, cy - 2);
+        ctx.lineTo(cx + 44, cy - 1);
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.moveTo(cx + 4, cy - 20);
+        ctx.lineTo(cx + 22, cy - 16);
+        ctx.lineTo(cx + 16, cy - 6);
+        ctx.lineTo(cx + 2, cy - 10);
+        ctx.closePath();
         ctx.fill();
 
+        ctx.fillStyle = s.eye;
+        ctx.beginPath();
+        ctx.moveTo(cx + 8, cy - 16);
+        ctx.lineTo(cx + 19, cy - 13);
+        ctx.lineTo(cx + 13, cy - 8);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    };
+
+    function drawFloatingPlatform() {
+      const fx = width * 0.60;
+      const fy = height * 0.35;
+      const fw = 100;
+      const fh = 14;
+
+      ctx.save();
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      ctx.moveTo(fx - (fw / 2) + 12, 0);
+      ctx.lineTo(fx - (fw / 2) + 12, fy);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(fx + (fw / 2) - 12, 0);
+      ctx.lineTo(fx + (fw / 2) - 12, fy);
+      ctx.stroke();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(fx - (fw / 2) + 12, fy, 4, 0, Math.PI * 2);
+      ctx.arc(fx + (fw / 2) - 12, fy, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#854d0e';
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2.5;
+      ctx.fillRect(fx - (fw / 2), fy, fw, fh);
+      ctx.strokeRect(fx - (fw / 2), fy, fw, fh);
+
+      ctx.fillStyle = '#a16207';
+      ctx.fillRect(fx - (fw / 2) + 4, fy + 2, fw - 8, 3);
+      ctx.restore();
+    }
+
+    function drawBirdGridDeck(cliffW, groundY) {
+      birdHitboxes = [];
+      const gridX = cliffW + 12;
+      const boxW = 58;
+      const boxH = 46;
+      const gap = 8;
+      const totalW = (boxW * 2) + gap;
+      const totalH = (boxH * 2) + gap;
+      const gridY = groundY - totalH - 10;
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(22, 101, 52, 0.88)';
+      ctx.strokeStyle = '#14532d';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.rect(gridX - 6, gridY - 6, totalW + 12, totalH + 12);
+      ctx.fill();
+      ctx.stroke();
+
+      birdTypes.forEach((b, i) => {
+        const col = i % 2;
+        const row = Math.floor(i / 2);
+        const bx = gridX + (col * (boxW + gap));
+        const by = gridY + (row * (boxH + gap));
+        const isSelected = (i === selectedBirdIndex);
+        const isEmpty = (b.count <= 0);
+
+        birdHitboxes.push({ x: bx + (boxW / 2), y: by + (boxH / 2), w: boxW, h: boxH, index: i });
+
+        if (isSelected) {
+          ctx.fillStyle = '#bbf7d0';
+          ctx.strokeStyle = '#f59e0b';
+          ctx.lineWidth = 3;
+        } else {
+          ctx.fillStyle = '#dcfce7';
+          ctx.strokeStyle = '#86efac';
+          ctx.lineWidth = 1.5;
+        }
+
+        ctx.beginPath();
+        ctx.rect(bx, by, boxW, boxH);
+        ctx.fill();
+        ctx.stroke();
+
+        const birdCx = bx + 22;
+        const birdCy = by + 26;
+
+        ctx.beginPath();
+        ctx.arc(birdCx, birdCy, b.r, 0, Math.PI * 2);
+        ctx.fillStyle = isEmpty ? '#94a3b8' : b.color;
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(birdCx + 3, birdCy - 3, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(birdCx + 4.2, birdCy - 3, 1.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.moveTo(birdCx + b.r - 2, birdCy - 3);
+        ctx.lineTo(birdCx + b.r + 8, birdCy);
+        ctx.lineTo(birdCx + b.r - 2, birdCy + 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        const badgeW = 24;
+        const badgeH = 16;
+        const badgeX = bx + boxW - badgeW - 3;
+        const badgeY = by + 4;
+
+        ctx.fillStyle = isSelected ? '#15803d' : '#14532d';
+        ctx.fillRect(badgeX, badgeY, badgeW, badgeH);
+        ctx.strokeStyle = isSelected ? '#f59e0b' : '#166534';
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(badgeX, badgeY, badgeW, badgeH);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`×${b.count}`, badgeX + (badgeW / 2), badgeY + (badgeH / 2) + 0.5);
+      });
+      ctx.restore();
+    }
+
+    function renderBirdAt(bx, by, birdObj, rotation = 0) {
+      ctx.save();
+      ctx.translate(bx, by);
+      if (rotation) ctx.rotate(rotation);
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 15, 0, Math.PI * 2);
+      ctx.fillStyle = birdObj.color;
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(4, -2, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(5.5, -2, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.moveTo(10, -2);
+      ctx.lineTo(19, 1);
+      ctx.lineTo(10, 4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawTrajectory(anchorX, anchorY, birdX, birdY, groundY) {
+      const vx = (anchorX - birdX) * launchPower;
+      const vy = (anchorY - birdY) * launchPower;
+      let simX = birdX;
+      let simY = birdY;
+      let simVx = vx;
+      let simVy = vy;
+
+      ctx.save();
+      for (let step = 0; step < 30; step++) {
+        simX += simVx;
+        simY += simVy;
+        simVy += gravity;
+        if (simY > groundY) break;
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.15, 0.95 - (step * 0.03))})`;
+        ctx.beginPath();
+        ctx.arc(simX, simY, Math.max(2, 4.5 - (step * 0.08)), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function render() {
+      animTick++;
+      ctx.clearRect(0, 0, width, height);
+
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+
+      ctx.fillStyle = '#89cbf8';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#9aa0d9';
+      ctx.beginPath();
+      ctx.moveTo(width * 0.20, groundY);
+      ctx.lineTo(width * 0.38, height * 0.44);
+      ctx.lineTo(width * 0.56, groundY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#b3b8eb';
+      ctx.beginPath();
+      ctx.moveTo(width * 0.44, groundY);
+      ctx.lineTo(width * 0.64, height * 0.38);
+      ctx.lineTo(width * 0.84, groundY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#42281d';
+      ctx.fillRect(0, groundY, width, groundH);
+      ctx.fillStyle = '#55a234';
+      ctx.fillRect(0, groundY, width, 14);
+
+      const cliffW = width * 0.11;
+      const cliffY = height * 0.40;
+      ctx.fillStyle = '#4a2c20';
+      ctx.beginPath();
+      ctx.moveTo(0, cliffY);
+      ctx.lineTo(cliffW, cliffY);
+      ctx.lineTo(cliffW + 18, groundY);
+      ctx.lineTo(0, groundY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#55a234';
+      ctx.fillRect(0, cliffY, cliffW + 4, 10);
+
+      bigBird.draw(cliffW, cliffY);
+      drawBirdGridDeck(cliffW, groundY);
+
+      const sx = cliffW + 168;
+      const sy = groundY - 105;
+      const leftForkX = sx - 18;
+      const leftForkY = sy - 34;
+      const rightForkX = sx + 18;
+      const rightForkY = sy - 34;
+      const centerAnchorX = sx;
+      const centerAnchorY = sy - 20;
+
+      ctx.strokeStyle = '#3e2316';
+      ctx.lineWidth = 11;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx, groundY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(leftForkX, leftForkY);
+      ctx.stroke();
+
+      const currentBird = birdTypes[selectedBirdIndex];
+      const hasBirds = currentBird && currentBird.count > 0;
+      let birdX = centerAnchorX;
+      let birdY = centerAnchorY;
+
+      if (isDragging) {
+        birdX = dragPos.x;
+        birdY = dragPos.y;
+      } else if (hasBirds) {
+        birdY += Math.sin(animTick * 0.08) * 1.5;
+      }
+
+      if (hasBirds) {
+        ctx.strokeStyle = '#1e1b18';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.moveTo(leftForkX, leftForkY);
+        ctx.lineTo(birdX - 6, birdY);
+        ctx.stroke();
+      }
+
+      if (isDragging && hasBirds) {
+        drawTrajectory(centerAnchorX, centerAnchorY, birdX, birdY, groundY);
+      }
+
+      if (hasBirds) {
+        renderBirdAt(birdX, birdY, currentBird);
+      }
+
+      ctx.strokeStyle = '#3e2316';
+      ctx.lineWidth = 11;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(rightForkX, rightForkY);
+      ctx.stroke();
+
+      if (hasBirds) {
+        ctx.strokeStyle = '#292524';
+        ctx.lineWidth = 4.5;
+        ctx.beginPath();
+        ctx.moveTo(rightForkX, rightForkY);
+        ctx.lineTo(birdX + 6, birdY);
+        ctx.stroke();
+      }
+
+      drawFloatingPlatform();
+
+      for (let i = flyingBirds.length - 1; i >= 0; i--) {
+        const fb = flyingBirds[i];
+        fb.x += fb.vx;
+        fb.y += fb.vy;
+        fb.vy += gravity;
+
+        const angle = Math.atan2(fb.vy, fb.vx);
+        renderBirdAt(fb.x, fb.y, fb, angle);
+
+        for (let t of targets) {
+          if (t.alive) {
+            const dist = Math.hypot(fb.x - t.x, fb.y - t.y);
+            if (dist < 15 + t.r) {
+              t.alive = false;
+              spawnExplosion(t.x, t.y, t.color, 24);
+              addFloatingScore(t.x, t.y - 20, '+1000');
+              addScore(1000);
+              updateTargetCountHud();
+
+              fb.vx *= 0.5;
+              fb.vy = -3;
+            }
+          }
+        }
+
+        for (let b of blocks) {
+          const nearestX = Math.max(b.x, Math.min(fb.x, b.x + b.w));
+          const nearestY = Math.max(b.y, Math.min(fb.y, b.y + b.h));
+          const dist = Math.hypot(fb.x - nearestX, fb.y - nearestY);
+
+          if (dist < 15) {
+            b.vx = fb.vx * 0.45;
+            b.vy = fb.vy * 0.35 - 1.5;
+            b.va = (Math.random() - 0.5) * 0.15;
+
+            spawnExplosion(nearestX, nearestY, b.color, 8);
+            addScore(150);
+
+            fb.vx *= -0.3;
+            fb.vy *= 0.4;
+            break;
+          }
+        }
+
+        if (fb.y >= groundY - 12) {
+          fb.y = groundY - 12;
+          fb.vy = -fb.vy * 0.35;
+          fb.vx *= 0.7;
+          fb.bounces = (fb.bounces || 0) + 1;
+          if (fb.bounces > 4 || Math.abs(fb.vx) < 0.3) {
+            flyingBirds.splice(i, 1);
+          }
+        } else if (fb.x > width + 60) {
+          flyingBirds.splice(i, 1);
+        }
+      }
+
+      for (let i = blocks.length - 1; i >= 0; i--) {
+        const b = blocks[i];
+        if (b.vx !== 0 || b.vy !== 0 || b.y < groundY - b.h) {
+          b.x += b.vx;
+          b.y += b.vy;
+          b.vy += gravity * 0.8;
+          b.angle += b.va;
+
+          if (b.y + b.h >= groundY) {
+            b.y = groundY - b.h;
+            b.vy = -b.vy * 0.2;
+            b.vx *= 0.8;
+            b.va *= 0.7;
+          }
+        }
+
+        ctx.save();
+        ctx.translate(b.x + b.w / 2, b.y + b.h / 2);
+        ctx.rotate(b.angle);
+        ctx.fillStyle = b.color;
+        ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-b.w / 2, -b.h / 2, b.w, b.h);
         ctx.restore();
       }
 
-      // --- مین رینڈر لوپ ---
-      function render() {
-        ctx.clearRect(0, 0, width, height);
-
-        const groundH = Math.max(height * 0.12, 42);
-        const groundY = height - groundH;
-
-        // 1. نیلا آسمان
-        ctx.fillStyle = '#89cbf8';
-        ctx.fillRect(0, 0, width, height);
-
-        // 2. سورج
-        ctx.fillStyle = '#fef08a';
-        ctx.beginPath();
-        ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 3. پہاڑ
-        ctx.fillStyle = '#9aa0d9';
-        ctx.beginPath();
-        ctx.moveTo(width * 0.20, groundY);
-        ctx.lineTo(width * 0.38, height * 0.44);
-        ctx.lineTo(width * 0.56, groundY);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = '#b3b8eb';
-        ctx.beginPath();
-        ctx.moveTo(width * 0.44, groundY);
-        ctx.lineTo(width * 0.64, height * 0.38);
-        ctx.lineTo(width * 0.84, groundY);
-        ctx.closePath();
-        ctx.fill();
-
-        // 4. زمین
-        ctx.fillStyle = '#42281d';
-        ctx.fillRect(0, groundY, width, groundH);
-        ctx.fillStyle = '#55a234';
-        ctx.fillRect(0, groundY, width, 14);
-
-        // 5. بائیں طرف کی پہاڑی (Cliff)
-        const cliffW = width * 0.12;
-        const cliffY = height * 0.40;
-        ctx.fillStyle = '#4a2c20';
-        ctx.beginPath();
-        ctx.moveTo(0, cliffY);
-        ctx.lineTo(cliffW, cliffY);
-        ctx.lineTo(cliffW + 18, groundY);
-        ctx.lineTo(0, groundY);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = '#55a234';
-        ctx.fillRect(0, cliffY, cliffW + 4, 10);
-
-        // 6. نیا باس ایگل پرندہ
-        bigBird.draw(cliffW, cliffY);
-
-        // 7. چھوٹے پرندوں کی قطار
-        const qStartX = cliffW + 28;
-        for (let i = 0; i < 7; i++) {
-          const qx = qStartX + (i * 18);
-          const qy = groundY - 8;
+      for (let t of targets) {
+        if (t.alive) {
+          ctx.save();
           ctx.beginPath();
-          ctx.arc(qx, qy, 8, 0, Math.PI * 2);
-          ctx.fillStyle = '#ef4444';
+          ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
+          ctx.fillStyle = t.color;
           ctx.fill();
-          ctx.strokeStyle = '#000';
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 2;
           ctx.stroke();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(t.x - 4, t.y - 3, 3.5, 0, Math.PI * 2);
+          ctx.arc(t.x + 4, t.y - 3, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#000000';
+          ctx.beginPath();
+          ctx.arc(t.x - 3.5, t.y - 3, 1.8, 0, Math.PI * 2);
+          ctx.arc(t.x + 4.5, t.y - 3, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(t.x, t.y + 4, 5, 0, Math.PI);
+          ctx.stroke();
+          ctx.restore();
         }
-
-        // 8. سلنگ شاٹ
-        const sx = width * 0.24;
-        const sy = groundY - 55;
-        ctx.strokeStyle = '#3e2316';
-        ctx.lineWidth = 9;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(sx, groundY);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(sx - 16, sy - 24);
-        ctx.lineTo(sx, sy);
-        ctx.lineTo(sx + 16, sy - 24);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(sx, sy - 14, 12, 0, Math.PI * 2);
-        ctx.fillStyle = '#ef4444';
-        ctx.fill();
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.arc(sx + 4, sy - 16, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(sx + 5, sy - 16, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#f59e0b';
-        ctx.beginPath();
-        ctx.moveTo(sx + 9, sy - 15);
-        ctx.lineTo(sx + 16, sy - 12);
-        ctx.lineTo(sx + 9, sy - 9);
-        ctx.closePath();
-        ctx.fill();
-
-        // 9. دائیں طرف کھسکایا گیا ہوا میں لٹکتا جھولا
-        drawFloatingPlatform();
-
-        // 10. زمین کے ٹارگٹس (دائیں جانب ایڈجسٹڈ)
-        // ٹاور 1
-        const t1X = width * 0.74;
-        ctx.fillStyle = '#d99a38';
-        ctx.fillRect(t1X - 26, groundY - 46, 10, 46);
-        ctx.strokeRect(t1X - 26, groundY - 46, 10, 46);
-        ctx.fillRect(t1X + 16, groundY - 46, 10, 46);
-        ctx.strokeRect(t1X + 16, groundY - 46, 10, 46);
-        ctx.fillRect(t1X - 30, groundY - 56, 60, 10);
-        ctx.strokeRect(t1X - 30, groundY - 56, 60, 10);
-
-        ctx.beginPath();
-        ctx.arc(t1X, groundY - 18, 17, 0, Math.PI * 2);
-        ctx.fillStyle = '#f97316';
-        ctx.fill();
-        ctx.stroke();
-
-        // ٹاور 2
-        const t2X = width * 0.88;
-        ctx.fillRect(t2X - 26, groundY - 46, 10, 46);
-        ctx.strokeRect(t2X - 26, groundY - 46, 10, 46);
-        ctx.fillRect(t2X + 16, groundY - 46, 10, 46);
-        ctx.strokeRect(t2X + 16, groundY - 46, 10, 46);
-        ctx.fillRect(t2X - 30, groundY - 56, 60, 10);
-        ctx.strokeRect(t2X - 30, groundY - 56, 60, 10);
-        ctx.beginPath();
-        ctx.arc(t2X, groundY - 18, 17, 0, Math.PI * 2);
-        ctx.fillStyle = '#ec4899';
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillRect(t2X - 26, groundY - 102, 10, 46);
-        ctx.strokeRect(t2X - 26, groundY - 102, 10, 46);
-        ctx.fillRect(t2X + 16, groundY - 102, 10, 46);
-        ctx.strokeRect(t2X + 16, groundY - 102, 10, 46);
-        ctx.fillRect(t2X - 30, groundY - 112, 60, 10);
-        ctx.strokeRect(t2X - 30, groundY - 112, 60, 10);
-        ctx.beginPath();
-        ctx.arc(t2X, groundY - 74, 17, 0, Math.PI * 2);
-        ctx.fillStyle = '#22c55e';
-        ctx.fill();
-        ctx.stroke();
-
-        requestAnimationFrame(render);
       }
-      render();
 
-      // ٹیپ کرنے پر کلر سائیکل
-      window.addEventListener('pointerup', () => {
-        if (startOverlay.style.display === 'none') {
-          bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += gravity * 0.5;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+          ctx.restore();
         }
-      });
+      }
+
+      for (let i = floatingScores.length - 1; i >= 0; i--) {
+        const fs = floatingScores[i];
+        fs.y -= 1.2;
+        fs.alpha -= 0.02;
+
+        if (fs.alpha <= 0) {
+          floatingScores.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.globalAlpha = fs.alpha;
+          ctx.fillStyle = '#fde047';
+          ctx.font = 'bold 18px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(fs.text, fs.x, fs.y);
+          ctx.restore();
+        }
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    render();
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    window.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('#top-hud')) return;
+
+      const pos = getCanvasCoords(e);
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+      const cliffW = width * 0.11;
+      const anchorX = cliffW + 168;
+      const anchorY = groundY - 125;
+
+      let gridClicked = false;
+      for (let hb of birdHitboxes) {
+        if (pos.x >= hb.x - (hb.w / 2) && pos.x <= hb.x + (hb.w / 2) &&
+            pos.y >= hb.y - (hb.h / 2) && pos.y <= hb.y + (hb.h / 2)) {
+          gridClicked = true;
+          if (birdTypes[hb.index].count > 0) {
+            selectedBirdIndex = hb.index;
+          }
+          break;
+        }
+      }
+      if (gridClicked) return;
+
+      const distToSling = Math.hypot(pos.x - anchorX, pos.y - anchorY);
+      const currentBird = birdTypes[selectedBirdIndex];
+
+      if (distToSling < 52 && currentBird && currentBird.count > 0) {
+        isDragging = true;
+        dragPos = { x: pos.x, y: pos.y };
+        return;
+      }
+
+      bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+
+      const pos = getCanvasCoords(e);
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+      const cliffW = width * 0.11;
+      const anchorX = cliffW + 168;
+      const anchorY = groundY - 125;
+
+      const dx = pos.x - anchorX;
+      const dy = pos.y - anchorY;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > maxDragDist) {
+        const angle = Math.atan2(dy, dx);
+        dragPos.x = anchorX + Math.cos(angle) * maxDragDist;
+        dragPos.y = anchorY + Math.sin(angle) * maxDragDist;
+      } else {
+        dragPos.x = pos.x;
+        dragPos.y = pos.y;
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const groundH = Math.max(height * 0.12, 42);
+      const groundY = height - groundH;
+      const cliffW = width * 0.11;
+      const anchorX = cliffW + 168;
+      const anchorY = groundY - 125;
+
+      const dx = anchorX - dragPos.x;
+      const dy = anchorY - dragPos.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist > 14) {
+        const activeBird = birdTypes[selectedBirdIndex];
+        if (activeBird && activeBird.count > 0) {
+          flyingBirds.push({
+            x: dragPos.x,
+            y: dragPos.y,
+            vx: dx * launchPower,
+            vy: dy * launchPower,
+            color: activeBird.color,
+            name: activeBird.name
+          });
+
+          activeBird.count--;
+          updateTotalHudCount();
+          ensureAvailableBirdSelected();
+        }
+      }
+    });
+
+    fsBtn.addEventListener('click', () => {
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen().catch(() => {});
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      }
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
     });
   </script>
 </body>
