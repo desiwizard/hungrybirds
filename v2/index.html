@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#1a1a2e">
+  <meta name="theme-color" content="#0d0f18">
   <title>Hungry Birds v2</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -18,6 +18,12 @@
 
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
+
+    <!-- Tap to Start Fullscreen Overlay -->
+    <div id="start-overlay">
+      <div class="play-badge">TAP TO PLAY</div>
+      <p style="font-size: 12px; color: #9ca3af; margin-top: 10px;">Tap to go full-screen</p>
+    </div>
 
     <header id="top-hud">
       <div class="hud-left">
@@ -39,7 +45,7 @@
 
     <footer id="bottom-hud">
       <div id="bird-queue" class="queue-container"></div>
-      <div id="action-hint" class="hint-text">Screen par tap karein color aur full screen ke liye</div>
+      <div id="action-hint" class="hint-text">Tap anywhere to test energy switch</div>
     </footer>
   </div>
 
@@ -47,6 +53,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       const canvas = document.getElementById('gameCanvas');
       const ctx = canvas.getContext('2d');
+      const startOverlay = document.getElementById('start-overlay');
 
       let width = window.innerWidth;
       let height = window.innerHeight;
@@ -62,11 +69,15 @@
         ctx.resetTransform ? ctx.resetTransform() : ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(dpr, dpr);
       }
-      window.addEventListener('resize', resizeCanvas);
+      window.addEventListener('resize', () => {
+        setTimeout(resizeCanvas, 150);
+      });
       resizeCanvas();
 
-      // Fullscreen & Auto-Rotate to Landscape
-      async function triggerFullScreenAndRotate() {
+      // Tap to Start & Enter Fullscreen
+      async function startGame() {
+        startOverlay.style.display = 'none';
+
         const el = document.documentElement;
         const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
         if (rfs) {
@@ -82,53 +93,84 @@
         setTimeout(resizeCanvas, 300);
       }
 
-      window.addEventListener('click', triggerFullScreenAndRotate, { once: true });
-      window.addEventListener('touchstart', triggerFullScreenAndRotate, { once: true });
+      startOverlay.addEventListener('click', startGame);
+      startOverlay.addEventListener('touchstart', startGame);
 
-      // Dynamic Color Big Bird
-      const bigBird = {
+      // Slingshot Position (Left Side)
+      const slingshot = {
+        getX() { return width * 0.18; },
+        getY() { return height * 0.65; },
+        draw() {
+          const sx = this.getX();
+          const sy = this.getY();
+          
+          ctx.strokeStyle = '#8b5a2b';
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+
+          // Base Pole
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx, height);
+          ctx.stroke();
+
+          // Fork
+          ctx.beginPath();
+          ctx.moveTo(sx - 16, sy - 28);
+          ctx.lineTo(sx, sy);
+          ctx.lineTo(sx + 16, sy - 28);
+          ctx.stroke();
+        }
+      };
+
+      // Player Bird (Seated on Slingshot on Left)
+      const playerBird = {
         energy: 100,
         getColor() {
-          if (this.energy >= 70) return '#ff2e55';
-          if (this.energy >= 30) return '#ff922b';
-          return '#6b7280';
+          if (this.energy >= 70) return '#ff2e55'; // Full Energy: Hot Red
+          if (this.energy >= 30) return '#ff922b'; // Medium: Energetic Orange
+          return '#6b7280';                       // Low: Dull Grey
         },
         draw() {
-          const bx = width * 0.82;
-          const by = height * 0.55;
-          const r = Math.min(width, height) * 0.12;
+          // Exactly resting on the slingshot fork
+          const bx = slingshot.getX();
+          const by = slingshot.getY() - 18;
+          const r = Math.min(width, height) * 0.055;
 
           ctx.save();
-          // Glow
+          // Glow Aura based on energy
           ctx.beginPath();
-          ctx.arc(bx, by, r + 8, 0, Math.PI * 2);
-          ctx.fillStyle = this.getColor() + '33';
+          ctx.arc(bx, by, r + 6, 0, Math.PI * 2);
+          ctx.fillStyle = this.getColor() + '44';
           ctx.fill();
 
-          // Body
+          // Main Body
           ctx.beginPath();
           ctx.arc(bx, by, r, 0, Math.PI * 2);
           ctx.fillStyle = this.getColor();
+          ctx.shadowColor = 'rgba(0,0,0,0.3)';
+          ctx.shadowBlur = 8;
           ctx.fill();
+          ctx.shadowBlur = 0;
 
-          // Eye
+          // Eye (facing RIGHT towards target)
           ctx.fillStyle = '#ffffff';
           ctx.beginPath();
-          ctx.arc(bx - r * 0.3, by - r * 0.2, r * 0.2, 0, Math.PI * 2);
+          ctx.arc(bx + r * 0.35, by - r * 0.2, r * 0.28, 0, Math.PI * 2);
           ctx.fill();
 
-          // Pupil
+          // Pupil (looking right)
           ctx.fillStyle = '#111827';
           ctx.beginPath();
-          ctx.arc(bx - r * 0.35, by - r * 0.2, r * 0.08, 0, Math.PI * 2);
+          ctx.arc(bx + r * 0.45, by - r * 0.2, r * 0.1, 0, Math.PI * 2);
           ctx.fill();
 
-          // Beak
+          // Beak (pointing RIGHT)
           ctx.fillStyle = '#f59e0b';
           ctx.beginPath();
-          ctx.moveTo(bx - r * 0.5, by - r * 0.05);
-          ctx.lineTo(bx - r * 0.9, by + r * 0.1);
-          ctx.lineTo(bx - r * 0.5, by + r * 0.25);
+          ctx.moveTo(bx + r * 0.55, by - r * 0.1);
+          ctx.lineTo(bx + r * 1.05, by + r * 0.05);
+          ctx.lineTo(bx + r * 0.55, by + r * 0.2);
           ctx.closePath();
           ctx.fill();
 
@@ -136,42 +178,55 @@
         }
       };
 
-      // Slingshot
-      function drawSlingshot() {
-        const sx = width * 0.18;
-        const sy = height * 0.65;
-        ctx.strokeStyle = '#8b5a2b';
-        ctx.lineWidth = 6;
-        ctx.lineCap = 'round';
+      // Floating Platform Demo on Right Side
+      function drawFloatingTargetArea() {
+        const px = width * 0.78;
+        const py = height * 0.55;
+        const pw = 120;
+        const ph = 14;
+
+        // Floating plank
+        ctx.fillStyle = '#92400e';
         ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(sx, height);
-        ctx.moveTo(sx - 16, sy - 28);
-        ctx.lineTo(sx, sy);
-        ctx.lineTo(sx + 16, sy - 28);
-        ctx.stroke();
+        ctx.roundRect ? ctx.roundRect(px - pw/2, py, pw, ph, 4) : ctx.rect(px - pw/2, py, pw, ph);
+        ctx.fill();
+
+        // Target box on top of platform
+        ctx.fillStyle = '#ca8a04';
+        ctx.fillRect(px - 15, py - 30, 30, 30);
       }
 
       function loop() {
         ctx.clearRect(0, 0, width, height);
 
+        // Edge-to-edge dark background
         const bg = ctx.createLinearGradient(0, 0, 0, height);
         bg.addColorStop(0, '#1e293b');
         bg.addColorStop(1, '#0f172a');
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, width, height);
 
-        drawSlingshot();
-        bigBird.draw();
+        // Ground line
+        ctx.fillStyle = '#15803d';
+        ctx.fillRect(0, height - 12, width, 12);
+
+        // Draw Slingshot & Left Bird
+        slingshot.draw();
+        playerBird.draw();
+
+        // Draw Right Suspended Platform
+        drawFloatingTargetArea();
 
         requestAnimationFrame(loop);
       }
       loop();
 
-      // Tap screen to switch color
+      // Screen Tap to cycle color
       window.addEventListener('pointerup', () => {
-        bigBird.energy -= 35;
-        if (bigBird.energy < 0) bigBird.energy = 100;
+        if (startOverlay.style.display === 'none') {
+          playerBird.energy -= 35;
+          if (playerBird.energy < 0) playerBird.energy = 100;
+        }
       });
     });
   </script>
