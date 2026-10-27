@@ -32,9 +32,9 @@
       height: 100vh;
       transform-origin: 0 0;
       overflow: hidden;
-      transition: transform 0.2s ease;
+      transition: transform 0.25s ease;
     }
-    /* Virtual 90 Degree Force Landscape */
+    /* زبردستی 90 ڈگری گھمانے کے لیے */
     .virtual-landscape {
       width: 100vh !important;
       height: 100vw !important;
@@ -50,12 +50,81 @@
       display: block;
       z-index: 1;
     }
+
+    /* پورٹریٹ میں اسکرین کے درمیان بڑا روٹیٹ اوورلے */
+    #rotate-screen-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      z-index: 999999;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .rotate-box {
+      background: #1e293b;
+      border: 3px solid #facc15;
+      padding: 30px 24px;
+      border-radius: 24px;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 320px;
+      width: 90%;
+    }
+    .rotate-phone-anim {
+      font-size: 54px;
+      animation: phoneRotateAnim 1.8s infinite ease-in-out;
+    }
+    @keyframes phoneRotateAnim {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(-90deg); }
+      100% { transform: rotate(0deg); }
+    }
+    .rotate-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #facc15;
+    }
+    .rotate-desc {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    .btn-force-rotate {
+      background: #eab308;
+      color: #000;
+      border: 2px solid #ca8a04;
+      font-size: 16px;
+      font-weight: 800;
+      padding: 12px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-force-rotate:active {
+      transform: scale(0.95);
+    }
+
     #top-hud {
       position: absolute;
       top: max(8px, env(safe-area-inset-top));
       left: max(12px, env(safe-area-inset-left));
       right: max(12px, env(safe-area-inset-right));
-      z-index: 9999;
+      z-index: 999;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -95,13 +164,6 @@
     }
     .circle-btn:active {
       transform: scale(0.92);
-    }
-    #btn-ring-rotate {
-      background: #fde047;
-      border: 2px solid #ca8a04;
-      font-weight: bold;
-      font-size: 18px;
-      color: #000;
     }
     #btn-fs {
       background: #38bdf8;
@@ -161,6 +223,18 @@
 </head>
 <body>
 
+  <!-- Center-Screen Rotate Overlay (Only shows when phone is portrait) -->
+  <div id="rotate-screen-overlay">
+    <div class="rotate-box">
+      <div class="rotate-phone-anim">📱</div>
+      <div class="rotate-title">Please Rotate Device</div>
+      <div class="rotate-desc">Hungry Birds is designed for landscape mode. Rotate your phone sideways to play!</div>
+      <button id="btn-force-landscape" class="btn-force-rotate">
+        <span>Play in Landscape</span> <span>↻</span>
+      </button>
+    </div>
+  </div>
+
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
 
@@ -175,7 +249,6 @@
 
       <div class="hud-controls">
         <button class="circle-btn" id="btn-restart" title="Restart Level">🔄</button>
-        <button class="circle-btn" id="btn-ring-rotate" title="Force Landscape">↻</button>
         <button id="btn-fs" class="circle-btn" title="Fullscreen Toggle">⛶</button>
       </div>
     </header>
@@ -194,8 +267,10 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const fsBtn = document.getElementById('btn-fs');
-    const ringRotateBtn = document.getElementById('btn-ring-rotate');
     const restartBtn = document.getElementById('btn-restart');
+    const rotateOverlay = document.getElementById('rotate-screen-overlay');
+    const forceLandscapeBtn = document.getElementById('btn-force-landscape');
+
     const totalBirdsEl = document.getElementById('total-birds-count');
     const targetCountEl = document.getElementById('target-count-hud');
     const scoreValEl = document.getElementById('score-val');
@@ -236,6 +311,31 @@
     let isLevelCompleted = false;
 
     let bigBirdEnergy = 100;
+
+    // اوورلے کا خودکار چیک: پورٹریٹ میں دکھائے گا، لینڈ اسکیپ میں غائب ہو جائے گا
+    function checkOrientationOverlay() {
+      const isPortrait = window.innerHeight > window.innerWidth;
+      if (isPortrait && !isVirtualRotated) {
+        rotateOverlay.style.display = 'flex';
+      } else {
+        rotateOverlay.style.display = 'none';
+      }
+    }
+
+    // درمیان والے بٹن پر کلک کرنے سے فوراً لینڈ اسکیپ ہو جائے
+    forceLandscapeBtn.addEventListener('click', () => {
+      isVirtualRotated = true;
+      container.classList.add('virtual-landscape');
+      rotateOverlay.style.display = 'none';
+
+      // فل اسکرین ٹرائی کریں
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
+      else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
+
+      window.scrollTo(0, 1);
+      resizeCanvas();
+    });
 
     function resetBirdsForLevel() {
       birdTypes = [
@@ -413,10 +513,12 @@
       }
       canvas.width = width;
       canvas.height = height;
+      checkOrientationOverlay();
       loadLevel(currentLevel);
     }
 
     window.addEventListener('resize', () => {
+      // اگر صارف نے موبائل کو واقعی ہاتھ سے لینڈ اسکیپ کر لیا ہے تو ورچوئل روٹیشن ہٹا دیں
       if (window.innerWidth > window.innerHeight && isVirtualRotated) {
         isVirtualRotated = false;
         container.classList.remove('virtual-landscape');
@@ -1264,7 +1366,7 @@
       requestAnimationFrame(render);
     }
 
-    // Touch translation safe with 90deg Virtual Rotation
+    // Touch Handling (Virtual Rotate Support)
     function getCanvasCoords(e) {
       const rect = canvas.getBoundingClientRect();
       const rawX = e.clientX - rect.left;
@@ -1284,7 +1386,7 @@
     }
 
     window.addEventListener('pointerdown', (e) => {
-      if (modal.style.display === 'flex') return;
+      if (modal.style.display === 'flex' || rotateOverlay.style.display === 'flex') return;
       if (e.target.closest('#top-hud')) return;
 
       const pos = getCanvasCoords(e);
@@ -1377,21 +1479,6 @@
 
     restartBtn.addEventListener('click', () => {
       loadLevel(currentLevel);
-    });
-
-    // Rotate Button (Bypasses mobile rotation lock instantly)
-    ringRotateBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      isVirtualRotated = !isVirtualRotated;
-
-      if (isVirtualRotated) {
-        container.classList.add('virtual-landscape');
-      } else {
-        container.classList.remove('virtual-landscape');
-      }
-
-      window.scrollTo(0, 1);
-      resizeCanvas();
     });
 
     // Fullscreen Toggle
