@@ -8,6 +8,16 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#89cbf8">
+
+  <!-- Browser Favicon & Mobile Home Screen Icons (Favicon.io Assets) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+  <link rel="manifest" href="site.webmanifest">
+
   <!-- Social & Meta Tags -->
   <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/v2/">
   <meta property="og:site_name" content="Hungry Birds v2">
@@ -34,7 +44,7 @@
   <meta name="twitter:title" content="Hungry Birds v2 - Multi Levels">
   <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
   <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
-  <link rel="apple-touch-icon" href="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+
   <style>
     * {
       box-sizing: border-box;
@@ -634,7 +644,6 @@
       addFloatingScore(bombX, bombY - 30, 'BOOOM! +500');
       addScore(500);
 
-      // आस-पास के ब्लॉक उड़ाएँ
       for (let i = structures.length - 1; i >= 0; i--) {
         const p = structures[i];
         const dist = Math.hypot((p.x + p.w / 2) - bombX, (p.y + p.h / 2) - bombY);
@@ -645,7 +654,6 @@
         }
       }
 
-      // टारगेट नष्ट करें
       targets.forEach(t => {
         if (t.alive) {
           const dist = Math.hypot(t.x - bombX, t.y - bombY);
@@ -661,7 +669,6 @@
         }
       });
 
-      // झूले और रस्सियों को ध्वस्त करें
       floatingPlatforms.forEach(fp => {
         if (!fp.collapsed) {
           const distPlat = Math.hypot(fp.x - bombX, fp.y - bombY);
@@ -1345,17 +1352,15 @@
         }
         if (birdExploded) continue;
 
-        // ==================== रस्सियों और झूले पर सटीक टक्कर ====================
+        // Ropes & Swing Platform Collision
         for (let fp of floatingPlatforms) {
           if (!fp.collapsed) {
             const leftRopeX = fp.x - (fp.w / 2) + 10;
             const rightRopeX = fp.x + (fp.w / 2) - 10;
 
-            // छत (y=0) से लेकर झूले के बेस तक पूरी रस्सी की हिटबॉक्स
             const hitLeftRope = Math.abs(fb.x - leftRopeX) < 18 && (fb.y >= 0 && fb.y <= fp.y + fp.h);
             const hitRightRope = Math.abs(fb.x - rightRopeX) < 18 && (fb.y >= 0 && fb.y <= fp.y + fp.h);
 
-            // अगर बॉम्ब बर्ड रस्सी को छूता है तो तुरंत फटेगा
             if (hitLeftRope || hitRightRope) {
               if (fb.id === 'black') {
                 triggerBombExplosion(fb.x, fb.y);
@@ -1458,7 +1463,7 @@
             p.vy = -p.vy * 0.15;
             p.vx *= 0.70;
             p.va *= 0.60;
-            if (Math.abs(p.vy) < 0.3) p.vy = 0;
+            if (Math.abs(p.vy) < 0.3) fp_vy = 0;
             if (Math.abs(p.vx) < 0.1) p.vx = 0;
             if (Math.abs(p.va) < 0.01) p.va = 0;
           }
