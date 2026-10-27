@@ -36,7 +36,6 @@
       display: block;
       z-index: 1;
     }
-    /* Top HUD */
     #top-hud {
       position: absolute;
       top: max(8px, env(safe-area-inset-top));
@@ -85,7 +84,6 @@
       border: 2px solid #ca8a04;
       font-weight: bold;
     }
-    /* 1-Tap Overlay */
     #start-overlay {
       position: absolute;
       top: 0;
@@ -119,10 +117,9 @@
 </head>
 <body>
 
-  <!-- Ek hi click par screen landscape aur fullscreen karne ka layer -->
   <div id="start-overlay">
     <div class="play-badge">TAP TO PLAY</div>
-    <p style="margin-top: 12px; font-size: 13px; color: #cbd5e1;">📱 Tap once to rotate & enter full screen</p>
+    <p style="margin-top: 12px; font-size: 13px; color: #cbd5e1;">📱 ایک بار ٹیپ کریں، فل اسکرین اور روٹیٹ ہو جائے گا</p>
   </div>
 
   <div id="game-container">
@@ -171,7 +168,7 @@
       window.addEventListener('resize', () => setTimeout(resizeCanvas, 150));
       resizeCanvas();
 
-      // Immediate 1st Tap Fullscreen & Landscape
+      // پہلی ہی ٹیپ پر فل اسکرین اور لینڈ اسکیپ
       function enterFullscreenDirectly() {
         startOverlay.style.display = 'none';
 
@@ -195,106 +192,114 @@
         enterFullscreenDirectly();
       });
 
-      // --- V2 UNIQUE BOSS BIRD (Crest Spikes + Angry Brows + Hooked Beak) ---
+      // --- V2 اینگولر شکاری باس ایگل (Angular Mecha-Eagle) ---
       const bigBird = {
         stateIndex: 0,
         states: [
-          { name: 'Rage',     body: '#dc2626', belly: '#f87171', glow: 'rgba(220, 38, 38, 0.4)' }, // 1. Fiery Red
-          { name: 'Craving',  body: '#ea580c', belly: '#fb923c', glow: 'rgba(234, 88, 12, 0.4)' }, // 2. Hungry Orange
-          { name: 'Starving', body: '#475569', belly: '#94a3b8', glow: 'rgba(71, 85, 105, 0.4)' }  // 3. Weak Slate Grey
+          { name: 'Rage',     main: '#ef4444', armor: '#991b1b', eye: '#fef08a', glow: 'rgba(239, 68, 68, 0.45)' },
+          { name: 'Craving',  main: '#f97316', armor: '#9a3412', eye: '#fef08a', glow: 'rgba(249, 115, 22, 0.45)' },
+          { name: 'Starving', main: '#64748b', armor: '#334155', eye: '#cbd5e1', glow: 'rgba(100, 116, 139, 0.45)' }
         ],
         getState() {
           return this.states[this.stateIndex];
         },
         draw(cliffW, cliffY) {
-          const state = this.getState();
-          const cx = cliffW * 0.48;
-          const cy = cliffY - 32;
-          const r = 32;
+          const s = this.getState();
+          const cx = cliffW * 0.46;
+          const cy = cliffY - 36;
 
           ctx.save();
 
-          // 1. Glow Aura
+          // 1. اورا گلو
+          ctx.fillStyle = s.glow;
           ctx.beginPath();
-          ctx.arc(cx, cy, r + 8, 0, Math.PI * 2);
-          ctx.fillStyle = state.glow;
+          ctx.moveTo(cx - 36, cy + 18);
+          ctx.lineTo(cx - 24, cy - 38);
+          ctx.lineTo(cx + 20, cy - 32);
+          ctx.lineTo(cx + 42, cy);
+          ctx.lineTo(cx + 18, cy + 28);
+          ctx.closePath();
           ctx.fill();
 
-          // 2. Head Crest / Spikes
-          ctx.fillStyle = state.body;
-          ctx.strokeStyle = '#000';
+          // 2. نوکیلے کریسٹ پر / اسپلٹرز
+          ctx.fillStyle = s.armor;
+          ctx.strokeStyle = '#0f172a';
           ctx.lineWidth = 2.5;
 
-          // Spike 1
           ctx.beginPath();
-          ctx.moveTo(cx - 10, cy - r + 4);
-          ctx.lineTo(cx - 24, cy - r - 16);
-          ctx.lineTo(cx - 2, cy - r + 1);
+          ctx.moveTo(cx - 8, cy - 24);
+          ctx.lineTo(cx - 34, cy - 42);
+          ctx.lineTo(cx - 18, cy - 14);
+          ctx.lineTo(cx - 40, cy - 20);
+          ctx.lineTo(cx - 14, cy);
           ctx.closePath();
           ctx.fill();
           ctx.stroke();
 
-          // Spike 2
+          // 3. اینگولر باڈی (گولائی ختم)
+          ctx.fillStyle = s.main;
           ctx.beginPath();
-          ctx.moveTo(cx - 4, cy - r + 2);
-          ctx.lineTo(cx - 12, cy - r - 22);
-          ctx.lineTo(cx + 8, cy - r + 2);
+          ctx.moveTo(cx - 26, cy - 12);
+          ctx.lineTo(cx - 10, cy - 30);
+          ctx.lineTo(cx + 18, cy - 22);
+          ctx.lineTo(cx + 30, cy + 4);
+          ctx.lineTo(cx + 12, cy + 26);
+          ctx.lineTo(cx - 22, cy + 24);
           ctx.closePath();
           ctx.fill();
           ctx.stroke();
 
-          // 3. Main Body
+          // 4. سینے کی آرمر پلیٹ
+          ctx.fillStyle = s.armor;
           ctx.beginPath();
-          ctx.ellipse(cx, cy, r + 6, r, 0, 0, Math.PI * 2);
-          ctx.fillStyle = state.body;
+          ctx.moveTo(cx - 4, cy - 10);
+          ctx.lineTo(cx + 16, cy - 6);
+          ctx.lineTo(cx + 22, cy + 8);
+          ctx.lineTo(cx + 8, cy + 22);
+          ctx.lineTo(cx - 8, cy + 12);
+          ctx.closePath();
           ctx.fill();
           ctx.stroke();
 
-          // 4. Belly Plate
-          ctx.beginPath();
-          ctx.ellipse(cx + 10, cy + 8, r * 0.55, r * 0.65, 0.2, 0, Math.PI * 2);
-          ctx.fillStyle = state.belly;
-          ctx.fill();
-
-          // 5. Angry Boss Eye
-          const eyeX = cx + 16;
-          const eyeY = cy - 6;
-
-          ctx.beginPath();
-          ctx.arc(eyeX, eyeY, 7, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.fill();
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.arc(eyeX + 3, eyeY, 3, 0, Math.PI * 2);
-          ctx.fillStyle = '#000000';
-          ctx.fill();
-
-          // Sharp Eyebrow
-          ctx.strokeStyle = '#000000';
-          ctx.lineWidth = 3.5;
-          ctx.beginPath();
-          ctx.moveTo(eyeX - 8, eyeY - 9);
-          ctx.lineTo(eyeX + 10, eyeY - 4);
-          ctx.stroke();
-
-          // 6. Hooked Raptor Beak
-          ctx.lineWidth = 2;
+          // 5. نوکیلی شکاری چونچ
           ctx.fillStyle = '#f59e0b';
           ctx.beginPath();
-          ctx.moveTo(cx + 26, cy - 8);
-          ctx.quadraticCurveTo(cx + 46, cy, cx + 44, cy + 12);
-          ctx.lineTo(cx + 26, cy + 8);
+          ctx.moveTo(cx + 24, cy - 14);
+          ctx.lineTo(cx + 52, cy - 2);
+          ctx.lineTo(cx + 28, cy + 14);
+          ctx.lineTo(cx + 26, cy + 2);
           ctx.closePath();
           ctx.fill();
           ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(cx + 26, cy - 2);
+          ctx.lineTo(cx + 44, cy - 1);
+          ctx.stroke();
+
+          // 6. غصے والی اینگولر آنکھ
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.moveTo(cx + 4, cy - 20);
+          ctx.lineTo(cx + 22, cy - 16);
+          ctx.lineTo(cx + 16, cy - 6);
+          ctx.lineTo(cx + 2, cy - 10);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = s.eye;
+          ctx.beginPath();
+          ctx.moveTo(cx + 8, cy - 16);
+          ctx.lineTo(cx + 19, cy - 13);
+          ctx.lineTo(cx + 13, cy - 8);
+          ctx.closePath();
+          ctx.fill();
 
           ctx.restore();
         }
       };
 
-      // --- SUSPENDED FLOATING PLATFORM (Hawa mein latakti slab) ---
+      // --- ہوا میں معلق پلیٹ فارم (Suspended Slab) ---
       function drawFloatingPlatform() {
         const fx = width * 0.50;
         const fy = height * 0.38;
@@ -303,7 +308,7 @@
 
         ctx.save();
 
-        // 1. Hanging Steel Ropes from Sky ceiling
+        // لٹکتی ہوئی کیبلز
         ctx.strokeStyle = '#1e293b';
         ctx.lineWidth = 3;
 
@@ -317,14 +322,13 @@
         ctx.lineTo(fx + (fw / 2) - 12, fy);
         ctx.stroke();
 
-        // Anchors
         ctx.fillStyle = '#f59e0b';
         ctx.beginPath();
         ctx.arc(fx - (fw / 2) + 12, fy, 4, 0, Math.PI * 2);
         ctx.arc(fx + (fw / 2) - 12, fy, 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // 2. Hanging Wooden Slab
+        // لکڑی کا تختہ
         ctx.fillStyle = '#854d0e';
         ctx.strokeStyle = '#000000';
         ctx.lineWidth = 2.5;
@@ -334,7 +338,7 @@
         ctx.fillStyle = '#a16207';
         ctx.fillRect(fx - (fw / 2) + 4, fy + 2, fw - 8, 3);
 
-        // 3. Floating Target (Cyan Target Ball)
+        // تختے کے اوپر ٹارگٹ
         const tr = 17;
         const tx = fx;
         const ty = fy - tr;
@@ -355,24 +359,24 @@
         ctx.restore();
       }
 
-      // --- Main Game Render Loop ---
+      // --- مین رینڈر لوپ ---
       function render() {
         ctx.clearRect(0, 0, width, height);
 
         const groundH = Math.max(height * 0.12, 42);
         const groundY = height - groundH;
 
-        // 1. Blue Sky
+        // 1. نیلا آسمان
         ctx.fillStyle = '#89cbf8';
         ctx.fillRect(0, 0, width, height);
 
-        // 2. Sun (Right Corner)
+        // 2. سورج
         ctx.fillStyle = '#fef08a';
         ctx.beginPath();
         ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
         ctx.fill();
 
-        // 3. Mountains
+        // 3. پہاڑ
         ctx.fillStyle = '#9aa0d9';
         ctx.beginPath();
         ctx.moveTo(width * 0.20, groundY);
@@ -389,13 +393,13 @@
         ctx.closePath();
         ctx.fill();
 
-        // 4. Ground (Brown + Green grass strip)
+        // 4. زمین
         ctx.fillStyle = '#42281d';
         ctx.fillRect(0, groundY, width, groundH);
         ctx.fillStyle = '#55a234';
         ctx.fillRect(0, groundY, width, 14);
 
-        // 5. Left Cliff
+        // 5. بائیں طرف کی پہاڑی (Cliff)
         const cliffW = width * 0.12;
         const cliffY = height * 0.40;
         ctx.fillStyle = '#4a2c20';
@@ -410,10 +414,10 @@
         ctx.fillStyle = '#55a234';
         ctx.fillRect(0, cliffY, cliffW + 4, 10);
 
-        // 6. Draw V2 Unique Boss Bird
+        // 6. نیا باس ایگل پرندہ
         bigBird.draw(cliffW, cliffY);
 
-        // 7. Small Birds Queue
+        // 7. چھوٹے پرندوں کی قطار
         const qStartX = cliffW + 28;
         for (let i = 0; i < 7; i++) {
           const qx = qStartX + (i * 18);
@@ -427,7 +431,7 @@
           ctx.stroke();
         }
 
-        // 8. Slingshot
+        // 8. سلنگ شاٹ
         const sx = width * 0.24;
         const sy = groundY - 55;
         ctx.strokeStyle = '#3e2316';
@@ -468,11 +472,11 @@
         ctx.closePath();
         ctx.fill();
 
-        // 9. Floating Suspended Platform
+        // 9. معلق لکڑی کا تختہ
         drawFloatingPlatform();
 
-        // 10. Ground Targets (Right Towers)
-        // Tower 1 (Single Story)
+        // 10. دائیں طرف کے ٹارگٹس
+        // ٹاور 1
         const t1X = width * 0.68;
         ctx.fillStyle = '#d99a38';
         ctx.fillRect(t1X - 26, groundY - 46, 10, 46);
@@ -488,7 +492,7 @@
         ctx.fill();
         ctx.stroke();
 
-        // Tower 2 (Double Story)
+        // ٹاور 2
         const t2X = width * 0.84;
         ctx.fillRect(t2X - 26, groundY - 46, 10, 46);
         ctx.strokeRect(t2X - 26, groundY - 46, 10, 46);
@@ -518,7 +522,7 @@
       }
       render();
 
-      // Screen Tap: Big Bird color cycle (Red -> Orange -> Grey -> Red)
+      // اسکرین پر ٹیپ کرنے سے رنگ بدلنا
       window.addEventListener('pointerup', () => {
         if (startOverlay.style.display === 'none') {
           bigBird.stateIndex = (bigBird.stateIndex + 1) % bigBird.states.length;
