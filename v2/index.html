@@ -7,16 +7,19 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hungry Bird V2">
   <meta name="theme-color" content="#89cbf8">
 
-  <!-- Browser Favicon & Mobile Home Screen Icons (Favicon.io Assets) -->
+  <!-- Correct Manifest Link for V2 -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Browser Favicon & Mobile Home Screen Icons -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
-  <link rel="manifest" href="site.webmanifest">
 
   <!-- Social & Meta Tags -->
   <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/v2/">
@@ -32,12 +35,6 @@
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1024">
   <meta property="og:image:height" content="1024">
-
-  <!-- Schema.org Microdata -->
-  <link rel="image_src" href="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
-  <meta itemprop="name" content="Hungry Birds v2 - Multi Levels">
-  <meta itemprop="description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
-  <meta itemprop="image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
@@ -322,6 +319,13 @@
   </div>
 
   <script>
+    // Register V2 Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const fsBtn = document.getElementById('btn-fs');
