@@ -306,13 +306,13 @@
     }
 
     .spinning-coin {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       background: radial-gradient(circle, #fff 10%, #ffd700 50%, #b8860b 100%);
       border-radius: 50%;
       border: 3px solid #ffeb3b;
-      margin: 8px auto 14px auto;
-      box-shadow: 0 0 16px rgba(255, 215, 0, 0.85);
+      margin: 8px auto 10px auto;
+      box-shadow: 0 0 18px rgba(255, 215, 0, 0.9);
       animation: coinSpin 1.4s infinite linear;
       display: none;
     }
@@ -320,6 +320,30 @@
       0% { transform: rotateY(0deg); }
       50% { transform: rotateY(180deg); }
       100% { transform: rotateY(360deg); }
+    }
+
+    /* GLOSSY & ENLARGED BONUS WIN TEXT STYLES */
+    .bonus-subtitle-glossy {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffffff 0%, #fff176 40%, #ffb300 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.65));
+      margin-bottom: 6px;
+      display: block;
+    }
+    .bonus-score-huge {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 38px;
+      font-weight: 900;
+      color: #ffd700;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.95), 0 0 30px rgba(255, 152, 0, 0.6);
+      margin: 2px 0 16px 0;
+      display: block;
+      letter-spacing: 1px;
     }
 
     /* VISUAL GUIDE CARD (START & HELP SCREENS) */
@@ -1149,6 +1173,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 let level = 1;
+let inBonusStage = false;
 let score = 0;
 let energy = 15;
 let isAiming = false;
@@ -1240,11 +1265,11 @@ const FOOD_CONFIGS = [
   { name: 'Strawberry', color: '#f44336', r: 16, pts: 150 }
 ];
 
-// ==================== LEVEL GENERATION ====================
 function isBonusLevel() {
-  return level % 6 === 0;
+  return inBonusStage;
 }
 
+// ==================== LEVEL GENERATION ====================
 function initLevel() {
   blocks = [];
   foods = [];
@@ -1280,25 +1305,22 @@ function initLevel() {
   resetBird();
   if (musicEnabled) startBackgroundMusic();
 
-  // SPECIAL BONUS LEVEL (Level 6 cycle): Balanced Metal Bunker (Achievable Arc Shot Layout)
+  // SPECIAL BONUS LEVEL: Balanced Metal Bunker
   if (isBonusLevel()) {
     const shieldX = 410;
-    const SHIELD_H = 130; // Height adjusted so arc shot can curve over properly
+    const SHIELD_H = 130;
     
-    // Front Unbreakable Heavy Metal Shield Wall
     blocks.push({
       id: 'metal_bunker_wall', towerId: 99, floor: 0, isPillar: true, isMetalShield: true,
       type: 'iron', x: shieldX, y: GROUND_Y - SHIELD_H, w: 22, h: SHIELD_H, vy: 0,
       hitsLeft: 999, maxHits: 999, color: '#37474F', falling: false, rotation: 0
     });
-    // Top Plate
     blocks.push({
       id: 'metal_bunker_top', towerId: 99, floor: 0, isRoof: true, isMetalShield: true,
       type: 'iron', x: shieldX - 8, y: GROUND_Y - SHIELD_H - 14, w: 38, h: 14, vy: 0,
       hitsLeft: 999, maxHits: 999, color: '#263238', falling: false, rotation: 0
     });
 
-    // 1st Target Stand: moved away from bunker blindspot to X=565 and elevated on a small pillar
     blocks.push({
       id: 'target1_stand', towerId: 99, floor: 0, isPillar: true,
       type: 'wood', x: 555, y: GROUND_Y - 45, w: 20, h: 45, vy: 0,
@@ -1309,7 +1331,6 @@ function initLevel() {
       r: 17, color: '#ff9800', pts: 300, alive: true
     });
 
-    // 2nd Target: Elevated Tower Behind at X=670
     const tX = 670;
     const PILLAR_H = 65;
     const ROOF_H = 14;
@@ -1341,7 +1362,7 @@ function initLevel() {
     return;
   }
 
-  // REGULAR LEVELS (1-5, etc.) - ORIGINAL OPEN LEVELS UNTOUCHED!
+  // REGULAR LEVELS
   const numTowers = Math.min(2 + Math.floor(level / 5), 3);
   const towerSpacing = 150;
   const startX = 530;
@@ -1760,14 +1781,19 @@ function checkAllFoodFinished() {
 
       const winCoin = document.getElementById('win-coin');
       const winTitle = document.getElementById('win-title');
+      const winMsg = document.getElementById('win-msg');
       const nextBtn = document.getElementById('next-level-btn');
 
+      // IF WON BONUS ROUND
       if (isBonusLevel()) {
         gameState = 'WIN';
         winTitle.innerText = "Bonus";
         winCoin.style.display = 'block';
         animateStars("win-stars", 0);
-        document.getElementById('win-msg').innerText = `Remaining Birds Bonus: +${starBonusPts} pts!`;
+        
+        // Glossy Subtitle on top + Huge Bold Points below coin
+        winMsg.innerHTML = `<span class="bonus-subtitle-glossy">Remaining Birds Bonus</span><span class="bonus-score-huge">+${starBonusPts}</span>`;
+        
         nextBtn.innerText = "Continue to Next Level ➔";
         document.getElementById('win-overlay').classList.remove('hidden');
         return;
@@ -1776,11 +1802,12 @@ function checkAllFoodFinished() {
       winCoin.style.display = 'none';
       nextBtn.innerText = "Next Level";
 
+      // AFTER LEVEL 5 CLEAR -> TRIGGER BONUS STAGE
       if (level === 5) {
         gameState = 'WIN';
         winTitle.innerText = "Level 5 Cleared! 🎉";
         animateStars("win-stars", earnedStars);
-        document.getElementById('win-msg').innerText = "Bonus";
+        winMsg.innerText = "Bonus Challenge Unlocked!";
         nextBtn.innerText = "Play Bonus Round ➔";
         document.getElementById('win-overlay').classList.remove('hidden');
         return;
@@ -1808,24 +1835,43 @@ function checkAllFoodFinished() {
           winText += `\nNext Level Upgraded: 12 Birds Available Per Level!`;
         }
         
-        document.getElementById('win-msg').innerText = winText;
+        winMsg.innerText = winText;
         document.getElementById('win-overlay').classList.remove('hidden');
       }
     }, 600);
   }
 }
 
-// BONUS MISS HANDLER (NO LOSS, ADVANCE TO NEXT CYCLE)
+// BONUS MISS HANDLER
 function handleBonusMiss() {
   stopRubberStretch();
   gameState = 'BONUS_LOSS';
   document.getElementById('bonusLossOverlay').style.display = 'flex';
 }
 
+// Bonus Loss -> Goes directly to regular Level 6
 document.getElementById('bonusContinueBtn').onclick = () => {
   document.getElementById('bonusLossOverlay').style.display = 'none';
-  level++;
+  inBonusStage = false;
+  level = 6;
   gameState = 'PLAY';
+  initLevel();
+};
+
+// Next Level Handler (Win Screen)
+document.getElementById('next-level-btn').onclick = () => {
+  document.getElementById('win-overlay').classList.add('hidden');
+  
+  if (level === 5 && !inBonusStage) {
+    inBonusStage = true;
+  } else if (inBonusStage) {
+    inBonusStage = false;
+    level = 6;
+  } else {
+    level++;
+  }
+  
+  gameState = 'PLAY'; 
   initLevel();
 };
 
@@ -1853,6 +1899,7 @@ function gameOver(reason) {
 function restartGame() {
   initAudioSystem(); 
   level = 1; 
+  inBonusStage = false;
   score = 0; 
   incrementGlobalPlayCount();
   startSilentSession();
@@ -1872,7 +1919,6 @@ function updateHUD() {
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
   
-  // Dynamic placement of the HEALTH badge right below the Giant Bird
   const clockEl = document.getElementById('bird-energy-clock');
   const energyEl = document.getElementById('energy-digits');
   const currentEnergyVal = Math.max(0, Math.ceil(energy));
@@ -1882,7 +1928,6 @@ function updateHUD() {
     const scaleX = rect.width / canvas.width;
     const scaleY = rect.height / canvas.height;
     
-    // Position 72px below the bird's base position for clean spacing
     const clockCanvasX = bigBird.x + 8;
     const clockCanvasY = bigBird.y + 72;
     
@@ -2211,6 +2256,7 @@ document.getElementById('start-game-btn').onclick = () => {
   document.getElementById('start-overlay').classList.add('hidden');
   gameState = 'PLAY';
   level = 1;
+  inBonusStage = false;
   score = 0;
   initLevel();
 };
@@ -2218,13 +2264,6 @@ document.getElementById('start-game-btn').onclick = () => {
 // Try Again Handlers (Hotspot on image & secondary button)
 document.getElementById('imgTryAgainHotspot').onclick = restartGame;
 document.getElementById('customRestartBtn').onclick = restartGame;
-
-document.getElementById('next-level-btn').onclick = () => {
-  level++; 
-  document.getElementById('win-overlay').classList.add('hidden');
-  gameState = 'PLAY'; 
-  initLevel();
-};
 
 document.getElementById('evolve-btn').onclick = () => {
   level++; 
