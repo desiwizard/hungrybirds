@@ -82,46 +82,69 @@
       border: 1px solid rgba(255,255,255,0.18);
     }
 
-    /* ==================== BIG PROMINENT ENERGY CLOCK UNDER GIANT BIRD ==================== */
+    /* ==================== HIGH-CONTRAST HEALTH BADGE UNDER GIANT BIRD ==================== */
     #bird-energy-clock {
       position: absolute;
       top: 50%;
       left: 62px;
       transform: translate(-50%, -50%);
-      background: rgba(15, 23, 42, 0.88);
-      border: 2px solid #2ed573;
+      background: rgba(8, 14, 26, 0.94);
+      border: 2px solid #00ff88;
       border-radius: 26px;
-      padding: 4px 14px;
+      padding: 5px 15px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       z-index: 28;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 0 0 12px rgba(46, 213, 115, 0.4);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 255, 136, 0.5);
       pointer-events: none;
       transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      white-space: nowrap;
     }
-    .clock-icon {
-      font-size: 16px;
+    .health-label {
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    }
+    .health-icon {
+      font-size: 14px;
+      color: #00ff88;
+      filter: drop-shadow(0 0 4px #00ff88);
     }
     .energy-digit-box {
-      color: #2ed573;
+      color: #00ff88;
       font-family: 'Courier New', Courier, monospace;
       font-weight: 900;
-      font-size: 20px;
-      min-width: 26px;
+      font-size: 24px;
+      min-width: 32px;
       text-align: center;
       transition: color 0.2s ease;
       display: inline-block;
-      text-shadow: 0 0 8px rgba(46, 213, 115, 0.7);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.9), 0 0 20px rgba(0, 255, 136, 0.4);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 255, 136, 0.35);
     }
     #bird-energy-clock.warning {
-      border-color: #ff4757;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 16px rgba(255, 71, 87, 0.8);
+      border-color: #ff3838;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), 0 0 18px rgba(255, 56, 56, 0.9);
       animation: pulseAlert 0.7s infinite alternate;
     }
+    #bird-energy-clock.warning .health-icon {
+      color: #ff3838;
+      filter: drop-shadow(0 0 6px #ff3838);
+    }
     #bird-energy-clock.warning .energy-digit-box {
-      color: #ff4757;
-      text-shadow: 0 0 10px rgba(255, 71, 87, 0.95);
+      color: #ff3838;
+      border-color: rgba(255, 56, 56, 0.5);
+      text-shadow: 0 0 12px rgba(255, 56, 56, 1), 0 0 22px rgba(255, 56, 56, 0.6);
     }
     @keyframes pulseAlert {
       from { transform: translate(-50%, -50%) scale(1); }
@@ -454,9 +477,9 @@
 <div id="game-container">
   <canvas id="gameCanvas" width="960" height="540"></canvas>
 
-  <!-- BIG ENERGY TIMER LOCATED UNDER GIANT BIRD -->
+  <!-- HIGH CONTRAST HEALTH BADGE DIRECTLY UNDER GIANT BIRD -->
   <div id="bird-energy-clock">
-    <span class="clock-icon">⚡</span>
+    <span class="health-label"><span class="health-icon">⚡</span>HEALTH:</span>
     <span id="energy-digits" class="energy-digit-box">15</span>
   </div>
 
@@ -532,7 +555,7 @@
           <div class="hud-legend-grid">
             <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
             <div>• <b>🎯 Shots:</b> Birds in queue</div>
-            <div>• <b>⚡ Energy:</b> Bird health clock</div>
+            <div>• <b>⚡ Health:</b> Bird health meter</div>
             <div>• <b>⛶ Fullscreen:</b> Toggle Screen</div>
             <div>• <b>🎵 Music:</b> BGM On/Off</div>
             <div>• <b>🔊 Sound:</b> SFX On/Off</div>
@@ -619,7 +642,7 @@
       <div class="hud-legend-grid">
         <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
         <div>• <b>🎯 Shots:</b> Birds in queue</div>
-        <div>• <b>⚡ Energy:</b> Bird health clock</div>
+        <div>• <b>⚡ Health:</b> Bird health meter</div>
         <div>• <b>⛶ Fullscreen:</b> Toggle Screen</div>
         <div>• <b>🎵 Music:</b> BGM On/Off</div>
         <div>• <b>🔊 Sound:</b> SFX On/Off</div>
@@ -1257,10 +1280,10 @@ function initLevel() {
   resetBird();
   if (musicEnabled) startBackgroundMusic();
 
-  // SPECIAL BONUS LEVEL (Level 6 cycle): Solid Metal Bunker (Strategy: Arc shot over it!)
+  // SPECIAL BONUS LEVEL (Level 6 cycle): Balanced Metal Bunker (Achievable Arc Shot Layout)
   if (isBonusLevel()) {
-    const shieldX = 430;
-    const SHIELD_H = 145;
+    const shieldX = 410;
+    const SHIELD_H = 130; // Height adjusted so arc shot can curve over properly
     
     // Front Unbreakable Heavy Metal Shield Wall
     blocks.push({
@@ -1275,8 +1298,19 @@ function initLevel() {
       hitsLeft: 999, maxHits: 999, color: '#263238', falling: false, rotation: 0
     });
 
-    // Elevated Protected Tower Behind Metal Bunker
-    const tX = 650;
+    // 1st Target Stand: moved away from bunker blindspot to X=565 and elevated on a small pillar
+    blocks.push({
+      id: 'target1_stand', towerId: 99, floor: 0, isPillar: true,
+      type: 'wood', x: 555, y: GROUND_Y - 45, w: 20, h: 45, vy: 0,
+      hitsLeft: 1, maxHits: 1, color: '#DDAA33', falling: false, rotation: 0
+    });
+    foods.push({
+      towerId: 99, floor: 0, x: 565, y: GROUND_Y - 65, vy: 0,
+      r: 17, color: '#ff9800', pts: 300, alive: true
+    });
+
+    // 2nd Target: Elevated Tower Behind at X=670
+    const tX = 670;
     const PILLAR_H = 65;
     const ROOF_H = 14;
     const pY = GROUND_Y - PILLAR_H;
@@ -1298,14 +1332,9 @@ function initLevel() {
       hitsLeft: 2, maxHits: 2, color: '#4A2E18', falling: false, rotation: 0
     });
 
-    // 2 Targets behind shield (Must be lobbed over bunker)
     foods.push({
       towerId: 100, floor: 0, x: tX, y: pY + (PILLAR_H / 2), vy: 0,
       r: 18, color: '#ffd700', pts: 400, alive: true
-    });
-    foods.push({
-      towerId: 99, floor: 0, x: 530, y: GROUND_Y - 22, vy: 0,
-      r: 17, color: '#ff9800', pts: 300, alive: true
     });
 
     updateHUD();
@@ -1843,7 +1872,7 @@ function updateHUD() {
   document.getElementById('shots-left-display').innerText = birdsLeft;
   document.getElementById('score-display').innerText = score;
   
-  // Dynamic placement of the energy timer right below the Giant Bird
+  // Dynamic placement of the HEALTH badge right below the Giant Bird
   const clockEl = document.getElementById('bird-energy-clock');
   const energyEl = document.getElementById('energy-digits');
   const currentEnergyVal = Math.max(0, Math.ceil(energy));
@@ -1853,9 +1882,9 @@ function updateHUD() {
     const scaleX = rect.width / canvas.width;
     const scaleY = rect.height / canvas.height;
     
-    // Position 65px below the bird's base position
+    // Position 72px below the bird's base position for clean spacing
     const clockCanvasX = bigBird.x + 8;
-    const clockCanvasY = bigBird.y + 70;
+    const clockCanvasY = bigBird.y + 72;
     
     clockEl.style.left = `${rect.left + clockCanvasX * scaleX}px`;
     clockEl.style.top = `${rect.top + clockCanvasY * scaleY}px`;
@@ -1905,7 +1934,7 @@ function drawSlingshotFront() {
   ctx.restore();
 }
 
-// NATURAL TREE TRUNK, PERCH BRANCH & LUSH GREEN TOP CANOPY (MATCHING V2 LOOK)
+// NATURAL TREE TRUNK, PERCH BRANCH & LUSH GREEN TOP CANOPY
 function drawTreeBranch() {
   ctx.save();
 
