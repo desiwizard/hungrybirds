@@ -10,37 +10,13 @@
   <meta name="apple-mobile-web-app-title" content="Hungry Bird V2">
   <meta name="theme-color" content="#89cbf8">
 
-  <!-- Correct Manifest Link for V2 -->
   <link rel="manifest" href="manifest.json">
-
-  <!-- Browser Favicon & Mobile Home Screen Icons -->
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
-
-  <!-- Social & Meta Tags -->
-  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/v2/">
-  <meta property="og:site_name" content="Hungry Birds v2">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Hungry Birds v2 - Multi Levels">
-  <meta property="og:logo" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg" />
-  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
-
-  <!-- Open Graph Images -->
-  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
-  <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1024">
-  <meta property="og:image:height" content="1024">
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Hungry Birds v2 - Multi Levels">
-  <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
-  <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
 
   <style>
     * {
@@ -92,7 +68,6 @@
       text-align: center;
       padding: 25px;
     }
-    
     .phone-anim-box {
       width: 70px;
       height: 120px;
@@ -133,7 +108,6 @@
       80% { transform: rotate(-90deg) scale(1.1); }
       100% { transform: rotate(0deg) scale(1); }
     }
-
     .force-play-btn {
       background: #22c55e;
       color: #fff;
@@ -144,19 +118,14 @@
       border-radius: 30px;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
-      animation: pulseBtn 1.2s infinite alternate;
       margin-top: 15px;
-    }
-    @keyframes pulseBtn {
-      from { transform: scale(1); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5); }
-      to { transform: scale(1.06); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.9); }
     }
 
     @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
       #rotate-device-overlay { display: flex !important; }
     }
 
-    /* HUD */
+    /* TOP HUD */
     .hud {
       position: absolute; 
       top: calc(8px + env(safe-area-inset-top, 0px)); 
@@ -186,24 +155,6 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.18);
     }
-
-    .energy-digit-box {
-      font-family: 'Courier New', Courier, monospace;
-      font-weight: 900;
-      font-size: 15px;
-      min-width: 24px;
-      text-align: center;
-      transition: color 0.2s ease;
-    }
-    .energy-high { color: #2ed573; }
-    .energy-mid  { color: #ffa502; }
-    .energy-low  { color: #ff4757; animation: pulseAlert 0.7s infinite alternate; }
-
-    @keyframes pulseAlert {
-      from { transform: scale(1); }
-      to { transform: scale(1.15); }
-    }
-
     .hud-controls {
       display: flex;
       align-items: center;
@@ -227,6 +178,49 @@
     }
     .circle-btn:active { transform: scale(0.92); }
 
+    .bonus-pulse {
+      animation: bonusGlow 1.2s infinite alternate ease-in-out;
+      color: #facc15 !important;
+      font-weight: 900;
+    }
+    @keyframes bonusGlow {
+      from { text-shadow: 0 0 4px #eab308; transform: scale(1); }
+      to { text-shadow: 0 0 14px #facc15, 0 0 24px #ca8a04; transform: scale(1.08); }
+    }
+
+    /* Celebration Banner */
+    #celebration-banner {
+      display: none;
+      position: absolute;
+      top: 22%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.6);
+      background: radial-gradient(circle, rgba(234, 179, 8, 0.95) 0%, rgba(180, 83, 9, 0.96) 100%);
+      border: 3.5px solid #fef08a;
+      box-shadow: 0 0 35px rgba(250, 204, 21, 0.8), 0 12px 30px rgba(0, 0, 0, 0.6);
+      color: #ffffff;
+      padding: 14px 34px;
+      border-radius: 40px;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      z-index: 100;
+      pointer-events: none;
+      white-space: nowrap;
+      text-align: center;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0;
+    }
+    #celebration-banner.show-banner {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+    #celebration-banner.fade-banner {
+      opacity: 0;
+      transform: translate(-50%, -80%) scale(0.9);
+    }
+
     /* Modals */
     #level-modal {
       display: none;
@@ -235,7 +229,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       backdrop-filter: blur(6px);
       z-index: 10000;
       flex-direction: column;
@@ -247,19 +241,48 @@
     .modal-box {
       background: #1e293b;
       border: 2px solid #facc15;
-      padding: 24px 36px;
+      padding: 24px 34px;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
+      max-width: 90vw;
     }
     .modal-title {
       font-size: 24px;
       font-weight: bold;
       color: #facc15;
     }
+
+    /* 3D Spinning Gold Coin */
+    .coin-anim-wrap {
+      perspective: 1000px;
+      margin: 8px 0;
+      display: none;
+    }
+    .gold-coin {
+      width: 64px;
+      height: 64px;
+      background: radial-gradient(circle, #fde047 30%, #eab308 70%, #ca8a04 100%);
+      border: 3.5px dashed #fef08a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 900;
+      color: #713f12;
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.7);
+      animation: spinCoin 1.2s infinite linear;
+    }
+    @keyframes spinCoin {
+      0% { transform: rotateY(0deg); }
+      50% { transform: rotateY(180deg) scale(1.1); }
+      100% { transform: rotateY(360deg); }
+    }
+
     .modal-btn {
       background: #22c55e;
       color: #fff;
@@ -290,13 +313,13 @@
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
 
+    <div id="celebration-banner">★ BONUS ROUND UNLOCKED! ★</div>
+
     <div class="hud">
       <div class="hud-pill">
-        <span>Lv <span id="level-num-hud" style="color:#ffeb3b;">1</span></span>
+        <span id="level-label-wrap">Lv <span id="level-num-hud" style="color:#ffeb3b;">1</span></span>
         <span>|</span>
-        <span>🎯 <span id="target-count-hud">4</span></span>
-        <span>|</span>
-        <span>⚡ <span id="energy-hud-val" class="energy-digit-box energy-high">100</span></span>
+        <span>🎯 <span id="target-count-hud">4</span> Targets</span>
       </div>
 
       <div class="hud-pill">
@@ -312,6 +335,9 @@
     <div id="level-modal">
       <div class="modal-box">
         <div id="modal-title" class="modal-title">Level Cleared!</div>
+        <div id="coin-wrap" class="coin-anim-wrap">
+          <div class="gold-coin">★</div>
+        </div>
         <p id="modal-desc" style="font-size: 14px; color: #cbd5e1;">All targets destroyed!</p>
         <button id="modal-action-btn" class="modal-btn">Next Level ➔</button>
       </div>
@@ -319,7 +345,6 @@
   </div>
 
   <script>
-    // Register V2 Service Worker for PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -333,45 +358,20 @@
     const targetCountEl = document.getElementById('target-count-hud');
     const scoreValEl = document.getElementById('score-val');
     const levelNumHud = document.getElementById('level-num-hud');
-    const energyHudVal = document.getElementById('energy-hud-val');
+    const levelLabelWrap = document.getElementById('level-label-wrap');
+    const celebrationBanner = document.getElementById('celebration-banner');
 
     const modal = document.getElementById('level-modal');
     const modalTitle = document.getElementById('modal-title');
     const modalDesc = document.getElementById('modal-desc');
     const modalActionBtn = document.getElementById('modal-action-btn');
-
-    const forceRotateBtn = document.getElementById("force-rotate-btn");
-    if (forceRotateBtn) {
-      forceRotateBtn.addEventListener("click", async () => {
-        try {
-          const docEl = document.documentElement;
-          if (docEl.requestFullscreen) {
-            await docEl.requestFullscreen();
-          } else if (docEl.webkitRequestFullscreen) {
-            await docEl.webkitRequestFullscreen();
-          }
-
-          if (screen.orientation && screen.orientation.lock) {
-            await screen.orientation.lock("landscape").catch(() => {});
-          }
-        } catch (err) {
-          console.log("Orientation lock note:", err);
-        }
-      });
-    }
+    const coinWrap = document.getElementById('coin-wrap');
 
     function toggleFullscreen() {
       const elem = document.documentElement;
       if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen().then(() => {
-            if (screen.orientation && screen.orientation.lock) {
-              screen.orientation.lock("landscape").catch(() => {});
-            }
-          }).catch(() => {});
-        } else if (elem.webkitRequestFullscreen) {
-          elem.webkitRequestFullscreen();
-        }
+        if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
+        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
       } else {
         if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
@@ -381,10 +381,11 @@
 
     let width = window.innerWidth;
     let height = window.innerHeight;
+
     let animTick = 0;
     let score = 0;
     let currentLevel = 1;
-    const totalLevels = 3;
+    const totalLevels = 6; // 5 regular levels + 1 bonus round
 
     let birdTypes = [];
     let selectedBirdIndex = 0;
@@ -399,10 +400,12 @@
     let dragPos = { x: 0, y: 0 };
     let flyingBirds = [];
     let particles = [];
+    let confettiList = [];
     let floatingScores = [];
     let structures = [];
     let targets = [];
     let floatingPlatforms = [];
+    let obstacleNet = null;
     let isLevelReady = false;
     let isLevelCompleted = false;
     let hasFirstFired = false;
@@ -412,26 +415,13 @@
     let bigBirdFallY = 0;
     let bigBirdFallVy = 0;
 
-    function updateEnergyHUD() {
-      const currentVal = Math.max(0, Math.ceil(bigBirdEnergy));
-      if (energyHudVal) {
-        energyHudVal.textContent = currentVal;
-        if (currentVal > 60) {
-          energyHudVal.className = 'energy-digit-box energy-high';
-        } else if (currentVal > 25) {
-          energyHudVal.className = 'energy-digit-box energy-mid';
-        } else {
-          energyHudVal.className = 'energy-digit-box energy-low';
-        }
-      }
-    }
-
-    function resetBirdsForLevel() {
+    function resetBirdsForLevel(lvl) {
+      const birdCount = (lvl === 6) ? 2 : 4;
       birdTypes = [
-        { id: 'red',    name: 'Red',    color: '#ef4444', count: 7, r: 15 },
-        { id: 'yellow', name: 'Yellow', color: '#eab308', count: 7, r: 15 },
-        { id: 'blue',   name: 'Blue',   color: '#38bdf8', count: 8, r: 14 },
-        { id: 'black',  name: 'Bomb',   color: '#1e293b', count: 8, r: 16 }
+        { id: 'red',    name: 'Red',    color: '#ef4444', count: birdCount, r: 15 },
+        { id: 'yellow', name: 'Yellow', color: '#eab308', count: birdCount, r: 15 },
+        { id: 'blue',   name: 'Blue',   color: '#38bdf8', count: birdCount, r: 14 },
+        { id: 'black',  name: 'Bomb',   color: '#1e293b', count: birdCount, r: 16 }
       ];
       selectedBirdIndex = 0;
       bigBirdEnergy = 100;
@@ -439,7 +429,6 @@
       bigBirdFallY = 0;
       bigBirdFallVy = 0;
       hasFirstFired = false;
-      updateEnergyHUD();
     }
 
     function ensureAvailableBirdSelected() {
@@ -459,8 +448,9 @@
       if (targetCountEl) targetCountEl.textContent = aliveCount;
     }
 
-    function createPiece(x, y, w, h, isVertical, color, isRoof = false) {
+    function createPiece(towerId, floor, x, y, w, h, isVertical, color, isRoof = false) {
       return {
+        towerId, floor,
         x, y, w, h,
         vx: 0, vy: 0,
         angle: 0, va: 0,
@@ -468,10 +458,44 @@
         isVertical,
         isRoof,
         color,
-        hp: 2,
+        hp: 1,
         alpha: 1.0,
         restTimer: 0
       };
+    }
+
+    // Trigger full celebration on entering Bonus Round
+    function launchBonusCelebration() {
+      confettiList = [];
+      const colors = ['#fde047', '#38bdf8', '#ec4899', '#22c55e', '#f97316', '#a855f7', '#ffffff'];
+      for (let i = 0; i < 90; i++) {
+        confettiList.push({
+          x: Math.random() * width,
+          y: Math.random() * -height * 0.6,
+          vx: (Math.random() - 0.5) * 3.5,
+          vy: Math.random() * 3 + 2.2,
+          sizeW: Math.random() * 8 + 5,
+          sizeH: Math.random() * 5 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          angle: Math.random() * Math.PI * 2,
+          vAngle: (Math.random() - 0.5) * 0.15,
+          isStar: Math.random() > 0.65,
+          alpha: 1.0
+        });
+      }
+
+      celebrationBanner.style.display = 'block';
+      celebrationBanner.className = '';
+      void celebrationBanner.offsetWidth;
+      celebrationBanner.classList.add('show-banner');
+
+      setTimeout(() => {
+        celebrationBanner.classList.remove('show-banner');
+        celebrationBanner.classList.add('fade-banner');
+        setTimeout(() => {
+          celebrationBanner.style.display = 'none';
+        }, 500);
+      }, 2300);
     }
 
     function loadLevel(lvl) {
@@ -479,8 +503,13 @@
       isLevelReady = false;
       isLevelCompleted = false;
       modal.style.display = 'none';
+      coinWrap.style.display = 'none';
 
-      if (levelNumHud) levelNumHud.textContent = lvl;
+      if (lvl === 6) {
+        levelLabelWrap.innerHTML = `<span class="bonus-pulse">BONUS 🌟</span>`;
+      } else {
+        levelLabelWrap.innerHTML = `Lv <span id="level-num-hud" style="color:#ffeb3b;">${lvl}</span>`;
+      }
 
       const groundH = Math.max(height * 0.12, 42);
       const groundY = height - groundH;
@@ -488,43 +517,45 @@
       structures = [];
       targets = [];
       floatingPlatforms = [];
+      obstacleNet = null;
       flyingBirds = [];
       particles = [];
+      confettiList = [];
       floatingScores = [];
-      resetBirdsForLevel();
+      resetBirdsForLevel(lvl);
 
       if (lvl === 1) {
         const t1X = width * 0.74;
-        structures.push(createPiece(t1X - 22, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece(t1X + 12, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece(t1X - 26, groundY - 56, 52, 10, false, '#b45309', true));
-        targets.push({ x: t1X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f97316', alive: true, falling: false });
+        structures.push(createPiece('t1', 0, t1X - 22, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('t1', 0, t1X + 12, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('t1', 0, t1X - 26, groundY - 56, 52, 10, false, '#b45309', true));
+        targets.push({ towerId: 't1', floor: 0, x: t1X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f97316', alive: true, falling: false });
 
         const t2X = width * 0.88;
-        structures.push(createPiece(t2X - 22, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece(t2X + 12, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece(t2X - 26, groundY - 56, 52, 10, false, '#b45309', true));
-        targets.push({ x: t2X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
+        structures.push(createPiece('t2', 0, t2X - 22, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('t2', 0, t2X + 12, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('t2', 0, t2X - 26, groundY - 56, 52, 10, false, '#b45309', true));
+        targets.push({ towerId: 't2', floor: 0, x: t2X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
 
-        structures.push(createPiece(t2X - 22, groundY - 102, 10, 46, true, '#d99a38'));
-        structures.push(createPiece(t2X + 12, groundY - 102, 10, 46, true, '#d99a38'));
-        structures.push(createPiece(t2X - 26, groundY - 112, 52, 10, false, '#b45309', true));
-        targets.push({ x: t2X, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#22c55e', alive: true, falling: false });
+        structures.push(createPiece('t2', 1, t2X - 22, groundY - 102, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('t2', 1, t2X + 12, groundY - 102, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('t2', 1, t2X - 26, groundY - 112, 52, 10, false, '#b45309', true));
+        targets.push({ towerId: 't2', floor: 1, x: t2X, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#22c55e', alive: true, falling: false });
 
         floatingPlatforms.push({ id: 'p1', x: width * 0.60, y: height * 0.35, w: 100, h: 14, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
         targets.push({ platformId: 'p1', x: width * 0.60, y: height * 0.35 - 16, vx: 0, vy: 0, r: 16, color: '#38bdf8', alive: true, falling: false });
 
       } else if (lvl === 2) {
         const fx = width * 0.76;
-        structures.push(createPiece(fx - 36, groundY - 50, 10, 50, true, '#d99a38'));
-        structures.push(createPiece(fx + 26, groundY - 50, 10, 50, true, '#d99a38'));
-        structures.push(createPiece(fx - 42, groundY - 60, 84, 10, false, '#b45309', true));
-        targets.push({ x: fx - 5, y: groundY - 20, vx: 0, vy: 0, r: 16, color: '#ef4444', alive: true, falling: false });
+        structures.push(createPiece('f1', 0, fx - 36, groundY - 50, 10, 50, true, '#d99a38'));
+        structures.push(createPiece('f1', 0, fx + 26, groundY - 50, 10, 50, true, '#d99a38'));
+        structures.push(createPiece('f1', 0, fx - 42, groundY - 60, 84, 10, false, '#b45309', true));
+        targets.push({ towerId: 'f1', floor: 0, x: fx - 5, y: groundY - 20, vx: 0, vy: 0, r: 16, color: '#ef4444', alive: true, falling: false });
 
-        structures.push(createPiece(fx - 36, groundY - 110, 10, 50, true, '#d99a38'));
-        structures.push(createPiece(fx + 26, groundY - 110, 10, 50, true, '#d99a38'));
-        structures.push(createPiece(fx - 42, groundY - 120, 84, 10, false, '#b45309', true));
-        targets.push({ x: fx - 5, y: groundY - 80, vx: 0, vy: 0, r: 16, color: '#eab308', alive: true, falling: false });
+        structures.push(createPiece('f1', 1, fx - 36, groundY - 110, 10, 50, true, '#d99a38'));
+        structures.push(createPiece('f1', 1, fx + 26, groundY - 110, 10, 50, true, '#d99a38'));
+        structures.push(createPiece('f1', 1, fx - 42, groundY - 120, 84, 10, false, '#b45309', true));
+        targets.push({ towerId: 'f1', floor: 1, x: fx - 5, y: groundY - 80, vx: 0, vy: 0, r: 16, color: '#eab308', alive: true, falling: false });
 
         floatingPlatforms.push({ id: 'p2_1', x: width * 0.52, y: height * 0.38, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
         targets.push({ platformId: 'p2_1', x: width * 0.52, y: height * 0.38 - 14, vx: 0, vy: 0, r: 14, color: '#a855f7', alive: true, falling: false });
@@ -536,17 +567,82 @@
         const sx = width * 0.80;
         for (let fl = 0; fl < 3; fl++) {
           const by = groundY - (fl * 52);
-          structures.push(createPiece(sx - 20, by - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece(sx + 12, by - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece(sx - 26, by - 56, 52, 10, false, '#b45309', true));
-          targets.push({ x: sx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 2 ? '#ec4899' : '#10b981', alive: true, falling: false });
+          structures.push(createPiece('s1', fl, sx - 20, by - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('s1', fl, sx + 12, by - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('s1', fl, sx - 26, by - 56, 52, 10, false, '#b45309', true));
+          targets.push({ towerId: 's1', floor: fl, x: sx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 2 ? '#ec4899' : '#10b981', alive: true, falling: false });
         }
 
         const wallX = width * 0.68;
-        structures.push(createPiece(wallX, groundY - 60, 16, 60, true, '#78350f'));
+        structures.push(createPiece('wall', 0, wallX, groundY - 60, 16, 60, true, '#78350f'));
 
         floatingPlatforms.push({ id: 'p3_1', x: width * 0.50, y: height * 0.30, w: 90, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
         targets.push({ platformId: 'p3_1', x: width * 0.50, y: height * 0.30 - 14, vx: 0, vy: 0, r: 15, color: '#f59e0b', alive: true, falling: false });
+
+      } else if (lvl === 4) {
+        const q1X = width * 0.72;
+        const q2X = width * 0.85;
+
+        [q1X, q2X].forEach((tx, idx) => {
+          structures.push(createPiece(`tw_${idx}`, 0, tx - 20, groundY - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece(`tw_${idx}`, 0, tx + 12, groundY - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece(`tw_${idx}`, 0, tx - 24, groundY - 56, 48, 10, false, '#b45309', true));
+          targets.push({ towerId: `tw_${idx}`, floor: 0, x: tx - 4, y: groundY - 20, vx: 0, vy: 0, r: 15, color: '#f97316', alive: true, falling: false });
+
+          structures.push(createPiece(`tw_${idx}`, 1, tx - 20, groundY - 102, 10, 46, true, '#d99a38'));
+          structures.push(createPiece(`tw_${idx}`, 1, tx + 12, groundY - 102, 10, 46, true, '#d99a38'));
+          structures.push(createPiece(`tw_${idx}`, 1, tx - 24, groundY - 112, 48, 10, false, '#b45309', true));
+          targets.push({ towerId: `tw_${idx}`, floor: 1, x: tx - 4, y: groundY - 76, vx: 0, vy: 0, r: 15, color: '#ec4899', alive: true, falling: false });
+        });
+
+        floatingPlatforms.push({ id: 'p4_1', x: width * 0.52, y: height * 0.28, w: 85, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+        targets.push({ platformId: 'p4_1', x: width * 0.52, y: height * 0.28 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
+
+      } else if (lvl === 5) {
+        const cx = width * 0.78;
+        for (let fl = 0; fl < 3; fl++) {
+          const by = groundY - (fl * 50);
+          structures.push(createPiece('citadel', fl, cx - 28, by - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('citadel', fl, cx + 20, by - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('citadel', fl, cx - 32, by - 56, 64, 10, false, '#b45309', true));
+          targets.push({ towerId: 'citadel', floor: fl, x: cx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 1 ? '#eab308' : '#a855f7', alive: true, falling: false });
+        }
+
+        structures.push(createPiece('shield', 0, cx - 58, groundY - 65, 14, 65, true, '#78350f'));
+        structures.push(createPiece('shield', 0, cx + 46, groundY - 65, 14, 65, true, '#78350f'));
+
+        floatingPlatforms.push({ id: 'p5_1', x: width * 0.56, y: height * 0.24, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+        targets.push({ platformId: 'p5_1', x: width * 0.56, y: height * 0.24 - 14, vx: 0, vy: 0, r: 14, color: '#22c55e', alive: true, falling: false });
+
+      } else if (lvl === 6) {
+        // BONUS ROUND: Obstacle Net
+        const netX = width * 0.50;
+        const netH = 135;
+        obstacleNet = {
+          x: netX,
+          y: groundY - netH,
+          w: 16,
+          h: netH
+        };
+
+        const bx1 = width * 0.72;
+        structures.push(createPiece('bn_1', 0, bx1 - 22, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('bn_1', 0, bx1 + 12, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('bn_1', 0, bx1 - 26, groundY - 56, 52, 10, false, '#b45309', true));
+        targets.push({ towerId: 'bn_1', floor: 0, x: bx1, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f59e0b', alive: true, falling: false });
+
+        const bx2 = width * 0.84;
+        structures.push(createPiece('bn_2', 0, bx2 - 22, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('bn_2', 0, bx2 + 12, groundY - 46, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('bn_2', 0, bx2 - 26, groundY - 56, 52, 10, false, '#b45309', true));
+        targets.push({ towerId: 'bn_2', floor: 0, x: bx2, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
+
+        structures.push(createPiece('bn_2', 1, bx2 - 22, groundY - 102, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('bn_2', 1, bx2 + 12, groundY - 102, 10, 46, true, '#d99a38'));
+        structures.push(createPiece('bn_2', 1, bx2 - 26, groundY - 112, 52, 10, false, '#b45309', true));
+        targets.push({ towerId: 'bn_2', floor: 1, x: bx2, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#38bdf8', alive: true, falling: false });
+
+        launchBonusCelebration();
       }
 
       updateTargetCountHud();
@@ -559,15 +655,40 @@
       const remainingTargets = targets.filter(t => t.alive).length;
       const totalBirds = birdTypes.reduce((sum, b) => sum + b.count, 0);
 
+      // VICTORY
       if (targets.length > 0 && remainingTargets === 0) {
         isLevelCompleted = true;
+
         setTimeout(() => {
-          if (currentLevel < totalLevels) {
-            modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
-            modalDesc.textContent = `Excellent Shot! Ready for Level ${currentLevel + 1}?`;
-            modalActionBtn.textContent = 'Next Level ➔';
+          if (currentLevel === 6) {
+            // BONUS ROUND WON
+            const leftoverBirds = totalBirds;
+            const bonusReward = leftoverBirds * 500;
+            addScore(bonusReward);
+
+            coinWrap.style.display = 'block';
+            modalTitle.textContent = `Bonus`;
+            modalDesc.innerHTML = `
+              <b>${leftoverBirds}</b> Birds Remaining × 500 = <span style="color:#facc15; font-size:18px; font-weight:900;">+${bonusReward} BONUS PTS!</span><br>
+              Total Score: <b>${score}</b>
+            `;
+            modalActionBtn.textContent = 'Restart Game 🔄';
+            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
+          }
+          else if (currentLevel < totalLevels) {
+            coinWrap.style.display = 'none';
+            if (currentLevel === 5) {
+              modalTitle.textContent = `Level 5 Cleared! 🎉`;
+              modalDesc.textContent = `Bonus`;
+              modalActionBtn.textContent = 'Play Bonus Round ➔';
+            } else {
+              modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
+              modalDesc.textContent = `Excellent Shot! Ready for Level ${currentLevel + 1}?`;
+              modalActionBtn.textContent = 'Next Level ➔';
+            }
             modalActionBtn.onclick = () => loadLevel(currentLevel + 1);
           } else {
+            coinWrap.style.display = 'none';
             modalTitle.textContent = `Champion! All Levels Won! 🏆`;
             modalDesc.textContent = `Final Score: ${score}`;
             modalActionBtn.textContent = 'Play Again 🔄';
@@ -576,23 +697,41 @@
           modal.style.display = 'flex';
         }, 1000);
       }
+      // GIANT BIRD STARVED
       else if (bigBirdEnergy <= 0 && !isLevelCompleted) {
         isLevelCompleted = true;
         setTimeout(() => {
-          modalTitle.textContent = `Giant Bird Starved! 💀`;
-          modalDesc.textContent = `Energy depleted! Keep the giant bird fed.`;
-          modalActionBtn.textContent = 'Retry Level 🔄';
-          modalActionBtn.onclick = () => loadLevel(currentLevel);
+          coinWrap.style.display = 'none';
+          if (currentLevel === 6) {
+            modalTitle.textContent = `So Close!`;
+            modalDesc.textContent = `Better luck next time!`;
+            modalActionBtn.textContent = 'Continue to Next Level ➔';
+            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
+          } else {
+            modalTitle.textContent = `Giant Bird Starved! 💀`;
+            modalDesc.textContent = `Energy depleted! Keep the giant bird fed.`;
+            modalActionBtn.textContent = 'Retry Level 🔄';
+            modalActionBtn.onclick = () => loadLevel(currentLevel);
+          }
           modal.style.display = 'flex';
         }, 1200);
       }
+      // OUT OF BIRDS
       else if (totalBirds === 0 && flyingBirds.length === 0 && remainingTargets > 0) {
         isLevelCompleted = true;
         setTimeout(() => {
-          modalTitle.textContent = `Level Failed! 😢`;
-          modalDesc.textContent = `${remainingTargets} targets remained unbroken.`;
-          modalActionBtn.textContent = 'Retry Level 🔄';
-          modalActionBtn.onclick = () => loadLevel(currentLevel);
+          coinWrap.style.display = 'none';
+          if (currentLevel === 6) {
+            modalTitle.textContent = `So Close!`;
+            modalDesc.textContent = `Better luck next time!`;
+            modalActionBtn.textContent = 'Continue to Next Level ➔';
+            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
+          } else {
+            modalTitle.textContent = `Level Failed! 😢`;
+            modalDesc.textContent = `${remainingTargets} targets remained unbroken.`;
+            modalActionBtn.textContent = 'Retry Level 🔄';
+            modalActionBtn.onclick = () => loadLevel(currentLevel);
+          }
           modal.style.display = 'flex';
         }, 1200);
       }
@@ -627,7 +766,6 @@
       floatingScores.push({ x, y, text, alpha: 1 });
     }
 
-    // ==================== BOMB BIRD MEGA EXPLOSION ====================
     function triggerBombExplosion(bombX, bombY) {
       const blastRadius = 140;
 
@@ -668,7 +806,6 @@
             addScore(1000);
             updateTargetCountHud();
             bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-            updateEnergyHUD();
           }
         }
       });
@@ -676,13 +813,28 @@
       floatingPlatforms.forEach(fp => {
         if (!fp.collapsed) {
           const distPlat = Math.hypot(fp.x - bombX, fp.y - bombY);
-          const leftRopeX = fp.x - (fp.w / 2) + 10;
-          const rightRopeX = fp.x + (fp.w / 2) - 10;
-          const distRope = Math.min(Math.abs(bombX - leftRopeX), Math.abs(bombX - rightRopeX));
-
-          if (distPlat < blastRadius + 20 || (distRope < 45 && bombY <= fp.y + fp.h + 20)) {
+          if (distPlat < blastRadius + 20) {
             collapseFloatingPlatform(fp, 5);
           }
+        }
+      });
+    }
+
+    function triggerCascadeFall(towerId, floor) {
+      structures.forEach(p => {
+        if (p.towerId === towerId && p.floor >= floor && !p.collapsed) {
+          p.collapsed = true;
+          p.vy = 2.4;
+          p.vx = (Math.random() * 2 - 1) * 1.5;
+          p.va = (Math.random() - 0.5) * 0.15;
+        }
+      });
+
+      targets.forEach(t => {
+        if (t.towerId === towerId && t.floor >= floor && t.alive) {
+          t.falling = true;
+          t.vy = 2.5;
+          t.vx = (Math.random() * 2 - 1);
         }
       });
     }
@@ -692,17 +844,12 @@
         const p = structures[i];
         const dist = Math.hypot(p.x + p.w / 2 - hitX, p.y + p.h / 2 - hitY);
         if (dist < 80) {
-          p.hp--;
-          if (p.hp <= 0 || hitPower > 4.5) {
-            spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 14);
-            structures.splice(i, 1);
-            addScore(100);
-            continue;
-          }
-          p.collapsed = true;
-          p.vx = (hitPower * 0.6) + (Math.random() * 2 - 1);
-          p.vy = 2.8;
-          p.va = p.isVertical ? (Math.random() * 0.12 + 0.08) : (Math.random() * 0.08 - 0.04);
+          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 14);
+          const tId = p.towerId;
+          const fl = p.floor;
+          structures.splice(i, 1);
+          addScore(100);
+          triggerCascadeFall(tId, fl);
         }
       }
 
@@ -740,303 +887,261 @@
       }
     }
 
-    function checkStructuralIntegrity() {
-      const groundH = Math.max(height * 0.12, 42);
-      const groundY = height - groundH;
-
+    function checkStructuralIntegrity(groundY) {
       structures.forEach(piece => {
         if (!piece.collapsed) {
           const isOnGround = Math.abs((piece.y + piece.h) - groundY) < 14;
 
           if (piece.isRoof) {
-            let leftSupport = false;
-            let rightSupport = false;
-
-            structures.forEach(other => {
-              if (other !== piece && !other.collapsed) {
-                const isUnder = Math.abs(other.y - (piece.y + piece.h)) < 18;
-                if (isUnder) {
-                  if (Math.abs(other.x - piece.x) < 26) leftSupport = true;
-                  if (Math.abs((other.x + other.w) - (piece.x + piece.w)) < 26) rightSupport = true;
-                }
-              }
+            const hasPillarBelow = structures.some(other => {
+              return other !== piece && !other.collapsed && other.towerId === piece.towerId &&
+                     other.floor === piece.floor && other.isVertical;
             });
-
-            if (!leftSupport || !rightSupport) {
-              piece.collapsed = true;
-              piece.vy = 3.0;
-              piece.vx = leftSupport ? 1.6 : -1.6;
-              piece.va = leftSupport ? 0.11 : -0.11;
-
-              targets.forEach(t => {
-                if (t.alive) {
-                  const dist = Math.hypot(t.x - (piece.x + piece.w / 2), t.y - (piece.y + piece.h / 2));
-                  if (dist < 60) {
-                    t.alive = false;
-                    spawnExplosion(t.x, t.y, t.color, 24);
-                    addFloatingScore(t.x, t.y - 20, '+1000');
-                    addScore(1000);
-                    updateTargetCountHud();
-                  }
-                }
-              });
+            if (!hasPillarBelow) {
+              triggerCascadeFall(piece.towerId, piece.floor);
             }
           }
           else if (piece.isVertical && !isOnGround) {
-            const hasSupportDirectlyBelow = structures.some(other => {
-              if (other !== piece && !other.collapsed) {
-                const xMatch = (piece.x < other.x + other.w + 6) && (piece.x + piece.w > other.x - 6);
-                const isUnderneath = Math.abs(other.y - (piece.y + piece.h)) < 18;
-                return xMatch && isUnderneath;
-              }
-              return false;
+            const hasSupportBelow = structures.some(other => {
+              return other !== piece && !other.collapsed && other.towerId === piece.towerId &&
+                     other.floor === piece.floor - 1 && other.isRoof;
             });
-
-            if (!hasSupportDirectlyBelow) {
-              piece.collapsed = true;
-              piece.vy = 2.8;
-              piece.vx = (Math.random() * 2 - 1);
-              piece.va = (Math.random() * 0.12 - 0.06);
+            if (!hasSupportBelow) {
+              triggerCascadeFall(piece.towerId, piece.floor);
             }
           }
         }
       });
     }
 
-    const bigBird = {
-      draw(cliffW, cliffY, groundY) {
-        let isCritical = (bigBirdEnergy <= 25 && bigBirdEnergy > 0);
-        let flickerRed = Math.floor(animTick / 6) % 2 === 0;
+    function drawObstacleNet() {
+      if (!obstacleNet) return;
+      ctx.save();
+      ctx.fillStyle = '#f8fafc';
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2.5;
+      ctx.fillRect(obstacleNet.x, obstacleNet.y, obstacleNet.w, obstacleNet.h);
+      ctx.strokeRect(obstacleNet.x, obstacleNet.y, obstacleNet.w, obstacleNet.h);
 
-        let mainColor = '#ef4444';
-        let armorColor = '#991b1b';
-        let eyeColor = '#fef08a';
-        let glowColor = 'rgba(239, 68, 68, 0.45)';
+      ctx.fillStyle = '#facc15';
+      ctx.fillRect(obstacleNet.x - 3, obstacleNet.y, obstacleNet.w + 6, 8);
 
-        if (bigBirdEnergy <= 0) {
-          mainColor = '#475569';
-          armorColor = '#1e293b';
-          eyeColor = '#94a3b8';
-          glowColor = 'rgba(71, 85, 105, 0.2)';
-        } else if (isCritical) {
-          mainColor = flickerRed ? '#ef4444' : '#475569';
-          armorColor = flickerRed ? '#991b1b' : '#1e293b';
-          eyeColor = flickerRed ? '#fef08a' : '#cbd5e1';
-          glowColor = flickerRed ? 'rgba(239, 68, 68, 0.75)' : 'rgba(71, 85, 105, 0.3)';
-        } else if (bigBirdEnergy <= 65) {
-          mainColor = '#f97316';
-          armorColor = '#9a3412';
-          eyeColor = '#fef08a';
-          glowColor = 'rgba(249, 115, 22, 0.45)';
-        }
-
-        const tremble = isCritical ? (Math.random() * 2.5 - 1.25) : 0;
-        const cx = cliffW * 0.46 + tremble;
-        let cy = (cliffY - 36);
-
-        if (bigBirdFalling) {
-          cy += bigBirdFallY;
-        }
-
-        ctx.save();
-        ctx.fillStyle = glowColor;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 1;
+      for (let y = obstacleNet.y + 12; y < obstacleNet.y + obstacleNet.h; y += 8) {
         ctx.beginPath();
-        ctx.moveTo(cx - 36, cy + 18);
-        ctx.lineTo(cx - 24, cy - 38);
-        ctx.lineTo(cx + 20, cy - 32);
-        ctx.lineTo(cx + 42, cy);
-        ctx.lineTo(cx + 18, cy + 28);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = armorColor;
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(cx - 8, cy - 24);
-        ctx.lineTo(cx - 34, cy - 42);
-        ctx.lineTo(cx - 18, cy - 14);
-        ctx.lineTo(cx - 40, cy - 20);
-        ctx.lineTo(cx - 14, cy);
-        ctx.closePath();
-        ctx.fill();
+        ctx.moveTo(obstacleNet.x, y);
+        ctx.lineTo(obstacleNet.x + obstacleNet.w, y);
         ctx.stroke();
-
-        ctx.fillStyle = mainColor;
-        ctx.beginPath();
-        ctx.moveTo(cx - 26, cy - 12);
-        ctx.lineTo(cx - 10, cy - 30);
-        ctx.lineTo(cx + 18, cy - 22);
-        ctx.lineTo(cx + 30, cy + 4);
-        ctx.lineTo(cx + 12, cy + 26);
-        ctx.lineTo(cx - 22, cy + 24);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = armorColor;
-        ctx.beginPath();
-        ctx.moveTo(cx - 4, cy - 10);
-        ctx.lineTo(cx + 16, cy - 6);
-        ctx.lineTo(cx + 22, cy + 8);
-        ctx.lineTo(cx + 8, cy + 22);
-        ctx.lineTo(cx - 8, cy + 12);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = '#f59e0b';
-        ctx.beginPath();
-        ctx.moveTo(cx + 24, cy - 14);
-        ctx.lineTo(cx + 52, cy - 2);
-        ctx.lineTo(cx + 28, cy + 14);
-        ctx.lineTo(cx + 26, cy + 2);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(cx + 26, cy - 2);
-        ctx.lineTo(cx + 44, cy - 1);
-        ctx.stroke();
-
-        if (bigBirdEnergy <= 0) {
-          ctx.strokeStyle = '#000';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(cx + 8, cy - 16); ctx.lineTo(cx + 16, cy - 8);
-          ctx.moveTo(cx + 16, cy - 16); ctx.lineTo(cx + 8, cy - 8);
-          ctx.stroke();
-        } else {
-          ctx.fillStyle = '#0f172a';
-          ctx.beginPath();
-          ctx.moveTo(cx + 4, cy - 20);
-          ctx.lineTo(cx + 22, cy - 16);
-          ctx.lineTo(cx + 16, cy - 6);
-          ctx.lineTo(cx + 2, cy - 10);
-          ctx.closePath();
-          ctx.fill();
-
-          ctx.fillStyle = eyeColor;
-          ctx.beginPath();
-          ctx.moveTo(cx + 8, cy - 16);
-          ctx.lineTo(cx + 19, cy - 13);
-          ctx.lineTo(cx + 13, cy - 8);
-          ctx.closePath();
-          ctx.fill();
-        }
-        ctx.restore();
       }
-    };
-
-    function drawFloatingPlatforms(groundY) {
-      for (let i = floatingPlatforms.length - 1; i >= 0; i--) {
-        const fp = floatingPlatforms[i];
-
-        if (fp.collapsed) {
-          fp.x += fp.vx;
-          fp.y += fp.vy;
-          fp.vy += woodGravity;
-          fp.angle += fp.va;
-
-          if (fp.x + fp.w / 2 >= width - 6) {
-            fp.x = width - 6 - fp.w / 2;
-            fp.vx = -Math.abs(fp.vx) * 0.4;
-          }
-
-          structures.forEach(p => {
-            if (!p.collapsed) {
-              const hitDist = Math.hypot((p.x + p.w / 2) - fp.x, (p.y + p.h / 2) - fp.y);
-              if (hitDist < 45) {
-                p.collapsed = true;
-                p.vy = fp.vy * 0.8 + 2.0;
-                p.vx = fp.vx * 0.8 + (Math.random() * 2 - 1);
-                p.va = (Math.random() * 0.15) - 0.07;
-                spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 12);
-                addScore(100);
-              }
-            }
-          });
-
-          if (fp.y + fp.h >= groundY) {
-            fp.y = groundY - fp.h;
-            fp.vy = -fp.vy * 0.15;
-            fp.vx *= 0.70;
-            fp.va *= 0.60;
-            if (Math.abs(fp.vy) < 0.3) fp.vy = 0;
-            if (Math.abs(fp.vx) < 0.1) fp.vx = 0;
-            if (Math.abs(fp.va) < 0.01) fp.va = 0;
-
-            fp.restTimer++;
-            if (fp.restTimer > 60) {
-              fp.alpha -= 0.035;
-              if (fp.alpha <= 0) {
-                spawnExplosion(fp.x, fp.y, '#854d0e', 6);
-                floatingPlatforms.splice(i, 1);
-                continue;
-              }
-            }
-          }
-        }
-
-        ctx.save();
-        ctx.globalAlpha = fp.alpha;
-
-        if (!fp.collapsed) {
-          ctx.strokeStyle = '#1e293b';
-          ctx.lineWidth = 3.5;
-
-          ctx.beginPath();
-          ctx.moveTo(fp.x - (fp.w / 2) + 10, 0);
-          ctx.lineTo(fp.x - (fp.w / 2) + 10, fp.y);
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.moveTo(fp.x + (fp.w / 2) - 10, 0);
-          ctx.lineTo(fp.x + (fp.w / 2) - 10, fp.y);
-          ctx.stroke();
-
-          ctx.fillStyle = '#f59e0b';
-          ctx.beginPath();
-          ctx.arc(fp.x - (fp.w / 2) + 10, fp.y, 4, 0, Math.PI * 2);
-          ctx.arc(fp.x + (fp.w / 2) - 10, fp.y, 4, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        ctx.translate(fp.x, fp.y + (fp.h / 2));
-        ctx.rotate(fp.angle);
-        ctx.fillStyle = '#854d0e';
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2.5;
-        ctx.fillRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
-        ctx.strokeRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
-        ctx.restore();
-      }
+      ctx.restore();
     }
 
-    function drawBirdGridDeck(cliffW, groundY) {
-      birdHitboxes = [];
-      const gridX = cliffW + 12;
-      const boxW = 58;
-      const boxH = 46;
-      const gap = 8;
-      const totalW = (boxW * 2) + gap;
-      const totalH = (boxH * 2) + gap;
-      const gridY = groundY - totalH - 10;
+    function drawTree(groundY) {
+      const treeX = Math.max(width * 0.065, 55);
+      const branchY = height * 0.44;
 
       ctx.save();
-      ctx.fillStyle = 'rgba(22, 101, 52, 0.88)';
-      ctx.strokeStyle = '#14532d';
+      ctx.fillStyle = '#4a2810';
+      ctx.strokeStyle = '#271206';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY);
+      ctx.quadraticCurveTo(treeX - 10, groundY - 80, treeX - 4, branchY - 50);
+      ctx.quadraticCurveTo(treeX + 16, branchY - 90, treeX + 28, branchY - 110);
+      ctx.quadraticCurveTo(treeX + 38, branchY - 50, treeX + 22, groundY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#5c3317';
+      ctx.beginPath();
+      ctx.moveTo(treeX + 8, branchY + 14);
+      ctx.quadraticCurveTo(treeX + 32, branchY + 6, treeX + 70, branchY);
+      ctx.lineTo(treeX + 74, branchY + 6);
+      ctx.quadraticCurveTo(treeX + 34, branchY + 18, treeX + 12, branchY + 24);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#2d6a1b';
+      ctx.beginPath();
+      ctx.arc(treeX + 26, branchY - 110, 36, 0, Math.PI * 2);
+      ctx.arc(treeX - 8, branchY - 85, 28, 0, Math.PI * 2);
+      ctx.arc(treeX + 54, branchY - 95, 26, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#3e8e24';
+      ctx.beginPath();
+      ctx.arc(treeX + 22, branchY - 114, 30, 0, Math.PI * 2);
+      ctx.arc(treeX - 6, branchY - 88, 22, 0, Math.PI * 2);
+      ctx.arc(treeX + 50, branchY - 98, 20, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#48a02a';
+      ctx.beginPath();
+      ctx.arc(treeX + 72, branchY + 8, 10, 0, Math.PI * 2);
+      ctx.arc(treeX + 82, branchY + 4, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBigBird(groundY) {
+      let isCritical = (bigBirdEnergy <= 25 && bigBirdEnergy > 0);
+      let flickerRed = Math.floor(animTick / 6) % 2 === 0;
+
+      let mainColor = '#ef4444';
+      let armorColor = '#991b1b';
+      let eyeColor = '#fef08a';
+
+      if (bigBirdEnergy <= 0) {
+        mainColor = '#475569'; armorColor = '#1e293b'; eyeColor = '#94a3b8';
+      } else if (isCritical) {
+        mainColor = flickerRed ? '#ef4444' : '#475569';
+        armorColor = flickerRed ? '#991b1b' : '#1e293b';
+        eyeColor = flickerRed ? '#fef08a' : '#cbd5e1';
+      } else if (bigBirdEnergy <= 65) {
+        mainColor = '#f97316'; armorColor = '#9a3412'; eyeColor = '#fef08a';
+      }
+
+      const treeX = Math.max(width * 0.065, 55);
+      const branchY = height * 0.44;
+      const tremble = isCritical ? (Math.random() * 2.5 - 1.25) : 0;
+      const cx = (treeX + 38) + tremble;
+      let cy = branchY - 26;
+
+      if (bigBirdFalling) {
+        cy += bigBirdFallY;
+      }
+
+      ctx.save();
+      ctx.fillStyle = armorColor;
+      ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.rect(gridX - 6, gridY - 6, totalW + 12, totalH + 12);
+      ctx.moveTo(cx - 8, cy - 24);
+      ctx.lineTo(cx - 34, cy - 42);
+      ctx.lineTo(cx - 18, cy - 14);
+      ctx.lineTo(cx - 40, cy - 20);
+      ctx.lineTo(cx - 14, cy);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = mainColor;
+      ctx.beginPath();
+      ctx.moveTo(cx - 26, cy - 12);
+      ctx.lineTo(cx - 10, cy - 30);
+      ctx.lineTo(cx + 18, cy - 22);
+      ctx.lineTo(cx + 30, cy + 4);
+      ctx.lineTo(cx + 12, cy + 26);
+      ctx.lineTo(cx - 22, cy + 24);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = armorColor;
+      ctx.beginPath();
+      ctx.moveTo(cx - 4, cy - 10);
+      ctx.lineTo(cx + 16, cy - 6);
+      ctx.lineTo(cx + 22, cy + 8);
+      ctx.lineTo(cx + 8, cy + 22);
+      ctx.lineTo(cx - 8, cy + 12);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.moveTo(cx + 24, cy - 14);
+      ctx.lineTo(cx + 52, cy - 2);
+      ctx.lineTo(cx + 28, cy + 14);
+      ctx.lineTo(cx + 26, cy + 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(cx + 26, cy - 2);
+      ctx.lineTo(cx + 44, cy - 1);
+      ctx.stroke();
+
+      if (bigBirdEnergy <= 0) {
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + 8, cy - 16); ctx.lineTo(cx + 16, cy - 8);
+        ctx.moveTo(cx + 16, cy - 16); ctx.lineTo(cx + 8, cy - 8);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.moveTo(cx + 4, cy - 20);
+        ctx.lineTo(cx + 22, cy - 16);
+        ctx.lineTo(cx + 16, cy - 6);
+        ctx.lineTo(cx + 2, cy - 10);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = eyeColor;
+        ctx.beginPath();
+        ctx.moveTo(cx + 8, cy - 16);
+        ctx.lineTo(cx + 19, cy - 13);
+        ctx.lineTo(cx + 13, cy - 8);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // HEALTH BADGE ON TREE TRUNK UNDER BIG BIRD & BRANCH
+      const bY = branchY + 36;
+      const bVal = Math.max(0, Math.ceil(bigBirdEnergy));
+      let bColor = '#2ed573';
+      if (bVal <= 25) bColor = '#ff4757';
+      else if (bVal <= 60) bColor = '#ffa502';
+
+      ctx.fillStyle = 'rgba(10, 15, 30, 0.94)';
+      ctx.strokeStyle = bColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(treeX - 16, bY, 96, 46, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = 'bold 8.5px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('BIRD HEALTH', treeX + 32, bY + 13);
+
+      ctx.fillStyle = bColor;
+      ctx.font = '900 22px Courier New, monospace';
+      ctx.fillText(`⚡${bVal}`, treeX + 32, bY + 37);
+
+      ctx.restore();
+    }
+
+    function drawBirdGridDeck(groundY) {
+      birdHitboxes = [];
+      const deckStartX = 10;
+      const boxW = 54;
+      const boxH = 42;
+      const gap = 6;
+      const totalW = (boxW * 2) + gap;
+      const totalH = (boxH * 2) + gap;
+      const gridY = groundY - totalH - 6;
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      ctx.strokeStyle = '#166534';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.rect(deckStartX - 4, gridY - 4, totalW + 8, totalH + 8);
       ctx.fill();
       ctx.stroke();
 
       birdTypes.forEach((b, i) => {
         const col = i % 2;
         const row = Math.floor(i / 2);
-        const bx = gridX + (col * (boxW + gap));
+        const bx = deckStartX + (col * (boxW + gap));
         const by = gridY + (row * (boxH + gap));
         const isSelected = (i === selectedBirdIndex);
         const isEmpty = (b.count <= 0);
@@ -1058,8 +1163,8 @@
         ctx.fill();
         ctx.stroke();
 
-        const birdCx = bx + 22;
-        const birdCy = by + 26;
+        const birdCx = bx + 19;
+        const birdCy = by + 24;
 
         ctx.beginPath();
         ctx.arc(birdCx, birdCy, b.r, 0, Math.PI * 2);
@@ -1089,10 +1194,10 @@
         ctx.lineWidth = 1.2;
         ctx.stroke();
 
-        const badgeW = 24;
-        const badgeH = 16;
+        const badgeW = 20;
+        const badgeH = 14;
         const badgeX = bx + boxW - badgeW - 3;
-        const badgeY = by + 4;
+        const badgeY = by + 3;
 
         ctx.fillStyle = isSelected ? '#15803d' : '#14532d';
         ctx.fillRect(badgeX, badgeY, badgeW, badgeH);
@@ -1101,7 +1206,7 @@
         ctx.strokeRect(badgeX, badgeY, badgeW, badgeH);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 11px sans-serif';
+        ctx.font = 'bold 10px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(`×${b.count}`, badgeX + (badgeW / 2), badgeY + (badgeH / 2) + 0.5);
@@ -1141,7 +1246,6 @@
       ctx.strokeStyle = '#000';
       ctx.lineWidth = 1;
       ctx.stroke();
-
       ctx.restore();
     }
 
@@ -1168,6 +1272,114 @@
       ctx.restore();
     }
 
+    function drawFloatingPlatforms(groundY) {
+      for (let i = floatingPlatforms.length - 1; i >= 0; i--) {
+        const fp = floatingPlatforms[i];
+
+        if (fp.collapsed) {
+          fp.x += fp.vx;
+          fp.y += fp.vy;
+          fp.vy += woodGravity;
+          fp.angle += fp.va;
+
+          if (fp.x + fp.w / 2 >= width - 6) {
+            fp.x = width - 6 - fp.w / 2;
+            fp.vx = -Math.abs(fp.vx) * 0.4;
+          }
+
+          structures.forEach(p => {
+            if (!p.collapsed) {
+              const hitDist = Math.hypot((p.x + p.w / 2) - fp.x, (p.y + p.h / 2) - fp.y);
+              if (hitDist < 45) {
+                spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 12);
+                triggerCascadeFall(p.towerId, p.floor);
+                addScore(100);
+              }
+            }
+          });
+
+          if (fp.y + fp.h >= groundY) {
+            fp.y = groundY - fp.h;
+            fp.vy = -fp.vy * 0.15;
+            fp.vx *= 0.70;
+            fp.va *= 0.60;
+            if (Math.abs(fp.vy) < 0.3) fp.vy = 0;
+            if (Math.abs(fp.vx) < 0.1) fp.vx = 0;
+            if (Math.abs(fp.va) < 0.01) fp.va = 0;
+
+            fp.restTimer++;
+            if (fp.restTimer > 60) {
+              fp.alpha -= 0.035;
+              if (fp.alpha <= 0) {
+                spawnExplosion(fp.x, fp.y, '#854d0e', 6);
+                floatingPlatforms.splice(i, 1);
+                continue;
+              }
+            }
+          }
+        }
+
+        ctx.save();
+        ctx.globalAlpha = fp.alpha;
+
+        if (!fp.collapsed) {
+          ctx.strokeStyle = '#1e293b';
+          ctx.lineWidth = 3.5;
+          ctx.beginPath();
+          ctx.moveTo(fp.x - (fp.w / 2) + 10, 0);
+          ctx.lineTo(fp.x - (fp.w / 2) + 10, fp.y);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(fp.x + (fp.w / 2) - 10, 0);
+          ctx.lineTo(fp.x + (fp.w / 2) - 10, fp.y);
+          ctx.stroke();
+
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(fp.x - (fp.w / 2) + 10, fp.y, 4, 0, Math.PI * 2);
+          ctx.arc(fp.x + (fp.w / 2) - 10, fp.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.translate(fp.x, fp.y + (fp.h / 2));
+        ctx.rotate(fp.angle);
+        ctx.fillStyle = '#854d0e';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2.5;
+        ctx.fillRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
+        ctx.strokeRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
+        ctx.restore();
+      }
+    }
+
+    function drawConfetti() {
+      for (let i = confettiList.length - 1; i >= 0; i--) {
+        const c = confettiList[i];
+        c.x += c.vx;
+        c.y += c.vy;
+        c.angle += c.vAngle;
+
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(c.angle);
+        ctx.fillStyle = c.color;
+
+        if (c.isStar) {
+          ctx.beginPath();
+          ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(-c.sizeW / 2, -c.sizeH / 2, c.sizeW, c.sizeH);
+        }
+        ctx.restore();
+
+        if (c.y > height + 20) {
+          confettiList.splice(i, 1);
+        }
+      }
+    }
+
     function render() {
       animTick++;
       ctx.clearRect(0, 0, width, height);
@@ -1177,8 +1389,6 @@
 
       if (hasFirstFired && !isLevelCompleted) {
         bigBirdEnergy = Math.max(0, bigBirdEnergy - 0.024);
-        updateEnergyHUD();
-
         if (bigBirdEnergy <= 0 && !bigBirdFalling) {
           bigBirdFalling = true;
           bigBirdFallVy = -3;
@@ -1188,13 +1398,15 @@
       if (bigBirdFalling) {
         bigBirdFallVy += 0.35;
         bigBirdFallY += bigBirdFallVy;
-        const cliffY = height * 0.40;
-        if ((cliffY - 36) + bigBirdFallY >= groundY - 20) {
-          bigBirdFallY = groundY - 20 - (cliffY - 36);
+        const branchY = height * 0.44;
+        const bBaseY = branchY - 26;
+        if (bBaseY + bigBirdFallY >= groundY - 20) {
+          bigBirdFallY = groundY - 20 - bBaseY;
           bigBirdFallVy = 0;
         }
       }
 
+      // Sky Background
       ctx.fillStyle = '#89cbf8';
       ctx.fillRect(0, 0, width, height);
 
@@ -1219,29 +1431,23 @@
       ctx.closePath();
       ctx.fill();
 
+      // Ground
       ctx.fillStyle = '#42281d';
       ctx.fillRect(0, groundY, width, groundH);
       ctx.fillStyle = '#55a234';
       ctx.fillRect(0, groundY, width, 14);
 
-      const cliffW = width * 0.11;
-      const cliffY = height * 0.40;
-      ctx.fillStyle = '#4a2c20';
-      ctx.beginPath();
-      ctx.moveTo(0, cliffY);
-      ctx.lineTo(cliffW, cliffY);
-      ctx.lineTo(cliffW + 18, groundY);
-      ctx.lineTo(0, groundY);
-      ctx.closePath();
-      ctx.fill();
+      // Draw Tree, Big Bird & Deck
+      drawTree(groundY);
+      drawBigBird(groundY);
+      drawBirdGridDeck(groundY);
 
-      ctx.fillStyle = '#55a234';
-      ctx.fillRect(0, cliffY, cliffW + 4, 10);
+      // Draw Obstacle Net in Bonus Level
+      drawObstacleNet();
 
-      bigBird.draw(cliffW, cliffY, groundY);
-      drawBirdGridDeck(cliffW, groundY);
-
-      const sx = cliffW + 168;
+      // Slingshot
+      const treeX = Math.max(width * 0.065, 55);
+      const sx = treeX + 175;
       const sy = groundY - 105;
       const leftForkX = sx - 18;
       const leftForkY = sy - 34;
@@ -1309,9 +1515,9 @@
       }
 
       drawFloatingPlatforms(groundY);
-      checkStructuralIntegrity();
+      checkStructuralIntegrity(groundY);
 
-      // ==================== FLYING BIRDS COLLISION ====================
+      // FLYING BIRDS COLLISION
       for (let i = flyingBirds.length - 1; i >= 0; i--) {
         const fb = flyingBirds[i];
         fb.x += fb.vx;
@@ -1322,6 +1528,17 @@
         renderBirdAt(fb.x, fb.y, fb, angle);
 
         let birdExploded = false;
+
+        // Obstacle Net Collision (Bonus Round)
+        if (obstacleNet) {
+          const hitNetX = (fb.x >= obstacleNet.x - 14 && fb.x <= obstacleNet.x + obstacleNet.w + 14);
+          const hitNetY = (fb.y >= obstacleNet.y && fb.y <= groundY);
+          if (hitNetX && hitNetY) {
+            spawnExplosion(fb.x, fb.y, '#f8fafc', 10);
+            fb.vx = -Math.abs(fb.vx) * 0.25;
+            fb.vy = 2.0;
+          }
+        }
 
         // Targets Collision
         for (let t of targets) {
@@ -1340,9 +1557,7 @@
               addFloatingScore(t.x, t.y - 20, '+1000');
               addScore(1000);
               updateTargetCountHud();
-
               bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-              updateEnergyHUD();
 
               if (t.platformId) {
                 const plat = floatingPlatforms.find(p => p.id === t.platformId);
@@ -1350,13 +1565,13 @@
               }
 
               breakStructureNear(t.x, t.y, 4);
-              fb.vx *= 0.6;
+              fb.vx *= 0.7;
             }
           }
         }
         if (birdExploded) continue;
 
-        // Ropes & Swing Platform Collision
+        // Floating Platforms Collision
         for (let fp of floatingPlatforms) {
           if (!fp.collapsed) {
             const leftRopeX = fp.x - (fp.w / 2) + 10;
@@ -1402,7 +1617,7 @@
           const nearestY = Math.max(p.y, Math.min(fb.y, p.y + p.h));
           const dist = Math.hypot(fb.x - nearestX, fb.y - nearestY);
 
-          if (dist < 16) {
+          if (dist < 18) {
             if (fb.id === 'black') {
               triggerBombExplosion(fb.x, fb.y);
               flyingBirds.splice(i, 1);
@@ -1410,25 +1625,21 @@
               break;
             }
 
-            p.hp--;
-            spawnExplosion(nearestX, nearestY, p.color, 12);
+            spawnExplosion(nearestX, nearestY, p.color, 14);
             addScore(150);
+            const tId = p.towerId;
+            const fl = p.floor;
+            structures.splice(k, 1);
 
-            if (p.hp <= 0 || Math.hypot(fb.vx, fb.vy) > 4) {
-              spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 16);
-              structures.splice(k, 1);
-            } else {
-              breakStructureNear(nearestX, nearestY, Math.abs(fb.vx));
-            }
+            triggerCascadeFall(tId, fl);
 
-            fb.vx *= -0.25;
-            fb.vy = 0.8;
+            fb.vx *= 0.65;
+            fb.vy = Math.min(fb.vy * 0.5, 1.5);
             break;
           }
         }
         if (birdExploded) continue;
 
-        // Ground Collision
         if (fb.y >= groundY - 12) {
           if (fb.id === 'black') {
             triggerBombExplosion(fb.x, groundY - 12);
@@ -1447,7 +1658,7 @@
         }
       }
 
-      // Structures physics
+      // Structures Physics
       for (let i = structures.length - 1; i >= 0; i--) {
         const p = structures[i];
 
@@ -1467,14 +1678,14 @@
             p.vy = -p.vy * 0.15;
             p.vx *= 0.70;
             p.va *= 0.60;
-            if (Math.abs(p.vy) < 0.3) fp_vy = 0;
+            if (Math.abs(p.vy) < 0.3) p.vy = 0;
             if (Math.abs(p.vx) < 0.1) p.vx = 0;
             if (Math.abs(p.va) < 0.01) p.va = 0;
           }
 
           p.restTimer++;
-          if (p.restTimer > 55) {
-            p.alpha -= 0.035;
+          if (p.restTimer > 45) {
+            p.alpha -= 0.045;
             if (p.alpha <= 0) {
               spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 6);
               structures.splice(i, 1);
@@ -1491,9 +1702,7 @@
                 addFloatingScore(t.x, t.y - 20, '+1000');
                 addScore(1000);
                 updateTargetCountHud();
-
                 bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-                updateEnergyHUD();
               }
             }
           }
@@ -1511,7 +1720,7 @@
         ctx.restore();
       }
 
-      // Targets
+      // Targets Physics
       for (let t of targets) {
         if (t.alive) {
           if (t.falling) {
@@ -1525,9 +1734,7 @@
               addFloatingScore(Math.min(t.x, width - 30), groundY - 24, '+1000');
               addScore(1000);
               updateTargetCountHud();
-
               bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-              updateEnergyHUD();
               continue;
             }
           }
@@ -1559,6 +1766,9 @@
           ctx.restore();
         }
       }
+
+      // Confetti & Celebration rendering
+      drawConfetti();
 
       // Particles
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -1602,11 +1812,10 @@
       requestAnimationFrame(render);
     }
 
-    // Touch & Pointer Events
     function getCoords(e) {
       const rect = canvas.getBoundingClientRect();
-      const cx = e.touches ? e.touches[0].clientX : e.clientX;
-      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      const cx = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+      const cy = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
       return {
         x: (cx - rect.left) * (width / rect.width),
         y: (cy - rect.top) * (height / rect.height)
@@ -1620,8 +1829,8 @@
       const pos = getCoords(e);
       const groundH = Math.max(height * 0.12, 42);
       const groundY = height - groundH;
-      const cliffW = width * 0.11;
-      const anchorX = cliffW + 168;
+      const treeX = Math.max(width * 0.065, 55);
+      const anchorX = treeX + 175;
       const anchorY = groundY - 125;
 
       let gridClicked = false;
@@ -1640,7 +1849,7 @@
       const distToSling = Math.hypot(pos.x - anchorX, pos.y - anchorY);
       const currentBird = birdTypes[selectedBirdIndex];
 
-      if (distToSling < 52 && currentBird && currentBird.count > 0) {
+      if (distToSling < 60 && currentBird && currentBird.count > 0) {
         isDragging = true;
         dragPos = { x: pos.x, y: pos.y };
       }
@@ -1652,8 +1861,8 @@
       const pos = getCoords(e);
       const groundH = Math.max(height * 0.12, 42);
       const groundY = height - groundH;
-      const cliffW = width * 0.11;
-      const anchorX = cliffW + 168;
+      const treeX = Math.max(width * 0.065, 55);
+      const anchorX = treeX + 175;
       const anchorY = groundY - 125;
 
       const dx = pos.x - anchorX;
@@ -1676,8 +1885,8 @@
 
       const groundH = Math.max(height * 0.12, 42);
       const groundY = height - groundH;
-      const cliffW = width * 0.11;
-      const anchorX = cliffW + 168;
+      const treeX = Math.max(width * 0.065, 55);
+      const anchorX = treeX + 175;
       const anchorY = groundY - 125;
 
       const dx = anchorX - dragPos.x;
