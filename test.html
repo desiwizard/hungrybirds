@@ -277,6 +277,86 @@
     }
 
     @media screen and (orientation: portrait) { #rotate-device-overlay { display: flex !important; } }
+
+    /* ==================== NEW CUSTOM GAME OVER BANNER MODAL ==================== */
+    #gameOverModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 15, 29, 0.85);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    .game-over-box {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: popInModal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes popInModal {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .game-over-img-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+      border: 3px solid rgba(255,255,255,0.25);
+    }
+    #gameOverImg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Clickable Hotspot directly on the image's Try Again button */
+    .img-try-again-hotspot {
+      position: absolute;
+      bottom: 4%;
+      left: 14%;
+      width: 28%;
+      height: 12%;
+      cursor: pointer;
+      z-index: 5;
+      background: rgba(255, 255, 255, 0.001);
+    }
+    .game-over-controls {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .score-submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .custom-try-btn {
+      background: linear-gradient(180deg, #2ed573 0%, #20bf6b 100%);
+      color: white;
+      border: 2px solid #ffffff;
+      padding: 9px 30px;
+      font-size: 17px;
+      font-weight: 900;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(46, 213, 115, 0.5);
+      transition: transform 0.1s ease;
+    }
+    .custom-try-btn:active {
+      transform: scale(0.94);
+    }
   </style>
 </head>
 <body>
@@ -325,10 +405,8 @@
     <div class="start-content-grid">
       <div class="start-col-left">
 
-        <!-- VISUAL GUIDE ON START SCREEN -->
         <div class="visual-guide-container">
           <svg class="visual-guide-svg" viewBox="0 0 540 100">
-            <!-- Slingshot Assembly -->
             <g transform="translate(10, 0)">
               <path d="M 50 90 L 50 60 L 32 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
               <path d="M 50 60 L 68 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
@@ -345,7 +423,6 @@
               <text x="25" y="98" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">🏹 YOUR SLINGSHOT</text>
             </g>
 
-            <!-- Center Action Arrow & Food -->
             <g transform="translate(200, 25)">
               <path d="M 10 25 L 90 25" stroke="#00e5ff" stroke-width="3" stroke-dasharray="5,4"/>
               <polygon points="90,19 104,25 90,31" fill="#00e5ff"/>
@@ -354,7 +431,6 @@
               <text x="50" y="44" fill="#00e5ff" font-size="10" font-weight="bold" text-anchor="middle">SMASH & FEED</text>
             </g>
 
-            <!-- Giant Bird Target -->
             <g transform="translate(420, 15)">
               <path d="M 10 80 L 90 80 L 90 55 L 10 55 Z" fill="#4E342E"/>
               <rect x="10" y="52" width="80" height="5" fill="#558B2F"/>
@@ -423,7 +499,6 @@
 
     <div class="visual-guide-container">
       <svg class="visual-guide-svg" viewBox="0 0 540 100">
-        <!-- Slingshot Assembly -->
         <g transform="translate(10, 0)">
           <path d="M 50 90 L 50 60 L 32 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
           <path d="M 50 60 L 68 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
@@ -440,7 +515,6 @@
           <text x="25" y="98" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">🏹 YOUR SLINGSHOT</text>
         </g>
 
-        <!-- Center Action Arrow & Food -->
         <g transform="translate(200, 25)">
           <path d="M 10 25 L 90 25" stroke="#00e5ff" stroke-width="3" stroke-dasharray="5,4"/>
           <polygon points="90,19 104,25 90,31" fill="#00e5ff"/>
@@ -449,7 +523,6 @@
           <text x="50" y="44" fill="#00e5ff" font-size="10" font-weight="bold" text-anchor="middle">SMASH & FEED</text>
         </g>
 
-        <!-- Giant Bird Target -->
         <g transform="translate(420, 15)">
           <path d="M 10 80 L 90 80 L 90 55 L 10 55 Z" fill="#4E342E"/>
           <rect x="10" y="52" width="80" height="5" fill="#558B2F"/>
@@ -488,19 +561,22 @@
     <button class="btn" id="close-help-btn" style="padding: 6px 24px; font-size: 14px;">RESUME GAME</button>
   </div>
 
-  <div id="lose-overlay" class="overlay hidden">
-    <h1 style="color: #ff5252;" id="lose-title">Giant Bird Starved!</h1>
-    <p id="lose-desc">Energy depleted! Keep the Giant Bird fed.</p>
+  <!-- ==================== NEW CUSTOM GAME OVER BANNER OVERLAY ==================== -->
+  <div id="gameOverModal">
+    <div class="game-over-box">
+      <div class="game-over-img-wrap">
+        <img id="gameOverImg" src="noenergy.jpeg" alt="Game Over">
+        <div class="img-try-again-hotspot" id="imgTryAgainHotspot" title="Play Again"></div>
+      </div>
 
-    <div id="scoreSubmitBox" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12px;">
-      <p style="color: #ffeb3b; font-size: 14px; font-weight: bold; margin-bottom: 8px;">
-        Enter initials to record your score:
-      </p>
-      <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off">
-      <button class="btn" id="saveScoreBtn" style="padding: 6px 18px; font-size: 14px; margin-bottom: 10px;">Save Score</button>
+      <div class="game-over-controls">
+        <div class="score-submit-row">
+          <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off" style="margin-bottom:0; width:130px; padding:6px 10px; font-size:14px;">
+          <button class="btn" id="saveScoreBtn" style="padding: 6px 16px; font-size: 13px;">Save Score</button>
+        </div>
+        <button class="custom-try-btn" id="customRestartBtn">🎯 TRY AGAIN!</button>
+      </div>
     </div>
-
-    <button class="btn" id="restart-btn">Try Again</button>
   </div>
 
   <div id="win-overlay" class="overlay hidden">
@@ -614,7 +690,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let cachedTopScores = [];
-let currentSessionDocId = null; // Single active session document ID
+let currentSessionDocId = null;
 
 function getDeviceInfo() {
   const ua = navigator.userAgent;
@@ -635,7 +711,7 @@ function getDeviceInfo() {
   let browser = "Unknown Browser";
   if (/SamsungBrowser/i.test(ua)) browser = "Samsung Browser";
   else if (/Edg/i.test(ua)) browser = "Edge";
-  else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Chrome";
+  else if (/Chrome/i.test(ua)) browser = "Chrome";
   else if (/Safari/i.test(ua)) browser = "Safari";
   else if (/Firefox/i.test(ua)) browser = "Firefox";
   else if (/OPR|Opera/i.test(ua)) browser = "Opera";
@@ -650,7 +726,6 @@ function getDeviceInfo() {
   };
 }
 
-// 1. Global Aggregated Counts
 async function incrementGlobalPlayCount() {
   try {
     const dev = getDeviceInfo();
@@ -698,7 +773,6 @@ async function incrementGlobalPlayCount() {
   }
 }
 
-// 2. IMMEDIATE GAME START SESSION LOGGER (Creates Document on Play Now / Restart)
 async function startSilentSession() {
   try {
     const dev = getDeviceInfo();
@@ -723,7 +797,6 @@ async function startSilentSession() {
   }
 }
 
-// 3. SILENT SESSION PROGRESS & GAME OVER UPDATER (Updates Same Line)
 async function updateSilentSession(finalScore, reachedLevel, isFinished = false) {
   if (!currentSessionDocId) return;
   try {
@@ -738,12 +811,10 @@ async function updateSilentSession(finalScore, reachedLevel, isFinished = false)
   }
 }
 
-// 4. Hall of Fame Leaderboard Submission (Same Line Update in game_sessions, No Extra Duplicate)
 async function submitScore(initials, finalScore) {
   try {
     const formattedInitials = initials.toUpperCase().substring(0, 5);
 
-    // Update same session document with player initials
     if (currentSessionDocId) {
       await db.collection("game_sessions").doc(currentSessionDocId).update({
         initials: formattedInitials,
@@ -753,7 +824,6 @@ async function submitScore(initials, finalScore) {
       });
     }
 
-    // Official Leaderboard record for Top 10 rankings
     const dev = getDeviceInfo();
     await db.collection("leaderboard").add({
       initials: formattedInitials,
@@ -1166,7 +1236,7 @@ function resetBird() {
 function onBirdFinishFlight() {
   const remainingFoods = foods.filter(f => f.alive).length + foodFlights.length;
   if (birdsLeft <= 0 && remainingFoods > 0) {
-    gameOver("No More Birds Left!", "You have run out of birds to launch!");
+    gameOver('NO_MORE_BIRDS');
   } else {
     resetBird();
   }
@@ -1249,7 +1319,7 @@ function loop() {
         bigBird.y = GROUND_Y - 14; bigBird.vy = 0; bigBird.vx = 0; bigBird.landed = true;
         playSmashAudio();
         screenShake = 6;
-        setTimeout(() => { gameOver("Giant Bird Starved!", "Energy depleted! The giant bird fell from hunger."); }, 700);
+        setTimeout(() => { gameOver('NO_ENERGY'); }, 700);
       }
     }
 
@@ -1457,7 +1527,6 @@ function checkAllFoodFinished() {
       const starBonusPts = earnedStars * 100;
       score += Math.floor(energy * 30) + starBonusPts;
 
-      // Update same session document silently on level win
       updateSilentSession(score, level, false);
 
       const milestoneBadge = document.getElementById('win-milestone-badge');
@@ -1491,20 +1560,37 @@ function checkAllFoodFinished() {
   }
 }
 
-function gameOver(title, desc) {
+// ==================== DYNAMIC GRAPHIC GAME OVER LOGIC ====================
+function gameOver(reason) {
   if (isWinningTransition) return;
   stopRubberStretch();
   gameState = 'LOSE';
 
-  // Mark same session finished
   updateSilentSession(score, level, true);
 
-  document.getElementById('lose-title').innerText = title;
-  document.getElementById('lose-desc').innerText = desc;
+  const bannerImg = document.getElementById('gameOverImg');
+  if (reason === 'NO_ENERGY') {
+    bannerImg.src = 'noenergy.jpeg';
+  } else {
+    bannerImg.src = 'nobirds.jpg';
+  }
+
   document.getElementById('playerInitials').value = '';
   document.getElementById('saveScoreBtn').disabled = false;
   document.getElementById('saveScoreBtn').innerText = 'Save Score';
-  document.getElementById('lose-overlay').classList.remove('hidden');
+  document.getElementById('gameOverModal').style.display = 'flex';
+}
+
+function restartGame() {
+  initAudioSystem(); 
+  level = 1; 
+  score = 0; 
+  incrementGlobalPlayCount();
+  startSilentSession();
+  
+  document.getElementById('gameOverModal').style.display = 'none';
+  gameState = 'PLAY';
+  initLevel();
 }
 
 function updateHUD() {
@@ -1754,8 +1840,8 @@ function drawGiantBird() {
 document.getElementById('start-game-btn').onclick = () => {
   initAudioSystem(); 
   startBackgroundMusic(); 
-  incrementGlobalPlayCount(); // Aggregated stats
-  startSilentSession();        // Single session entry created instantly!
+  incrementGlobalPlayCount();
+  startSilentSession();
   
   document.getElementById('start-overlay').classList.add('hidden');
   gameState = 'PLAY';
@@ -1764,17 +1850,9 @@ document.getElementById('start-game-btn').onclick = () => {
   initLevel();
 };
 
-document.getElementById('restart-btn').onclick = () => {
-  initAudioSystem(); 
-  level = 1; 
-  score = 0; 
-  incrementGlobalPlayCount();
-  startSilentSession();        // Fresh session for new round!
-  
-  document.getElementById('lose-overlay').classList.add('hidden');
-  gameState = 'PLAY';
-  initLevel();
-};
+// Try Again Handlers (Hotspot on image & secondary button)
+document.getElementById('imgTryAgainHotspot').onclick = restartGame;
+document.getElementById('customRestartBtn').onclick = restartGame;
 
 document.getElementById('next-level-btn').onclick = () => {
   level++; 
@@ -1796,7 +1874,7 @@ document.getElementById('saveScoreBtn').onclick = async () => {
   const btn = document.getElementById('saveScoreBtn');
   btn.disabled = true; 
   btn.innerText = "Saving...";
-  await submitScore(initials, score); // Updates same session line with initials
+  await submitScore(initials, score);
   btn.innerText = "Saved!";
 };
 
