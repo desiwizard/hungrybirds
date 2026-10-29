@@ -10,6 +10,27 @@
   <meta name="apple-mobile-web-app-title" content="Hungry Bird V2">
   <meta name="theme-color" content="#89cbf8">
 
+  <!-- ==================== WHATSAPP & SOCIAL MEDIA META TAGS ==================== -->
+  <meta property="og:site_name" content="Hungry Birds v2">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/v2/">
+  <meta property="og:title" content="Hungry Birds v2 - Multi Levels">
+  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+
+  <!-- WhatsApp Image Tags (Absolute HTTPS URLs) -->
+  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+  <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hungry Birds v2 - Multi Levels">
+  <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
+  <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
+
+  <!-- Favicons & Manifest -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -122,7 +143,7 @@
     }
 
     @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-      #rotate-device-overlay { display: flex !important; }
+      #rotate-device-overlay:not(.dismissed) { display: flex !important; }
     }
 
     /* TOP HUD */
@@ -357,7 +378,6 @@
     const restartBtn = document.getElementById('btn-restart');
     const targetCountEl = document.getElementById('target-count-hud');
     const scoreValEl = document.getElementById('score-val');
-    const levelNumHud = document.getElementById('level-num-hud');
     const levelLabelWrap = document.getElementById('level-label-wrap');
     const celebrationBanner = document.getElementById('celebration-banner');
 
@@ -366,6 +386,35 @@
     const modalDesc = document.getElementById('modal-desc');
     const modalActionBtn = document.getElementById('modal-action-btn');
     const coinWrap = document.getElementById('coin-wrap');
+
+    // ROTATE BUTTON HANDLER (Fix for phone orientation)
+    const forceRotateBtn = document.getElementById("force-rotate-btn");
+    const rotateOverlay = document.getElementById("rotate-device-overlay");
+
+    if (forceRotateBtn) {
+      forceRotateBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          const docEl = document.documentElement;
+          if (docEl.requestFullscreen) {
+            await docEl.requestFullscreen();
+          } else if (docEl.webkitRequestFullscreen) {
+            await docEl.webkitRequestFullscreen();
+          }
+        } catch (fsErr) {}
+
+        try {
+          if (screen.orientation && screen.orientation.lock) {
+            await screen.orientation.lock("landscape");
+          }
+        } catch (lockErr) {}
+
+        if (rotateOverlay) {
+          rotateOverlay.classList.add("dismissed");
+          rotateOverlay.style.display = "none";
+        }
+      });
+    }
 
     function toggleFullscreen() {
       const elem = document.documentElement;
@@ -385,7 +434,8 @@
     let animTick = 0;
     let score = 0;
     let currentLevel = 1;
-    const totalLevels = 6; // 5 regular levels + 1 bonus round
+    let inBonusStage = false;
+    const maxGameLevels = 20;
 
     let birdTypes = [];
     let selectedBirdIndex = 0;
@@ -415,8 +465,8 @@
     let bigBirdFallY = 0;
     let bigBirdFallVy = 0;
 
-    function resetBirdsForLevel(lvl) {
-      const birdCount = (lvl === 6) ? 2 : 4;
+    function resetBirdsForLevel(isBonus) {
+      const birdCount = isBonus ? 2 : 4;
       birdTypes = [
         { id: 'red',    name: 'Red',    color: '#ef4444', count: birdCount, r: 15 },
         { id: 'yellow', name: 'Yellow', color: '#eab308', count: birdCount, r: 15 },
@@ -464,7 +514,6 @@
       };
     }
 
-    // Trigger full celebration on entering Bonus Round
     function launchBonusCelebration() {
       confettiList = [];
       const colors = ['#fde047', '#38bdf8', '#ec4899', '#22c55e', '#f97316', '#a855f7', '#ffffff'];
@@ -498,14 +547,15 @@
       }, 2300);
     }
 
-    function loadLevel(lvl) {
+    function loadLevel(lvl, isBonus = false) {
       currentLevel = lvl;
+      inBonusStage = isBonus;
       isLevelReady = false;
       isLevelCompleted = false;
       modal.style.display = 'none';
       coinWrap.style.display = 'none';
 
-      if (lvl === 6) {
+      if (inBonusStage) {
         levelLabelWrap.innerHTML = `<span class="bonus-pulse">BONUS 🌟</span>`;
       } else {
         levelLabelWrap.innerHTML = `Lv <span id="level-num-hud" style="color:#ffeb3b;">${lvl}</span>`;
@@ -522,100 +572,10 @@
       particles = [];
       confettiList = [];
       floatingScores = [];
-      resetBirdsForLevel(lvl);
+      resetBirdsForLevel(inBonusStage);
 
-      if (lvl === 1) {
-        const t1X = width * 0.74;
-        structures.push(createPiece('t1', 0, t1X - 22, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('t1', 0, t1X + 12, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('t1', 0, t1X - 26, groundY - 56, 52, 10, false, '#b45309', true));
-        targets.push({ towerId: 't1', floor: 0, x: t1X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f97316', alive: true, falling: false });
-
-        const t2X = width * 0.88;
-        structures.push(createPiece('t2', 0, t2X - 22, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('t2', 0, t2X + 12, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('t2', 0, t2X - 26, groundY - 56, 52, 10, false, '#b45309', true));
-        targets.push({ towerId: 't2', floor: 0, x: t2X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
-
-        structures.push(createPiece('t2', 1, t2X - 22, groundY - 102, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('t2', 1, t2X + 12, groundY - 102, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('t2', 1, t2X - 26, groundY - 112, 52, 10, false, '#b45309', true));
-        targets.push({ towerId: 't2', floor: 1, x: t2X, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#22c55e', alive: true, falling: false });
-
-        floatingPlatforms.push({ id: 'p1', x: width * 0.60, y: height * 0.35, w: 100, h: 14, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-        targets.push({ platformId: 'p1', x: width * 0.60, y: height * 0.35 - 16, vx: 0, vy: 0, r: 16, color: '#38bdf8', alive: true, falling: false });
-
-      } else if (lvl === 2) {
-        const fx = width * 0.76;
-        structures.push(createPiece('f1', 0, fx - 36, groundY - 50, 10, 50, true, '#d99a38'));
-        structures.push(createPiece('f1', 0, fx + 26, groundY - 50, 10, 50, true, '#d99a38'));
-        structures.push(createPiece('f1', 0, fx - 42, groundY - 60, 84, 10, false, '#b45309', true));
-        targets.push({ towerId: 'f1', floor: 0, x: fx - 5, y: groundY - 20, vx: 0, vy: 0, r: 16, color: '#ef4444', alive: true, falling: false });
-
-        structures.push(createPiece('f1', 1, fx - 36, groundY - 110, 10, 50, true, '#d99a38'));
-        structures.push(createPiece('f1', 1, fx + 26, groundY - 110, 10, 50, true, '#d99a38'));
-        structures.push(createPiece('f1', 1, fx - 42, groundY - 120, 84, 10, false, '#b45309', true));
-        targets.push({ towerId: 'f1', floor: 1, x: fx - 5, y: groundY - 80, vx: 0, vy: 0, r: 16, color: '#eab308', alive: true, falling: false });
-
-        floatingPlatforms.push({ id: 'p2_1', x: width * 0.52, y: height * 0.38, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-        targets.push({ platformId: 'p2_1', x: width * 0.52, y: height * 0.38 - 14, vx: 0, vy: 0, r: 14, color: '#a855f7', alive: true, falling: false });
-
-        floatingPlatforms.push({ id: 'p2_2', x: width * 0.63, y: height * 0.22, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-        targets.push({ platformId: 'p2_2', x: width * 0.63, y: height * 0.22 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
-
-      } else if (lvl === 3) {
-        const sx = width * 0.80;
-        for (let fl = 0; fl < 3; fl++) {
-          const by = groundY - (fl * 52);
-          structures.push(createPiece('s1', fl, sx - 20, by - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('s1', fl, sx + 12, by - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('s1', fl, sx - 26, by - 56, 52, 10, false, '#b45309', true));
-          targets.push({ towerId: 's1', floor: fl, x: sx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 2 ? '#ec4899' : '#10b981', alive: true, falling: false });
-        }
-
-        const wallX = width * 0.68;
-        structures.push(createPiece('wall', 0, wallX, groundY - 60, 16, 60, true, '#78350f'));
-
-        floatingPlatforms.push({ id: 'p3_1', x: width * 0.50, y: height * 0.30, w: 90, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-        targets.push({ platformId: 'p3_1', x: width * 0.50, y: height * 0.30 - 14, vx: 0, vy: 0, r: 15, color: '#f59e0b', alive: true, falling: false });
-
-      } else if (lvl === 4) {
-        const q1X = width * 0.72;
-        const q2X = width * 0.85;
-
-        [q1X, q2X].forEach((tx, idx) => {
-          structures.push(createPiece(`tw_${idx}`, 0, tx - 20, groundY - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece(`tw_${idx}`, 0, tx + 12, groundY - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece(`tw_${idx}`, 0, tx - 24, groundY - 56, 48, 10, false, '#b45309', true));
-          targets.push({ towerId: `tw_${idx}`, floor: 0, x: tx - 4, y: groundY - 20, vx: 0, vy: 0, r: 15, color: '#f97316', alive: true, falling: false });
-
-          structures.push(createPiece(`tw_${idx}`, 1, tx - 20, groundY - 102, 10, 46, true, '#d99a38'));
-          structures.push(createPiece(`tw_${idx}`, 1, tx + 12, groundY - 102, 10, 46, true, '#d99a38'));
-          structures.push(createPiece(`tw_${idx}`, 1, tx - 24, groundY - 112, 48, 10, false, '#b45309', true));
-          targets.push({ towerId: `tw_${idx}`, floor: 1, x: tx - 4, y: groundY - 76, vx: 0, vy: 0, r: 15, color: '#ec4899', alive: true, falling: false });
-        });
-
-        floatingPlatforms.push({ id: 'p4_1', x: width * 0.52, y: height * 0.28, w: 85, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-        targets.push({ platformId: 'p4_1', x: width * 0.52, y: height * 0.28 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
-
-      } else if (lvl === 5) {
-        const cx = width * 0.78;
-        for (let fl = 0; fl < 3; fl++) {
-          const by = groundY - (fl * 50);
-          structures.push(createPiece('citadel', fl, cx - 28, by - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('citadel', fl, cx + 20, by - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('citadel', fl, cx - 32, by - 56, 64, 10, false, '#b45309', true));
-          targets.push({ towerId: 'citadel', floor: fl, x: cx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 1 ? '#eab308' : '#a855f7', alive: true, falling: false });
-        }
-
-        structures.push(createPiece('shield', 0, cx - 58, groundY - 65, 14, 65, true, '#78350f'));
-        structures.push(createPiece('shield', 0, cx + 46, groundY - 65, 14, 65, true, '#78350f'));
-
-        floatingPlatforms.push({ id: 'p5_1', x: width * 0.56, y: height * 0.24, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-        targets.push({ platformId: 'p5_1', x: width * 0.56, y: height * 0.24 - 14, vx: 0, vy: 0, r: 14, color: '#22c55e', alive: true, falling: false });
-
-      } else if (lvl === 6) {
-        // BONUS ROUND: Obstacle Net
+      if (inBonusStage) {
+        // BONUS ROUND LAYOUT
         const netX = width * 0.50;
         const netH = 135;
         obstacleNet = {
@@ -643,6 +603,100 @@
         targets.push({ towerId: 'bn_2', floor: 1, x: bx2, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#38bdf8', alive: true, falling: false });
 
         launchBonusCelebration();
+      } else {
+        // REGULAR PATTERN (1-5 Cycle)
+        const cycle = ((lvl - 1) % 5) + 1;
+
+        if (cycle === 1) {
+          const t1X = width * 0.74;
+          structures.push(createPiece('t1', 0, t1X - 22, groundY - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('t1', 0, t1X + 12, groundY - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('t1', 0, t1X - 26, groundY - 56, 52, 10, false, '#b45309', true));
+          targets.push({ towerId: 't1', floor: 0, x: t1X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f97316', alive: true, falling: false });
+
+          const t2X = width * 0.88;
+          structures.push(createPiece('t2', 0, t2X - 22, groundY - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('t2', 0, t2X + 12, groundY - 46, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('t2', 0, t2X - 26, groundY - 56, 52, 10, false, '#b45309', true));
+          targets.push({ towerId: 't2', floor: 0, x: t2X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
+
+          structures.push(createPiece('t2', 1, t2X - 22, groundY - 102, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('t2', 1, t2X + 12, groundY - 102, 10, 46, true, '#d99a38'));
+          structures.push(createPiece('t2', 1, t2X - 26, groundY - 112, 52, 10, false, '#b45309', true));
+          targets.push({ towerId: 't2', floor: 1, x: t2X, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#22c55e', alive: true, falling: false });
+
+          floatingPlatforms.push({ id: 'p1', x: width * 0.60, y: height * 0.35, w: 100, h: 14, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p1', x: width * 0.60, y: height * 0.35 - 16, vx: 0, vy: 0, r: 16, color: '#38bdf8', alive: true, falling: false });
+
+        } else if (cycle === 2) {
+          const fx = width * 0.76;
+          structures.push(createPiece('f1', 0, fx - 36, groundY - 50, 10, 50, true, '#d99a38'));
+          structures.push(createPiece('f1', 0, fx + 26, groundY - 50, 10, 50, true, '#d99a38'));
+          structures.push(createPiece('f1', 0, fx - 42, groundY - 60, 84, 10, false, '#b45309', true));
+          targets.push({ towerId: 'f1', floor: 0, x: fx - 5, y: groundY - 20, vx: 0, vy: 0, r: 16, color: '#ef4444', alive: true, falling: false });
+
+          structures.push(createPiece('f1', 1, fx - 36, groundY - 110, 10, 50, true, '#d99a38'));
+          structures.push(createPiece('f1', 1, fx + 26, groundY - 110, 10, 50, true, '#d99a38'));
+          structures.push(createPiece('f1', 1, fx - 42, groundY - 120, 84, 10, false, '#b45309', true));
+          targets.push({ towerId: 'f1', floor: 1, x: fx - 5, y: groundY - 80, vx: 0, vy: 0, r: 16, color: '#eab308', alive: true, falling: false });
+
+          floatingPlatforms.push({ id: 'p2_1', x: width * 0.52, y: height * 0.38, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p2_1', x: width * 0.52, y: height * 0.38 - 14, vx: 0, vy: 0, r: 14, color: '#a855f7', alive: true, falling: false });
+
+          floatingPlatforms.push({ id: 'p2_2', x: width * 0.63, y: height * 0.22, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p2_2', x: width * 0.63, y: height * 0.22 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
+
+        } else if (cycle === 3) {
+          const sx = width * 0.80;
+          for (let fl = 0; fl < 3; fl++) {
+            const by = groundY - (fl * 52);
+            structures.push(createPiece('s1', fl, sx - 20, by - 46, 10, 46, true, '#d99a38'));
+            structures.push(createPiece('s1', fl, sx + 12, by - 46, 10, 46, true, '#d99a38'));
+            structures.push(createPiece('s1', fl, sx - 26, by - 56, 52, 10, false, '#b45309', true));
+            targets.push({ towerId: 's1', floor: fl, x: sx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 2 ? '#ec4899' : '#10b981', alive: true, falling: false });
+          }
+
+          const wallX = width * 0.68;
+          structures.push(createPiece('wall', 0, wallX, groundY - 60, 16, 60, true, '#78350f'));
+
+          floatingPlatforms.push({ id: 'p3_1', x: width * 0.50, y: height * 0.30, w: 90, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p3_1', x: width * 0.50, y: height * 0.30 - 14, vx: 0, vy: 0, r: 15, color: '#f59e0b', alive: true, falling: false });
+
+        } else if (cycle === 4) {
+          const q1X = width * 0.72;
+          const q2X = width * 0.85;
+
+          [q1X, q2X].forEach((tx, idx) => {
+            structures.push(createPiece(`tw_${idx}`, 0, tx - 20, groundY - 46, 10, 46, true, '#d99a38'));
+            structures.push(createPiece(`tw_${idx}`, 0, tx + 12, groundY - 46, 10, 46, true, '#d99a38'));
+            structures.push(createPiece(`tw_${idx}`, 0, tx - 24, groundY - 56, 48, 10, false, '#b45309', true));
+            targets.push({ towerId: `tw_${idx}`, floor: 0, x: tx - 4, y: groundY - 20, vx: 0, vy: 0, r: 15, color: '#f97316', alive: true, falling: false });
+
+            structures.push(createPiece(`tw_${idx}`, 1, tx - 20, groundY - 102, 10, 46, true, '#d99a38'));
+            structures.push(createPiece(`tw_${idx}`, 1, tx + 12, groundY - 102, 10, 46, true, '#d99a38'));
+            structures.push(createPiece(`tw_${idx}`, 1, tx - 24, groundY - 112, 48, 10, false, '#b45309', true));
+            targets.push({ towerId: `tw_${idx}`, floor: 1, x: tx - 4, y: groundY - 76, vx: 0, vy: 0, r: 15, color: '#ec4899', alive: true, falling: false });
+          });
+
+          floatingPlatforms.push({ id: 'p4_1', x: width * 0.52, y: height * 0.28, w: 85, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p4_1', x: width * 0.52, y: height * 0.28 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
+
+        } else if (cycle === 5) {
+          const cx = width * 0.78;
+          for (let fl = 0; fl < 3; fl++) {
+            const by = groundY - (fl * 50);
+            structures.push(createPiece('citadel', fl, cx - 28, by - 46, 10, 46, true, '#d99a38'));
+            structures.push(createPiece('citadel', fl, cx + 20, by - 46, 10, 46, true, '#d99a38'));
+            structures.push(createPiece('citadel', fl, cx - 32, by - 56, 64, 10, false, '#b45309', true));
+            targets.push({ towerId: 'citadel', floor: fl, x: cx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 1 ? '#eab308' : '#a855f7', alive: true, falling: false });
+          }
+
+          structures.push(createPiece('shield', 0, cx - 58, groundY - 65, 14, 65, true, '#78350f'));
+          structures.push(createPiece('shield', 0, cx + 46, groundY - 65, 14, 65, true, '#78350f'));
+
+          floatingPlatforms.push({ id: 'p5_1', x: width * 0.56, y: height * 0.24, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p5_1', x: width * 0.56, y: height * 0.24 - 14, vx: 0, vy: 0, r: 14, color: '#22c55e', alive: true, falling: false });
+        }
       }
 
       updateTargetCountHud();
@@ -660,39 +714,46 @@
         isLevelCompleted = true;
 
         setTimeout(() => {
-          if (currentLevel === 6) {
+          if (inBonusStage) {
             // BONUS ROUND WON
             const leftoverBirds = totalBirds;
             const bonusReward = leftoverBirds * 500;
             addScore(bonusReward);
 
             coinWrap.style.display = 'block';
-            modalTitle.textContent = `Bonus`;
+            modalTitle.textContent = `Bonus Cleared! 🌟`;
             modalDesc.innerHTML = `
               <b>${leftoverBirds}</b> Birds Remaining × 500 = <span style="color:#facc15; font-size:18px; font-weight:900;">+${bonusReward} BONUS PTS!</span><br>
               Total Score: <b>${score}</b>
             `;
-            modalActionBtn.textContent = 'Restart Game 🔄';
-            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
-          }
-          else if (currentLevel < totalLevels) {
-            coinWrap.style.display = 'none';
-            if (currentLevel === 5) {
-              modalTitle.textContent = `Level 5 Cleared! 🎉`;
-              modalDesc.textContent = `Bonus`;
-              modalActionBtn.textContent = 'Play Bonus Round ➔';
+            if (currentLevel < maxGameLevels) {
+              modalActionBtn.textContent = `Next Level ${currentLevel + 1} ➔`;
+              modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
             } else {
-              modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
-              modalDesc.textContent = `Excellent Shot! Ready for Level ${currentLevel + 1}?`;
-              modalActionBtn.textContent = 'Next Level ➔';
+              modalActionBtn.textContent = 'Restart Game 🔄';
+              modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1, false); };
             }
-            modalActionBtn.onclick = () => loadLevel(currentLevel + 1);
+          }
+          else if (currentLevel % 5 === 0) {
+            // TRIGGER PERIODIC BONUS (Every 5 levels)
+            coinWrap.style.display = 'none';
+            modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
+            modalDesc.textContent = `Get ready for the Bonus Challenge!`;
+            modalActionBtn.textContent = 'Play Bonus Round ➔';
+            modalActionBtn.onclick = () => loadLevel(currentLevel, true);
+          }
+          else if (currentLevel < maxGameLevels) {
+            coinWrap.style.display = 'none';
+            modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
+            modalDesc.textContent = `Ready for Level ${currentLevel + 1}?`;
+            modalActionBtn.textContent = 'Next Level ➔';
+            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
           } else {
             coinWrap.style.display = 'none';
             modalTitle.textContent = `Champion! All Levels Won! 🏆`;
             modalDesc.textContent = `Final Score: ${score}`;
             modalActionBtn.textContent = 'Play Again 🔄';
-            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
+            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1, false); };
           }
           modal.style.display = 'flex';
         }, 1000);
@@ -702,16 +763,16 @@
         isLevelCompleted = true;
         setTimeout(() => {
           coinWrap.style.display = 'none';
-          if (currentLevel === 6) {
+          if (inBonusStage) {
             modalTitle.textContent = `So Close!`;
             modalDesc.textContent = `Better luck next time!`;
-            modalActionBtn.textContent = 'Continue to Next Level ➔';
-            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
+            modalActionBtn.textContent = `Continue to Level ${currentLevel + 1} ➔`;
+            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
           } else {
             modalTitle.textContent = `Giant Bird Starved! 💀`;
             modalDesc.textContent = `Energy depleted! Keep the giant bird fed.`;
             modalActionBtn.textContent = 'Retry Level 🔄';
-            modalActionBtn.onclick = () => loadLevel(currentLevel);
+            modalActionBtn.onclick = () => loadLevel(currentLevel, false);
           }
           modal.style.display = 'flex';
         }, 1200);
@@ -721,16 +782,16 @@
         isLevelCompleted = true;
         setTimeout(() => {
           coinWrap.style.display = 'none';
-          if (currentLevel === 6) {
+          if (inBonusStage) {
             modalTitle.textContent = `So Close!`;
             modalDesc.textContent = `Better luck next time!`;
-            modalActionBtn.textContent = 'Continue to Next Level ➔';
-            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1); };
+            modalActionBtn.textContent = `Continue to Level ${currentLevel + 1} ➔`;
+            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
           } else {
             modalTitle.textContent = `Level Failed! 😢`;
             modalDesc.textContent = `${remainingTargets} targets remained unbroken.`;
             modalActionBtn.textContent = 'Retry Level 🔄';
-            modalActionBtn.onclick = () => loadLevel(currentLevel);
+            modalActionBtn.onclick = () => loadLevel(currentLevel, false);
           }
           modal.style.display = 'flex';
         }, 1200);
@@ -742,7 +803,7 @@
       height = window.innerHeight;
       canvas.width = width;
       canvas.height = height;
-      loadLevel(currentLevel);
+      loadLevel(currentLevel, inBonusStage);
     }
     window.addEventListener('resize', resizeCanvas);
 
@@ -1092,7 +1153,7 @@
         ctx.fill();
       }
 
-      // HEALTH BADGE ON TREE TRUNK UNDER BIG BIRD & BRANCH
+      // HEALTH BADGE
       const bY = branchY + 36;
       const bVal = Math.max(0, Math.ceil(bigBirdEnergy));
       let bColor = '#2ed573';
@@ -1678,7 +1739,7 @@
             p.vy = -p.vy * 0.15;
             p.vx *= 0.70;
             p.va *= 0.60;
-            if (Math.abs(p.vy) < 0.3) p.vy = 0;
+            if (Math.abs(p.vy) < 0.3) fp.vy = 0;
             if (Math.abs(p.vx) < 0.1) p.vx = 0;
             if (Math.abs(p.va) < 0.01) p.va = 0;
           }
@@ -1914,7 +1975,7 @@
     });
 
     restartBtn.addEventListener('click', () => {
-      loadLevel(currentLevel);
+      loadLevel(currentLevel, inBonusStage);
     });
 
     resizeCanvas();
