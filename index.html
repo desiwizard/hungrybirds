@@ -1,163 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="UTF-8">
-  <title>Hungry Birds v2 - Multi Levels</title>
+  <title>Hungry Bird: Energy Feast</title>
+  
+ <!-- فیویکان اور موبائل ایپ مینیفیسٹ لنکس -->
+ <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+ <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+ <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+ <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+ <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+ <link rel="manifest" href="site.webmanifest">
+  <!-- Social & Meta Tags -->
+  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/">
+  <meta property="fb:app_id" content="966242223397117">
+  <meta property="og:site_name" content="Hungry Bird">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hungry Bird: Energy Feast">
+  <meta property="og:logo" content="https://desiwizard.github.io/hungrybirds/bird.jpeg" />
+  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+
+  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+  <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="536">
+
+  <link rel="image_src" href="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+  <meta itemprop="name" content="Hungry Bird: Energy Feast">
+  <meta itemprop="description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
+  <meta itemprop="image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hungry Bird: Energy Feast">
+  <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
+  <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#87CEEB">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Hungry Bird V2">
-  <meta name="theme-color" content="#89cbf8">
-
-  <!-- ==================== WHATSAPP & SOCIAL MEDIA META TAGS ==================== -->
-  <meta property="og:site_name" content="Hungry Birds v2">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/v2/">
-  <meta property="og:title" content="Hungry Birds v2 - Multi Levels">
-  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
-
-  <!-- WhatsApp Image Tags (Absolute HTTPS URLs) -->
-  <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
-  <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
-  <meta property="og:image:type" content="image/jpeg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-
-  <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Hungry Birds v2 - Multi Levels">
-  <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
-  <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
-
-  <!-- Favicons & Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+  <meta name="apple-mobile-web-app-title" content="Hungry Bird">
+  <link rel="apple-touch-icon" href="bird.jpeg">
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: none;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
     html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #89cbf8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      touch-action: none;
-      position: fixed;
-      inset: 0;
+      width: 100%; height: 100%; background-color: #87CEEB;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      touch-action: none; position: fixed; inset: 0;
     }
-    #game-container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #89cbf8;
-      overflow: hidden;
-    }
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      touch-action: none;
-      background-color: #89cbf8;
-    }
-
-    #rotate-device-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.98);
-      color: #fff;
-      z-index: 99999;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 25px;
-    }
-    .phone-anim-box {
-      width: 70px;
-      height: 120px;
-      border: 4px solid #38bdf8;
-      border-radius: 14px;
-      position: relative;
-      margin-bottom: 25px;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
-      animation: phoneRotate 2.6s infinite ease-in-out;
-      background: rgba(255,255,255,0.06);
-    }
-    .phone-anim-box::before {
-      content: '';
-      position: absolute;
-      top: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 14px;
-      height: 3px;
-      background: #38bdf8;
-      border-radius: 2px;
-    }
-    .phone-anim-box::after {
-      content: '';
-      position: absolute;
-      bottom: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 10px;
-      height: 10px;
-      border: 2px solid #38bdf8;
-      border-radius: 50%;
-    }
-    @keyframes phoneRotate {
-      0% { transform: rotate(0deg) scale(1); }
-      20% { transform: rotate(0deg) scale(1); }
-      60% { transform: rotate(-90deg) scale(1.1); }
-      80% { transform: rotate(-90deg) scale(1.1); }
-      100% { transform: rotate(0deg) scale(1); }
-    }
-    .force-play-btn {
-      background: #22c55e;
-      color: #fff;
-      border: 2px solid #fff;
-      padding: 14px 28px;
-      font-size: 16px;
-      font-weight: 900;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
-      margin-top: 15px;
-    }
-
-    @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-      #rotate-device-overlay:not(.dismissed) { display: flex !important; }
-    }
-
-    /* TOP HUD */
+    #game-container { position: relative; width: 100vw; height: 100vh; background: #87CEEB; overflow: hidden; }
+    canvas { width: 100%; height: 100%; display: block; touch-action: none; background-color: #87CEEB; }
+    
     .hud {
       position: absolute; 
-      top: calc(8px + env(safe-area-inset-top, 0px)); 
+      top: calc(10px + env(safe-area-inset-top, 0px)); 
       left: calc(12px + env(safe-area-inset-left, 0px)); 
       right: calc(12px + env(safe-area-inset-right, 0px));
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      pointer-events: none;
-      z-index: 25;
-      gap: 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      pointer-events: none; z-index: 25; gap: 8px;
     }
     .hud-pill {
       background: rgba(0, 0, 0, 0.72);
@@ -176,1810 +81,2210 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.25);
       border: 1px solid rgba(255,255,255,0.18);
     }
-    .hud-controls {
+
+    /* ==================== HIGH-CONTRAST HEALTH BADGE UNDER GIANT BIRD ==================== */
+    #bird-energy-clock {
+      position: absolute;
+      top: 50%;
+      left: 62px;
+      transform: translate(-50%, -50%);
+      background: rgba(8, 14, 26, 0.94);
+      border: 2px solid #00ff88;
+      border-radius: 26px;
+      padding: 5px 15px;
       display: flex;
       align-items: center;
       gap: 8px;
-      pointer-events: auto;
+      z-index: 28;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 255, 136, 0.5);
+      pointer-events: none;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      white-space: nowrap;
     }
-    .circle-btn {
-      width: 36px;
-      height: 36px;
+    .health-label {
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    }
+    .health-icon {
+      font-size: 14px;
+      color: #00ff88;
+      filter: drop-shadow(0 0 4px #00ff88);
+    }
+    .energy-digit-box {
+      color: #00ff88;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 900;
+      font-size: 24px;
+      min-width: 32px;
+      text-align: center;
+      transition: color 0.2s ease;
+      display: inline-block;
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.9), 0 0 20px rgba(0, 255, 136, 0.4);
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 255, 136, 0.35);
+    }
+    #bird-energy-clock.warning {
+      border-color: #ff3838;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), 0 0 18px rgba(255, 56, 56, 0.9);
+      animation: pulseAlert 0.7s infinite alternate;
+    }
+    #bird-energy-clock.warning .health-icon {
+      color: #ff3838;
+      filter: drop-shadow(0 0 6px #ff3838);
+    }
+    #bird-energy-clock.warning .energy-digit-box {
+      color: #ff3838;
+      border-color: rgba(255, 56, 56, 0.5);
+      text-shadow: 0 0 12px rgba(255, 56, 56, 1), 0 0 22px rgba(255, 56, 56, 0.6);
+    }
+    @keyframes pulseAlert {
+      from { transform: translate(-50%, -50%) scale(1); }
+      to { transform: translate(-50%, -50%) scale(1.15); }
+    }
+
+    .sound-btn {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border: none !important;
+      color: #111 !important;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.75);
-      border: 1.5px solid #ffeb3b;
-      color: #ffeb3b;
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 13px;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
       transition: transform 0.1s ease;
     }
-    .circle-btn:active { transform: scale(0.92); }
+    .sound-btn:active { transform: scale(0.92); }
+    .sound-btn.muted { background: #ffcdd2 !important; color: #d32f2f !important; }
 
-    .bonus-pulse {
-      animation: bonusGlow 1.2s infinite alternate ease-in-out;
-      color: #facc15 !important;
-      font-weight: 900;
-    }
-    @keyframes bonusGlow {
-      from { text-shadow: 0 0 4px #eab308; transform: scale(1); }
-      to { text-shadow: 0 0 14px #facc15, 0 0 24px #ca8a04; transform: scale(1.08); }
-    }
-
-    /* Celebration Banner */
-    #celebration-banner {
-      display: none;
+    #fs-btn {
       position: absolute;
-      top: 22%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.6);
-      background: radial-gradient(circle, rgba(234, 179, 8, 0.95) 0%, rgba(180, 83, 9, 0.96) 100%);
-      border: 3.5px solid #fef08a;
-      box-shadow: 0 0 35px rgba(250, 204, 21, 0.8), 0 12px 30px rgba(0, 0, 0, 0.6);
-      color: #ffffff;
-      padding: 14px 34px;
-      border-radius: 40px;
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      z-index: 100;
-      pointer-events: none;
-      white-space: nowrap;
-      text-align: center;
-      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      opacity: 0;
-    }
-    #celebration-banner.show-banner {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.05);
-    }
-    #celebration-banner.fade-banner {
-      opacity: 0;
-      transform: translate(-50%, -80%) scale(0.9);
-    }
-
-    /* Modals */
-    #level-modal {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(6px);
-      z-index: 10000;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      text-align: center;
-    }
-    .modal-box {
-      background: #1e293b;
-      border: 2px solid #facc15;
-      padding: 24px 34px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      max-width: 90vw;
-    }
-    .modal-title {
-      font-size: 24px;
-      font-weight: bold;
-      color: #facc15;
-    }
-
-    /* 3D Spinning Gold Coin */
-    .coin-anim-wrap {
-      perspective: 1000px;
-      margin: 8px 0;
-      display: none;
-    }
-    .gold-coin {
-      width: 64px;
-      height: 64px;
-      background: radial-gradient(circle, #fde047 30%, #eab308 70%, #ca8a04 100%);
-      border: 3.5px dashed #fef08a;
+      top: calc(56px + env(safe-area-inset-top, 0px));
+      right: calc(14px + env(safe-area-inset-right, 0px));
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 0, 0, 0.78);
+      border: 2px solid #ffeb3b;
+      color: #ffeb3b;
+      font-size: 17px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
-      font-weight: 900;
-      color: #713f12;
-      box-shadow: 0 0 20px rgba(250, 204, 21, 0.7);
-      animation: spinCoin 1.2s infinite linear;
+      cursor: pointer;
+      z-index: 35;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+      transition: transform 0.15s ease, background 0.15s ease;
     }
-    @keyframes spinCoin {
+    #fs-btn:active {
+      transform: scale(0.90);
+      background: rgba(0, 0, 0, 0.95);
+    }
+
+    .overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.88);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: white; z-index: 100; text-align: center; padding: 8px 16px;
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .overlay.hidden { display: none !important; }
+    .overlay h1 { font-size: 20px; margin-bottom: 4px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
+    .overlay p { font-size: 13px; margin-bottom: 8px; color: #eee; white-space: pre-line; }
+    
+    .start-content-grid {
+      display: flex; flex-direction: row; align-items: flex-start; justify-content: center;
+      gap: 14px; width: 100%; max-width: 890px; margin-top: 2px;
+    }
+    .start-col-left { flex: 1.25; display: flex; flex-direction: column; align-items: center; }
+    .start-col-right { flex: 0.75; display: flex; flex-direction: column; align-items: center; }
+
+    .rules-card {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px; padding: 7px 10px; margin-bottom: 6px;
+      text-align: left; font-size: 11px; line-height: 1.4; width: 100%;
+    }
+    .rules-card b { color: #ffeb3b; }
+
+    .hud-legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px 12px;
+      margin-top: 4px;
+      font-size: 10.5px;
+    }
+    .hud-legend-grid div {
+      white-space: nowrap;
+    }
+
+    .diff-container { display: flex; gap: 10px; margin-bottom: 8px; }
+    .diff-btn {
+      background: rgba(255, 255, 255, 0.15); color: #fff; border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer;
+    }
+    .diff-btn.active { background: #ffeb3b; color: #111; border-color: #fbc02d; }
+    .btn {
+      background: #4CAF50; color: white; border: none; padding: 7px 26px;
+      font-size: 15px; font-weight: bold; border-radius: 20px; cursor: pointer;
+      box-shadow: 0 4px #2e7d32;
+    }
+    .btn:active { transform: translateY(2px); box-shadow: 0 2px #2e7d32; }
+    input[type="text"] { 
+      width: 180px; padding: 8px 12px; font-size: 16px; font-weight: bold;
+      text-align: center; text-transform: uppercase; border-radius: 6px; 
+      border: 2px solid #ffeb3b; margin-bottom: 10px; outline: none; background: #111; color: #fff;
+    }
+    #leaderboard { 
+      width: 100%; max-width: 320px; background: rgba(255, 255, 255, 0.1); 
+      padding: 8px 12px; border-radius: 8px; font-size: 12px; text-align: left; border: 1px solid rgba(255,255,255,0.15);
+    }
+    #leaderboard h3 { text-align: center; margin-bottom: 4px; color: #ffeb3b; font-size: 13px; }
+    .leaderboard-scroll { max-height: 180px; overflow-y: auto; padding-right: 4px; }
+    .lb-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+    .stars-container {
+      display: flex; gap: 8px; justify-content: center;
+      margin: 10px 0 14px 0; min-height: 40px; align-items: center; flex-wrap: wrap;
+    }
+    .star-item {
+      font-size: 32px; filter: drop-shadow(0 2px 6px rgba(255, 235, 59, 0.6));
+      display: inline-block; animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      opacity: 0; transform: scale(0);
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0) rotate(-20deg); }
+      70% { opacity: 1; transform: scale(1.3) rotate(10deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    .milestone-badge {
+      background: linear-gradient(135deg, #ff9800, #ff5722);
+      border: 2px solid #ffeb3b;
+      border-radius: 12px;
+      padding: 8px 16px;
+      margin: 10px 0;
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+      display: none;
+    }
+
+    /* BONUS BANNER & COIN ANIMATION */
+    #bonus-banner {
+      position: absolute;
+      top: 24%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: linear-gradient(135deg, #ffd700, #ff9800);
+      color: #1a1a1a;
+      font-size: 26px;
+      font-weight: 900;
+      padding: 12px 32px;
+      border-radius: 40px;
+      border: 3px solid #fff;
+      box-shadow: 0 0 35px rgba(255, 215, 0, 0.8);
+      z-index: 90;
+      pointer-events: none;
+      white-space: nowrap;
+      transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+      opacity: 0;
+    }
+    #bonus-banner.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .spinning-coin {
+      width: 48px;
+      height: 48px;
+      background: radial-gradient(circle, #fff 10%, #ffd700 50%, #b8860b 100%);
+      border-radius: 50%;
+      border: 3px solid #ffeb3b;
+      margin: 8px auto 10px auto;
+      box-shadow: 0 0 18px rgba(255, 215, 0, 0.9);
+      animation: coinSpin 1.4s infinite linear;
+      display: none;
+    }
+    @keyframes coinSpin {
       0% { transform: rotateY(0deg); }
-      50% { transform: rotateY(180deg) scale(1.1); }
+      50% { transform: rotateY(180deg); }
       100% { transform: rotateY(360deg); }
     }
 
-    .modal-btn {
-      background: #22c55e;
-      color: #fff;
-      border: none;
-      padding: 10px 24px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    /* GLOSSY & ENLARGED BONUS WIN TEXT STYLES */
+    .bonus-subtitle-glossy {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffffff 0%, #fff176 40%, #ffb300 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.65));
+      margin-bottom: 6px;
+      display: block;
     }
-    .modal-btn:active { transform: scale(0.96); }
+    .bonus-score-huge {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 38px;
+      font-weight: 900;
+      color: #ffd700;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.95), 0 0 30px rgba(255, 152, 0, 0.6);
+      margin: 2px 0 16px 0;
+      display: block;
+      letter-spacing: 1px;
+    }
+
+    /* VISUAL GUIDE CARD (START & HELP SCREENS) */
+    .visual-guide-container {
+      display: flex; flex-direction: column; align-items: center;
+      background: rgba(0, 0, 0, 0.55); border: 1.5px solid #ffeb3b;
+      border-radius: 10px; padding: 6px 8px; margin-bottom: 6px; width: 100%;
+    }
+    .visual-guide-svg { width: 100%; max-height: 82px; }
+
+    /* ROTATE DEVICE OVERLAY & ANIMATION */
+    #rotate-device-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); color: #fff;
+      z-index: 99999; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 25px;
+    }
+    
+    .phone-anim-box {
+      width: 70px; height: 120px; border: 4px solid #38bdf8;
+      border-radius: 14px; position: relative; margin-bottom: 25px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      animation: phoneRotate 2.6s infinite ease-in-out;
+      background: rgba(255,255,255,0.06);
+    }
+    .phone-anim-box::before {
+      content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      width: 14px; height: 3px; background: #38bdf8; border-radius: 2px;
+    }
+    .phone-anim-box::after {
+      content: ''; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+      width: 10px; height: 10px; border: 2px solid #38bdf8; border-radius: 50%;
+    }
+    @keyframes phoneRotate {
+      0% { transform: rotate(0deg) scale(1); }
+      20% { transform: rotate(0deg) scale(1); }
+      60% { transform: rotate(-90deg) scale(1.1); }
+      80% { transform: rotate(-90deg) scale(1.1); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    .force-play-btn {
+      background: #22c55e; color: #fff; border: 2px solid #fff;
+      padding: 14px 28px; font-size: 16px; font-weight: 900; border-radius: 30px;
+      cursor: pointer; box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
+      animation: pulseBtn 1.2s infinite alternate; margin-top: 15px;
+    }
+    @keyframes pulseBtn {
+      from { transform: scale(1); box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5); }
+      to { transform: scale(1.06); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.9); }
+    }
+
+    @media screen and (orientation: portrait) { #rotate-device-overlay { display: flex !important; } }
+
+    /* ==================== CUSTOM GRAPHIC GAME OVER BANNER MODAL ==================== */
+    #gameOverModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 15, 29, 0.85);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    .game-over-box {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: popInModal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes popInModal {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .game-over-img-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+      border: 3px solid rgba(255,255,255,0.25);
+    }
+    #gameOverImg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .img-try-again-hotspot {
+      position: absolute;
+      bottom: 4%;
+      left: 14%;
+      width: 28%;
+      height: 12%;
+      cursor: pointer;
+      z-index: 5;
+      background: rgba(255, 255, 255, 0.001);
+    }
+    .game-over-controls {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .score-submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .custom-try-btn {
+      background: linear-gradient(180deg, #2ed573 0%, #20bf6b 100%);
+      color: white;
+      border: 2px solid #ffffff;
+      padding: 9px 30px;
+      font-size: 17px;
+      font-weight: 900;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(46, 213, 115, 0.5);
+      transition: transform 0.1s ease;
+    }
+    .custom-try-btn:active {
+      transform: scale(0.94);
+    }
+
+    /* BONUS LOSS OVERLAY */
+    #bonusLossOverlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.88);
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      color: white; z-index: 100; text-align: center; padding: 8px 16px;
+    }
   </style>
 </head>
 <body>
 
-  <div id="rotate-device-overlay">
-    <div class="phone-anim-box"></div>
-    <h1 style="color: #ffeb3b; font-size: 22px; margin-bottom: 8px;">ROTATE YOUR PHONE</h1>
-    <p style="color: #cbd5e1; font-size: 14px; max-width: 300px; line-height: 1.5;">
-      Please rotate your phone sideways into <b>Landscape</b> mode to start playing.
-    </p>
-    <button id="force-rotate-btn" class="force-play-btn">
-      🔄 TAP TO ROTATE & PLAY
-    </button>
+<!-- ROTATE SCREEN ANIMATED OVERLAY -->
+<div id="rotate-device-overlay">
+  <div class="phone-anim-box"></div>
+  <h1 style="color: #ffeb3b; font-size: 22px; margin-bottom: 8px;">ROTATE YOUR PHONE</h1>
+  <p style="color: #cbd5e1; font-size: 14px; max-width: 300px; line-height: 1.5;">
+    Please rotate your phone sideways into <b>Landscape</b> mode to start playing.
+  </p>
+  <button id="force-rotate-btn" class="force-play-btn">
+    🔄 TAP TO ROTATE & PLAY
+  </button>
+</div>
+
+<div id="game-container">
+  <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+  <!-- HIGH CONTRAST HEALTH BADGE DIRECTLY UNDER GIANT BIRD -->
+  <div id="bird-energy-clock">
+    <span class="health-label"><span class="health-icon">⚡</span>HEALTH:</span>
+    <span id="energy-digits" class="energy-digit-box">15</span>
   </div>
 
-  <div id="game-container">
-    <canvas id="gameCanvas"></canvas>
+  <div id="bonus-banner">★ BONUS ROUND UNLOCKED! ★</div>
 
-    <div id="celebration-banner">★ BONUS ROUND UNLOCKED! ★</div>
+  <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
-    <div class="hud">
-      <div class="hud-pill">
-        <span id="level-label-wrap">Lv <span id="level-num-hud" style="color:#ffeb3b;">1</span></span>
-        <span>|</span>
-        <span>🎯 <span id="target-count-hud">4</span> Targets</span>
-      </div>
-
-      <div class="hud-pill">
-        <span>Score: <span id="score-val" style="color:#ffeb3b;">0</span></span>
-      </div>
-
-      <div class="hud-controls">
-        <button class="circle-btn" id="btn-restart" title="Restart Level">🔄</button>
-        <button class="circle-btn" id="btn-fs" title="Fullscreen">⛶</button>
-      </div>
+  <div class="hud">
+    <div class="hud-pill">
+      <span id="level-display" style="color: #ffeb3b;">Lv 1 • Normal</span>
+      <span>|</span>
+      <span>🎯 <span id="shots-left-display">8</span></span>
     </div>
 
-    <div id="level-modal">
-      <div class="modal-box">
-        <div id="modal-title" class="modal-title">Level Cleared!</div>
-        <div id="coin-wrap" class="coin-anim-wrap">
-          <div class="gold-coin">★</div>
+    <div class="hud-pill">
+      <span>Score: <span id="score-display" style="color:#ffeb3b;">0</span></span>
+    </div>
+
+    <div class="hud-pill" style="gap: 6px; padding: 4px 8px;">
+      <button id="music-btn" class="sound-btn" title="Music">🎵</button>
+      <button id="sfx-btn" class="sound-btn" title="SFX">🔊</button>
+      <button id="lb-hud-btn" class="sound-btn" title="Leaderboard">🏆</button>
+      <button id="help-hud-btn" class="sound-btn" title="Help" style="font-weight: bold;">❓</button>
+    </div>
+  </div>
+
+  <!-- START OVERLAY -->
+  <div id="start-overlay" class="overlay">
+    <h1>HUNGRY BIRD: ENERGY FEAST</h1>
+    <div class="start-content-grid">
+      <div class="start-col-left">
+
+        <div class="visual-guide-container">
+          <svg class="visual-guide-svg" viewBox="0 0 540 100">
+            <g transform="translate(10, 0)">
+              <path d="M 50 90 L 50 60 L 32 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+              <path d="M 50 60 L 68 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+              <line x1="32" y1="30" x2="-8" y2="44" stroke="#2b1408" stroke-width="4"/>
+              <line x1="68" y1="30" x2="-8" y2="44" stroke="#42200f" stroke-width="4"/>
+              <circle cx="-8" cy="44" r="14" fill="#E53935" stroke="#111" stroke-width="2"/>
+              <circle cx="-4" cy="40" r="3" fill="#fff"/>
+              <circle cx="-3" cy="40" r="1.5" fill="#000"/>
+              <polygon points="2,43 9,46 2,49" fill="#FF9800"/>
+              <path d="M -8 44 Q 40 10 95 18" stroke="#ffeb3b" stroke-width="3" stroke-dasharray="4,4" fill="none"/>
+              <polygon points="93,13 100,18 93,23" fill="#ffeb3b"/>
+              <path d="M -15 58 L -35 70" stroke="#00e676" stroke-width="3.5" stroke-linecap="round"/>
+              <polygon points="-39,66 -37,76 -27,74" fill="#00e676"/>
+              <text x="25" y="98" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">🏹 YOUR SLINGSHOT</text>
+            </g>
+
+            <g transform="translate(200, 25)">
+              <path d="M 10 25 L 90 25" stroke="#00e5ff" stroke-width="3" stroke-dasharray="5,4"/>
+              <polygon points="90,19 104,25 90,31" fill="#00e5ff"/>
+              <circle cx="50" cy="14" r="13" fill="#ff9800" stroke="#111" stroke-width="1.5"/>
+              <rect x="40" y="12" width="20" height="4" fill="#4caf50" rx="2"/>
+              <text x="50" y="44" fill="#00e5ff" font-size="10" font-weight="bold" text-anchor="middle">SMASH & FEED</text>
+            </g>
+
+            <g transform="translate(420, 15)">
+              <path d="M 10 80 L 90 80 L 90 55 L 10 55 Z" fill="#4E342E"/>
+              <rect x="10" y="52" width="80" height="5" fill="#558B2F"/>
+              <ellipse cx="50" cy="38" rx="28" ry="24" fill="#E53935" stroke="#000" stroke-width="2"/>
+              <circle cx="62" cy="26" r="6" fill="#fff"/>
+              <circle cx="64" cy="26" r="3" fill="#000"/>
+              <polygon points="72,25 96,16 80,34 96,50 72,43" fill="#FF9800"/>
+              <text x="50" y="95" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">👑 GIANT BIRD</text>
+            </g>
+          </svg>
         </div>
-        <p id="modal-desc" style="font-size: 14px; color: #cbd5e1;">All targets destroyed!</p>
-        <button id="modal-action-btn" class="modal-btn">Next Level ➔</button>
+
+        <div class="rules-card" style="background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4); margin-bottom: 5px;">
+          <b style="color:#00e5ff;">📊 SCREEN HUD & BUTTONS:</b>
+          <div class="hud-legend-grid">
+            <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
+            <div>• <b>🎯 Shots:</b> Birds in queue</div>
+            <div>• <b>⚡ Health:</b> Bird health meter</div>
+            <div>• <b>⛶ Fullscreen:</b> Toggle Screen</div>
+            <div>• <b>🎵 Music:</b> BGM On/Off</div>
+            <div>• <b>🔊 Sound:</b> SFX On/Off</div>
+            <div>• <b>🏆 Trophy:</b> Top 10 Scores</div>
+            <div></div>
+          </div>
+        </div>
+
+        <div class="rules-card" style="margin-bottom: 6px;">
+          🎯 <b>How to Play:</b> Drag bird back on slingshot, aim & release to smash towers!<br>
+          🪵 <b>Hit Durability:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
+          ⭐ <b>Star Bonus:</b> Earn 1 Star (+100 pts) per unused bird each round!
+        </div>
+
+        <div class="diff-container">
+          <button class="diff-btn" data-diff="novice">Novice</button>
+          <button class="diff-btn active" data-diff="normal">Normal</button>
+          <button class="diff-btn" data-diff="expert">Expert</button>
+        </div>
+        <button class="btn" id="start-game-btn">PLAY NOW</button>
+      </div>
+
+      <div class="start-col-right">
+        <div id="leaderboard">
+          <h3>TOP 10 SCORES</h3>
+          <div id="leaderboardList" class="leaderboard-scroll">Loading...</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      });
-    }
+  <!-- LEADERBOARD OVERLAY -->
+  <div id="lb-overlay" class="overlay hidden">
+    <h1>LEADERBOARD</h1>
+    <div id="leaderboard" style="margin-bottom: 14px; max-width: 360px;">
+      <h3>GLOBAL TOP 10</h3>
+      <div id="leaderboardListMid" class="leaderboard-scroll" style="max-height: 220px;">Loading...</div>
+    </div>
+    <button class="btn" id="close-lb-btn">BACK TO GAME</button>
+  </div>
 
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const fsBtn = document.getElementById('btn-fs');
-    const restartBtn = document.getElementById('btn-restart');
-    const targetCountEl = document.getElementById('target-count-hud');
-    const scoreValEl = document.getElementById('score-val');
-    const levelLabelWrap = document.getElementById('level-label-wrap');
-    const celebrationBanner = document.getElementById('celebration-banner');
+  <!-- HELP OVERLAY -->
+  <div id="help-overlay" class="overlay hidden">
+    <h1 style="margin-bottom: 4px;">HOW TO PLAY</h1>
 
-    const modal = document.getElementById('level-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDesc = document.getElementById('modal-desc');
-    const modalActionBtn = document.getElementById('modal-action-btn');
-    const coinWrap = document.getElementById('coin-wrap');
+    <div class="visual-guide-container">
+      <svg class="visual-guide-svg" viewBox="0 0 540 100">
+        <g transform="translate(10, 0)">
+          <path d="M 50 90 L 50 60 L 32 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 50 60 L 68 30" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+          <line x1="32" y1="30" x2="-8" y2="44" stroke="#2b1408" stroke-width="4"/>
+          <line x1="68" y1="30" x2="-8" y2="44" stroke="#42200f" stroke-width="4"/>
+          <circle cx="-8" cy="44" r="14" fill="#E53935" stroke="#111" stroke-width="2"/>
+          <circle cx="-4" cy="40" r="3" fill="#fff"/>
+          <circle cx="-3" cy="40" r="1.5" fill="#000"/>
+          <polygon points="2,43 9,46 2,49" fill="#FF9800"/>
+          <path d="M -8 44 Q 40 10 95 18" stroke="#ffeb3b" stroke-width="3" stroke-dasharray="4,4" fill="none"/>
+          <polygon points="93,13 100,18 93,23" fill="#ffeb3b"/>
+          <path d="M -15 58 L -35 70" stroke="#00e676" stroke-width="3.5" stroke-linecap="round"/>
+          <polygon points="-39,66 -37,76 -27,74" fill="#00e676"/>
+          <text x="25" y="98" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">🏹 YOUR SLINGSHOT</text>
+        </g>
+        <g transform="translate(200, 25)">
+          <path d="M 10 25 L 90 25" stroke="#00e5ff" stroke-width="3" stroke-dasharray="5,4"/>
+          <polygon points="90,19 104,25 90,31" fill="#00e5ff"/>
+          <circle cx="50" cy="14" r="13" fill="#ff9800" stroke="#111" stroke-width="1.5"/>
+          <rect x="40" y="12" width="20" height="4" fill="#4caf50" rx="2"/>
+          <text x="50" y="44" fill="#00e5ff" font-size="10" font-weight="bold" text-anchor="middle">SMASH & FEED</text>
+        </g>
+        <g transform="translate(420, 15)">
+          <path d="M 10 80 L 90 80 L 90 55 L 10 55 Z" fill="#4E342E"/>
+          <rect x="10" y="52" width="80" height="5" fill="#558B2F"/>
+          <ellipse cx="50" cy="38" rx="28" ry="24" fill="#E53935" stroke="#000" stroke-width="2"/>
+          <circle cx="62" cy="26" r="6" fill="#fff"/>
+          <circle cx="64" cy="26" r="3" fill="#000"/>
+          <polygon points="72,25 96,16 80,34 96,50 72,43" fill="#FF9800"/>
+          <text x="50" y="95" fill="#ffeb3b" font-size="11" font-weight="bold" text-anchor="middle">👑 GIANT BIRD</text>
+        </g>
+      </svg>
+    </div>
 
-    // ROTATE BUTTON HANDLER (Fix for phone orientation)
-    const forceRotateBtn = document.getElementById("force-rotate-btn");
-    const rotateOverlay = document.getElementById("rotate-device-overlay");
+    <div class="rules-card" style="max-width: 580px; margin-bottom: 6px; background: rgba(0, 188, 212, 0.12); border-color: rgba(0, 188, 212, 0.4);">
+      <b style="color:#00e5ff; font-size:12px;">📊 SCREEN HUD & ICONS EXPLAINED:</b>
+      <div class="hud-legend-grid">
+        <div>• <b>Lv & Mode:</b> Level & Difficulty</div>
+        <div>• <b>🎯 Shots:</b> Birds in queue</div>
+        <div>• <b>⚡ Health:</b> Bird health meter</div>
+        <div>• <b>⛶ Fullscreen:</b> Toggle Screen</div>
+        <div>• <b>🎵 Music:</b> BGM On/Off</div>
+        <div>• <b>🔊 Sound:</b> SFX On/Off</div>
+        <div>• <b>🏆 Trophy:</b> Top 10 Scores</div>
+        <div></div>
+      </div>
+    </div>
 
-    if (forceRotateBtn) {
-      forceRotateBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        try {
-          const docEl = document.documentElement;
-          if (docEl.requestFullscreen) {
-            await docEl.requestFullscreen();
-          } else if (docEl.webkitRequestFullscreen) {
-            await docEl.webkitRequestFullscreen();
-          }
-        } catch (fsErr) {}
+    <div class="rules-card" style="max-width: 580px; margin-bottom: 10px; font-size: 11px; line-height: 1.45;">
+      🪵 <b>Materials:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
+      ⭐ <b>Accuracy Bonus:</b> 1 Star (+100 pts) for every unused bird per level!<br>
+      🍔 <b>Objective:</b> Touch bird on slingshot, pull backwards, and smash food into Giant Bird's mouth!
+    </div>
 
-        try {
-          if (screen.orientation && screen.orientation.lock) {
-            await screen.orientation.lock("landscape");
-          }
-        } catch (lockErr) {}
+    <button class="btn" id="close-help-btn" style="padding: 6px 24px; font-size: 14px;">RESUME GAME</button>
+  </div>
 
-        if (rotateOverlay) {
-          rotateOverlay.classList.add("dismissed");
-          rotateOverlay.style.display = "none";
-        }
-      });
-    }
+  <!-- GRAPHICAL GAME OVER BANNER MODAL (FOR NORMAL LEVELS) -->
+  <div id="gameOverModal">
+    <div class="game-over-box">
+      <div class="game-over-img-wrap">
+        <img id="gameOverImg" src="noenergy.jpeg" alt="Game Over">
+        <div class="img-try-again-hotspot" id="imgTryAgainHotspot" title="Play Again"></div>
+      </div>
 
-    function toggleFullscreen() {
-      const elem = document.documentElement;
-      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      <div class="game-over-controls">
+        <div class="score-submit-row">
+          <input type="text" id="playerInitials" maxlength="5" placeholder="INITIALS" autocomplete="off" style="margin-bottom:0; width:130px; padding:6px 10px; font-size:14px;">
+          <button class="btn" id="saveScoreBtn" style="padding: 6px 16px; font-size: 13px;">Save Score</button>
+        </div>
+        <button class="custom-try-btn" id="customRestartBtn">🎯 TRY AGAIN!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BONUS ROUND LOSS OVERLAY (NO LOSS / CONTINUE TO NEXT LEVEL) -->
+  <div id="bonusLossOverlay">
+    <h1 style="color: #ffeb3b; font-size: 26px; margin-bottom: 6px;">So Close!</h1>
+    <p style="color: #eee; font-size: 15px; margin-bottom: 16px;">Better luck next time!</p>
+    <button class="btn" id="bonusContinueBtn" style="padding: 8px 28px; font-size: 15px;">Continue to Next Level ➔</button>
+  </div>
+
+  <div id="win-overlay" class="overlay hidden">
+    <h1 id="win-title">LEVEL COMPLETED!</h1>
+    <div id="win-coin" class="spinning-coin"></div>
+    <div id="win-stars" class="stars-container"></div>
+    <div id="win-milestone-badge" class="milestone-badge"></div>
+    <p id="win-msg">All food cleared! Giant Bird is full.</p>
+    <button class="btn" id="next-level-btn">Next Level</button>
+  </div>
+
+  <div id="evolve-overlay" class="overlay hidden">
+    <h1>CHARACTER EVOLVED!</h1>
+    <div id="evolve-stars" class="stars-container"></div>
+    <p id="evolve-msg">Your Giant Bird has grown bigger and stronger!</p>
+    <button class="btn" id="evolve-btn" style="background:#00bcd4; box-shadow:0 4px #008ba3;">Claim Power</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.onkeydown = function(e) {
+  if (e.keyCode === 123) return false;
+  if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) return false;
+  if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) return false;
+};
+
+// ==================== FORCE ROTATE & FULLSCREEN HANDLER ====================
+const forceRotateBtn = document.getElementById("force-rotate-btn");
+if (forceRotateBtn) {
+  forceRotateBtn.addEventListener("click", async () => {
+    initAudioSystem();
+    try {
+      const docEl = document.documentElement;
+      if (docEl.requestFullscreen) {
+        await docEl.requestFullscreen();
+      } else if (docEl.webkitRequestFullscreen) {
+        await docEl.webkitRequestFullscreen();
       }
-    }
-    fsBtn.addEventListener('click', toggleFullscreen);
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-    let animTick = 0;
-    let score = 0;
-    let currentLevel = 1;
-    let inBonusStage = false;
-    const maxGameLevels = 20;
-
-    let birdTypes = [];
-    let selectedBirdIndex = 0;
-    let birdHitboxes = [];
-
-    const maxDragDist = 100;
-    const launchPower = 0.32;
-    const gravity = 0.30;
-    const woodGravity = 0.58;
-
-    let isDragging = false;
-    let dragPos = { x: 0, y: 0 };
-    let flyingBirds = [];
-    let particles = [];
-    let confettiList = [];
-    let floatingScores = [];
-    let structures = [];
-    let targets = [];
-    let floatingPlatforms = [];
-    let obstacleNet = null;
-    let isLevelReady = false;
-    let isLevelCompleted = false;
-    let hasFirstFired = false;
-
-    let bigBirdEnergy = 100;
-    let bigBirdFalling = false;
-    let bigBirdFallY = 0;
-    let bigBirdFallVy = 0;
-
-    function resetBirdsForLevel(isBonus) {
-      const birdCount = isBonus ? 2 : 4;
-      birdTypes = [
-        { id: 'red',    name: 'Red',    color: '#ef4444', count: birdCount, r: 15 },
-        { id: 'yellow', name: 'Yellow', color: '#eab308', count: birdCount, r: 15 },
-        { id: 'blue',   name: 'Blue',   color: '#38bdf8', count: birdCount, r: 14 },
-        { id: 'black',  name: 'Bomb',   color: '#1e293b', count: birdCount, r: 16 }
-      ];
-      selectedBirdIndex = 0;
-      bigBirdEnergy = 100;
-      bigBirdFalling = false;
-      bigBirdFallY = 0;
-      bigBirdFallVy = 0;
-      hasFirstFired = false;
-    }
-
-    function ensureAvailableBirdSelected() {
-      if (birdTypes[selectedBirdIndex].count <= 0) {
-        const nextIdx = birdTypes.findIndex(b => b.count > 0);
-        if (nextIdx !== -1) selectedBirdIndex = nextIdx;
+      if (screen.orientation && screen.orientation.lock) {
+        await screen.orientation.lock("landscape").catch(() => {});
       }
+    } catch (err) {
+      console.log("Orientation lock note:", err);
     }
+  });
+}
 
-    function addScore(pts) {
-      score += pts;
-      if (scoreValEl) scoreValEl.textContent = score;
-    }
+// ==================== ROBUST GEO-LOCATION TRACKING VIA IP ====================
+let cachedGeo = {
+  country: localStorage.getItem("hb_geo_country") || "Unknown",
+  city: localStorage.getItem("hb_geo_city") || "Unknown",
+  location: localStorage.getItem("hb_geo_loc") || "Unknown"
+};
 
-    function updateTargetCountHud() {
-      const aliveCount = targets.filter(t => t.alive).length;
-      if (targetCountEl) targetCountEl.textContent = aliveCount;
-    }
-
-    function createPiece(towerId, floor, x, y, w, h, isVertical, color, isRoof = false) {
-      return {
-        towerId, floor,
-        x, y, w, h,
-        vx: 0, vy: 0,
-        angle: 0, va: 0,
-        collapsed: false,
-        isVertical,
-        isRoof,
-        color,
-        hp: 1,
-        alpha: 1.0,
-        restTimer: 0
+async function fetchGeoLocation() {
+  try {
+    const res = await fetch("https://ipwho.is/");
+    const data = await res.json();
+    if (data && data.success) {
+      cachedGeo = {
+        country: data.country || "Unknown",
+        city: data.city || "Unknown",
+        location: `${data.city || 'Unknown'}, ${data.country || 'Unknown'}`
       };
+      localStorage.setItem("hb_geo_country", cachedGeo.country);
+      localStorage.setItem("hb_geo_city", cachedGeo.city);
+      localStorage.setItem("hb_geo_loc", cachedGeo.location);
+      return;
     }
+  } catch (err) {
+    console.warn("Primary geo lookup failed, trying fallback...", err);
+  }
 
-    function launchBonusCelebration() {
-      confettiList = [];
-      const colors = ['#fde047', '#38bdf8', '#ec4899', '#22c55e', '#f97316', '#a855f7', '#ffffff'];
-      for (let i = 0; i < 90; i++) {
-        confettiList.push({
-          x: Math.random() * width,
-          y: Math.random() * -height * 0.6,
-          vx: (Math.random() - 0.5) * 3.5,
-          vy: Math.random() * 3 + 2.2,
-          sizeW: Math.random() * 8 + 5,
-          sizeH: Math.random() * 5 + 3,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          angle: Math.random() * Math.PI * 2,
-          vAngle: (Math.random() - 0.5) * 0.15,
-          isStar: Math.random() > 0.65,
-          alpha: 1.0
-        });
-      }
-
-      celebrationBanner.style.display = 'block';
-      celebrationBanner.className = '';
-      void celebrationBanner.offsetWidth;
-      celebrationBanner.classList.add('show-banner');
-
-      setTimeout(() => {
-        celebrationBanner.classList.remove('show-banner');
-        celebrationBanner.classList.add('fade-banner');
-        setTimeout(() => {
-          celebrationBanner.style.display = 'none';
-        }, 500);
-      }, 2300);
+  try {
+    const res2 = await fetch("https://ipapi.co/json/");
+    const data2 = await res2.json();
+    if (data2 && data2.country_name) {
+      cachedGeo = {
+        country: data2.country_name || "Unknown",
+        city: data2.city || "Unknown",
+        location: `${data2.city || 'Unknown'}, ${data2.country_name || 'Unknown'}`
+      };
+      localStorage.setItem("hb_geo_country", cachedGeo.country);
+      localStorage.setItem("hb_geo_city", cachedGeo.city);
+      localStorage.setItem("hb_geo_loc", cachedGeo.location);
     }
+  } catch (e) {
+    console.warn("Geo lookup fallback bypassed:", e);
+  }
+}
+fetchGeoLocation();
 
-    function loadLevel(lvl, isBonus = false) {
-      currentLevel = lvl;
-      inBonusStage = isBonus;
-      isLevelReady = false;
-      isLevelCompleted = false;
-      modal.style.display = 'none';
-      coinWrap.style.display = 'none';
+// ==================== FIREBASE CONFIG & ANALYTICS ====================
+const firebaseConfig = {
+    apiKey: "AIzaSyCfUMBhfupMiTdG9gSxBmtScrY2LSVREvQ",
+    authDomain: "hungrybirds-88404.firebaseapp.com",
+    projectId: "hungrybirds-88404",
+    storageBucket: "hungrybirds-88404.firebasestorage.app",
+    messagingSenderId: "266507044450",
+    appId: "1:266507044450:web:8136abefd5790f0fd4333b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-      if (inBonusStage) {
-        levelLabelWrap.innerHTML = `<span class="bonus-pulse">BONUS 🌟</span>`;
-      } else {
-        levelLabelWrap.innerHTML = `Lv <span id="level-num-hud" style="color:#ffeb3b;">${lvl}</span>`;
-      }
+let cachedTopScores = [];
+let currentSessionDocId = null;
 
-      const groundH = Math.max(height * 0.12, 42);
-      const groundY = height - groundH;
+function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  let deviceType = "Desktop";
+  if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+    deviceType = "Tablet";
+  } else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated/i.test(ua)) {
+    deviceType = "Mobile";
+  }
 
-      structures = [];
-      targets = [];
-      floatingPlatforms = [];
-      obstacleNet = null;
-      flyingBirds = [];
-      particles = [];
-      confettiList = [];
-      floatingScores = [];
-      resetBirdsForLevel(inBonusStage);
+  let os = "Unknown OS";
+  if (/Windows/i.test(ua)) os = "Windows";
+  else if (/Android/i.test(ua)) os = "Android";
+  else if (/iPhone|iPad|iPod/i.test(ua)) os = "iOS";
+  else if (/Mac/i.test(ua)) os = "MacOS";
+  else if (/Linux/i.test(ua)) os = "Linux";
 
-      if (inBonusStage) {
-        // BONUS ROUND LAYOUT
-        const netX = width * 0.50;
-        const netH = 135;
-        obstacleNet = {
-          x: netX,
-          y: groundY - netH,
-          w: 16,
-          h: netH
-        };
+  let browser = "Unknown Browser";
+  if (/SamsungBrowser/i.test(ua)) browser = "Samsung Browser";
+  else if (/Edg/i.test(ua)) browser = "Edge";
+  else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Chrome";
+  else if (/Safari/i.test(ua)) browser = "Safari";
+  else if (/Firefox/i.test(ua)) browser = "Firefox";
+  else if (/OPR|Opera/i.test(ua)) browser = "Opera";
 
-        const bx1 = width * 0.72;
-        structures.push(createPiece('bn_1', 0, bx1 - 22, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('bn_1', 0, bx1 + 12, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('bn_1', 0, bx1 - 26, groundY - 56, 52, 10, false, '#b45309', true));
-        targets.push({ towerId: 'bn_1', floor: 0, x: bx1, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f59e0b', alive: true, falling: false });
+  const screenRes = `${window.screen.width}x${window.screen.height}`;
+  return {
+    type: deviceType,
+    os: os,
+    browser: browser,
+    screen: screenRes,
+    summary: `${deviceType} (${os} / ${browser})`
+  };
+}
 
-        const bx2 = width * 0.84;
-        structures.push(createPiece('bn_2', 0, bx2 - 22, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('bn_2', 0, bx2 + 12, groundY - 46, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('bn_2', 0, bx2 - 26, groundY - 56, 52, 10, false, '#b45309', true));
-        targets.push({ towerId: 'bn_2', floor: 0, x: bx2, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
+async function incrementGlobalPlayCount() {
+  try {
+    const dev = getDeviceInfo();
+    const statsRef = db.collection("analytics").doc("stats");
+    const docSnap = await statsRef.get();
 
-        structures.push(createPiece('bn_2', 1, bx2 - 22, groundY - 102, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('bn_2', 1, bx2 + 12, groundY - 102, 10, 46, true, '#d99a38'));
-        structures.push(createPiece('bn_2', 1, bx2 - 26, groundY - 112, 52, 10, false, '#b45309', true));
-        targets.push({ towerId: 'bn_2', floor: 1, x: bx2, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#38bdf8', alive: true, falling: false });
-
-        launchBonusCelebration();
-      } else {
-        // REGULAR PATTERN (1-5 Cycle)
-        const cycle = ((lvl - 1) % 5) + 1;
-
-        if (cycle === 1) {
-          const t1X = width * 0.74;
-          structures.push(createPiece('t1', 0, t1X - 22, groundY - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('t1', 0, t1X + 12, groundY - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('t1', 0, t1X - 26, groundY - 56, 52, 10, false, '#b45309', true));
-          targets.push({ towerId: 't1', floor: 0, x: t1X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#f97316', alive: true, falling: false });
-
-          const t2X = width * 0.88;
-          structures.push(createPiece('t2', 0, t2X - 22, groundY - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('t2', 0, t2X + 12, groundY - 46, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('t2', 0, t2X - 26, groundY - 56, 52, 10, false, '#b45309', true));
-          targets.push({ towerId: 't2', floor: 0, x: t2X, y: groundY - 18, vx: 0, vy: 0, r: 17, color: '#ec4899', alive: true, falling: false });
-
-          structures.push(createPiece('t2', 1, t2X - 22, groundY - 102, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('t2', 1, t2X + 12, groundY - 102, 10, 46, true, '#d99a38'));
-          structures.push(createPiece('t2', 1, t2X - 26, groundY - 112, 52, 10, false, '#b45309', true));
-          targets.push({ towerId: 't2', floor: 1, x: t2X, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#22c55e', alive: true, falling: false });
-
-          floatingPlatforms.push({ id: 'p1', x: width * 0.60, y: height * 0.35, w: 100, h: 14, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p1', x: width * 0.60, y: height * 0.35 - 16, vx: 0, vy: 0, r: 16, color: '#38bdf8', alive: true, falling: false });
-
-        } else if (cycle === 2) {
-          const fx = width * 0.76;
-          structures.push(createPiece('f1', 0, fx - 36, groundY - 50, 10, 50, true, '#d99a38'));
-          structures.push(createPiece('f1', 0, fx + 26, groundY - 50, 10, 50, true, '#d99a38'));
-          structures.push(createPiece('f1', 0, fx - 42, groundY - 60, 84, 10, false, '#b45309', true));
-          targets.push({ towerId: 'f1', floor: 0, x: fx - 5, y: groundY - 20, vx: 0, vy: 0, r: 16, color: '#ef4444', alive: true, falling: false });
-
-          structures.push(createPiece('f1', 1, fx - 36, groundY - 110, 10, 50, true, '#d99a38'));
-          structures.push(createPiece('f1', 1, fx + 26, groundY - 110, 10, 50, true, '#d99a38'));
-          structures.push(createPiece('f1', 1, fx - 42, groundY - 120, 84, 10, false, '#b45309', true));
-          targets.push({ towerId: 'f1', floor: 1, x: fx - 5, y: groundY - 80, vx: 0, vy: 0, r: 16, color: '#eab308', alive: true, falling: false });
-
-          floatingPlatforms.push({ id: 'p2_1', x: width * 0.52, y: height * 0.38, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p2_1', x: width * 0.52, y: height * 0.38 - 14, vx: 0, vy: 0, r: 14, color: '#a855f7', alive: true, falling: false });
-
-          floatingPlatforms.push({ id: 'p2_2', x: width * 0.63, y: height * 0.22, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p2_2', x: width * 0.63, y: height * 0.22 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
-
-        } else if (cycle === 3) {
-          const sx = width * 0.80;
-          for (let fl = 0; fl < 3; fl++) {
-            const by = groundY - (fl * 52);
-            structures.push(createPiece('s1', fl, sx - 20, by - 46, 10, 46, true, '#d99a38'));
-            structures.push(createPiece('s1', fl, sx + 12, by - 46, 10, 46, true, '#d99a38'));
-            structures.push(createPiece('s1', fl, sx - 26, by - 56, 52, 10, false, '#b45309', true));
-            targets.push({ towerId: 's1', floor: fl, x: sx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 2 ? '#ec4899' : '#10b981', alive: true, falling: false });
-          }
-
-          const wallX = width * 0.68;
-          structures.push(createPiece('wall', 0, wallX, groundY - 60, 16, 60, true, '#78350f'));
-
-          floatingPlatforms.push({ id: 'p3_1', x: width * 0.50, y: height * 0.30, w: 90, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p3_1', x: width * 0.50, y: height * 0.30 - 14, vx: 0, vy: 0, r: 15, color: '#f59e0b', alive: true, falling: false });
-
-        } else if (cycle === 4) {
-          const q1X = width * 0.72;
-          const q2X = width * 0.85;
-
-          [q1X, q2X].forEach((tx, idx) => {
-            structures.push(createPiece(`tw_${idx}`, 0, tx - 20, groundY - 46, 10, 46, true, '#d99a38'));
-            structures.push(createPiece(`tw_${idx}`, 0, tx + 12, groundY - 46, 10, 46, true, '#d99a38'));
-            structures.push(createPiece(`tw_${idx}`, 0, tx - 24, groundY - 56, 48, 10, false, '#b45309', true));
-            targets.push({ towerId: `tw_${idx}`, floor: 0, x: tx - 4, y: groundY - 20, vx: 0, vy: 0, r: 15, color: '#f97316', alive: true, falling: false });
-
-            structures.push(createPiece(`tw_${idx}`, 1, tx - 20, groundY - 102, 10, 46, true, '#d99a38'));
-            structures.push(createPiece(`tw_${idx}`, 1, tx + 12, groundY - 102, 10, 46, true, '#d99a38'));
-            structures.push(createPiece(`tw_${idx}`, 1, tx - 24, groundY - 112, 48, 10, false, '#b45309', true));
-            targets.push({ towerId: `tw_${idx}`, floor: 1, x: tx - 4, y: groundY - 76, vx: 0, vy: 0, r: 15, color: '#ec4899', alive: true, falling: false });
-          });
-
-          floatingPlatforms.push({ id: 'p4_1', x: width * 0.52, y: height * 0.28, w: 85, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p4_1', x: width * 0.52, y: height * 0.28 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
-
-        } else if (cycle === 5) {
-          const cx = width * 0.78;
-          for (let fl = 0; fl < 3; fl++) {
-            const by = groundY - (fl * 50);
-            structures.push(createPiece('citadel', fl, cx - 28, by - 46, 10, 46, true, '#d99a38'));
-            structures.push(createPiece('citadel', fl, cx + 20, by - 46, 10, 46, true, '#d99a38'));
-            structures.push(createPiece('citadel', fl, cx - 32, by - 56, 64, 10, false, '#b45309', true));
-            targets.push({ towerId: 'citadel', floor: fl, x: cx - 4, y: by - 22, vx: 0, vy: 0, r: 15, color: fl === 1 ? '#eab308' : '#a855f7', alive: true, falling: false });
-          }
-
-          structures.push(createPiece('shield', 0, cx - 58, groundY - 65, 14, 65, true, '#78350f'));
-          structures.push(createPiece('shield', 0, cx + 46, groundY - 65, 14, 65, true, '#78350f'));
-
-          floatingPlatforms.push({ id: 'p5_1', x: width * 0.56, y: height * 0.24, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p5_1', x: width * 0.56, y: height * 0.24 - 14, vx: 0, vy: 0, r: 14, color: '#22c55e', alive: true, falling: false });
-        }
-      }
-
-      updateTargetCountHud();
-      setTimeout(() => { isLevelReady = true; }, 400);
-    }
-
-    function checkLevelState() {
-      if (!isLevelReady || isLevelCompleted) return;
-
-      const remainingTargets = targets.filter(t => t.alive).length;
-      const totalBirds = birdTypes.reduce((sum, b) => sum + b.count, 0);
-
-      // VICTORY
-      if (targets.length > 0 && remainingTargets === 0) {
-        isLevelCompleted = true;
-
-        setTimeout(() => {
-          if (inBonusStage) {
-            // BONUS ROUND WON
-            const leftoverBirds = totalBirds;
-            const bonusReward = leftoverBirds * 500;
-            addScore(bonusReward);
-
-            coinWrap.style.display = 'block';
-            modalTitle.textContent = `Bonus Cleared! 🌟`;
-            modalDesc.innerHTML = `
-              <b>${leftoverBirds}</b> Birds Remaining × 500 = <span style="color:#facc15; font-size:18px; font-weight:900;">+${bonusReward} BONUS PTS!</span><br>
-              Total Score: <b>${score}</b>
-            `;
-            if (currentLevel < maxGameLevels) {
-              modalActionBtn.textContent = `Next Level ${currentLevel + 1} ➔`;
-              modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
-            } else {
-              modalActionBtn.textContent = 'Restart Game 🔄';
-              modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1, false); };
-            }
-          }
-          else if (currentLevel % 5 === 0) {
-            // TRIGGER PERIODIC BONUS (Every 5 levels)
-            coinWrap.style.display = 'none';
-            modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
-            modalDesc.textContent = `Get ready for the Bonus Challenge!`;
-            modalActionBtn.textContent = 'Play Bonus Round ➔';
-            modalActionBtn.onclick = () => loadLevel(currentLevel, true);
-          }
-          else if (currentLevel < maxGameLevels) {
-            coinWrap.style.display = 'none';
-            modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
-            modalDesc.textContent = `Ready for Level ${currentLevel + 1}?`;
-            modalActionBtn.textContent = 'Next Level ➔';
-            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
-          } else {
-            coinWrap.style.display = 'none';
-            modalTitle.textContent = `Champion! All Levels Won! 🏆`;
-            modalDesc.textContent = `Final Score: ${score}`;
-            modalActionBtn.textContent = 'Play Again 🔄';
-            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1, false); };
-          }
-          modal.style.display = 'flex';
-        }, 1000);
-      }
-      // GIANT BIRD STARVED
-      else if (bigBirdEnergy <= 0 && !isLevelCompleted) {
-        isLevelCompleted = true;
-        setTimeout(() => {
-          coinWrap.style.display = 'none';
-          if (inBonusStage) {
-            modalTitle.textContent = `So Close!`;
-            modalDesc.textContent = `Better luck next time!`;
-            modalActionBtn.textContent = `Continue to Level ${currentLevel + 1} ➔`;
-            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
-          } else {
-            modalTitle.textContent = `Giant Bird Starved! 💀`;
-            modalDesc.textContent = `Energy depleted! Keep the giant bird fed.`;
-            modalActionBtn.textContent = 'Retry Level 🔄';
-            modalActionBtn.onclick = () => loadLevel(currentLevel, false);
-          }
-          modal.style.display = 'flex';
-        }, 1200);
-      }
-      // OUT OF BIRDS
-      else if (totalBirds === 0 && flyingBirds.length === 0 && remainingTargets > 0) {
-        isLevelCompleted = true;
-        setTimeout(() => {
-          coinWrap.style.display = 'none';
-          if (inBonusStage) {
-            modalTitle.textContent = `So Close!`;
-            modalDesc.textContent = `Better luck next time!`;
-            modalActionBtn.textContent = `Continue to Level ${currentLevel + 1} ➔`;
-            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
-          } else {
-            modalTitle.textContent = `Level Failed! 😢`;
-            modalDesc.textContent = `${remainingTargets} targets remained unbroken.`;
-            modalActionBtn.textContent = 'Retry Level 🔄';
-            modalActionBtn.onclick = () => loadLevel(currentLevel, false);
-          }
-          modal.style.display = 'flex';
-        }, 1200);
-      }
-    }
-
-    function resizeCanvas() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-      loadLevel(currentLevel, inBonusStage);
-    }
-    window.addEventListener('resize', resizeCanvas);
-
-    function spawnExplosion(x, y, color, count = 18) {
-      for (let i = 0; i < count; i++) {
-        const speed = Math.random() * 5 + 1.5;
-        const angle = Math.random() * Math.PI * 2;
-        particles.push({
-          x, y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 1,
-          size: Math.random() * 4 + 2,
-          color,
-          alpha: 1,
-          decay: Math.random() * 0.04 + 0.02
-        });
-      }
-    }
-
-    function addFloatingScore(x, y, text) {
-      floatingScores.push({ x, y, text, alpha: 1 });
-    }
-
-    function triggerBombExplosion(bombX, bombY) {
-      const blastRadius = 140;
-
-      for (let i = 0; i < 48; i++) {
-        const speed = Math.random() * 9 + 2;
-        const angle = Math.random() * Math.PI * 2;
-        particles.push({
-          x: bombX,
-          y: bombY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 2,
-          size: Math.random() * 8 + 4,
-          color: (i % 3 === 0) ? '#f97316' : ((i % 3 === 1) ? '#ef4444' : '#1e293b'),
-          alpha: 1,
-          decay: Math.random() * 0.03 + 0.015
-        });
-      }
-      addFloatingScore(bombX, bombY - 30, 'BOOOM! +500');
-      addScore(500);
-
-      for (let i = structures.length - 1; i >= 0; i--) {
-        const p = structures[i];
-        const dist = Math.hypot((p.x + p.w / 2) - bombX, (p.y + p.h / 2) - bombY);
-        if (dist < blastRadius) {
-          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 16);
-          structures.splice(i, 1);
-          addScore(150);
-        }
-      }
-
-      targets.forEach(t => {
-        if (t.alive) {
-          const dist = Math.hypot(t.x - bombX, t.y - bombY);
-          if (dist < blastRadius) {
-            t.alive = false;
-            spawnExplosion(t.x, t.y, t.color, 28);
-            addFloatingScore(t.x, t.y - 20, '+1000');
-            addScore(1000);
-            updateTargetCountHud();
-            bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-          }
-        }
+    if (!docSnap.exists) {
+      await statsRef.set({
+        playCount: 1,
+        devices: { [dev.type]: 1 },
+        os: { [dev.os]: 1 },
+        browsers: { [dev.browser]: 1 },
+        countries: { [cachedGeo.country]: 1 },
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
       });
+    } else {
+      const updateData = {
+        playCount: firebase.firestore.FieldValue.increment(1),
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      updateData[`devices.${dev.type}`] = firebase.firestore.FieldValue.increment(1);
+      updateData[`os.${dev.os}`] = firebase.firestore.FieldValue.increment(1);
+      updateData[`browsers.${dev.browser}`] = firebase.firestore.FieldValue.increment(1);
+      if (cachedGeo.country && cachedGeo.country !== "Unknown") {
+        updateData[`countries.${cachedGeo.country}`] = firebase.firestore.FieldValue.increment(1);
+      }
 
-      floatingPlatforms.forEach(fp => {
-        if (!fp.collapsed) {
-          const distPlat = Math.hypot(fp.x - bombX, fp.y - bombY);
-          if (distPlat < blastRadius + 20) {
-            collapseFloatingPlatform(fp, 5);
-          }
-        }
+      await statsRef.update(updateData);
+    }
+
+    await db.collection("analytics_logs").add({
+      event: "game_start",
+      device: dev.summary,
+      deviceType: dev.type,
+      os: dev.os,
+      browser: dev.browser,
+      screen: dev.screen,
+      city: cachedGeo.city,
+      country: cachedGeo.country,
+      location: cachedGeo.location,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (err) {
+    console.error("Firestore Error in tracking:", err);
+  }
+}
+
+async function startSilentSession() {
+  try {
+    const dev = getDeviceInfo();
+    const docRef = await db.collection("game_sessions").add({
+      initials: "-",
+      score: 0,
+      level: 1,
+      difficulty: currentDifficulty,
+      status: "playing",
+      city: cachedGeo.city || "Unknown",
+      country: cachedGeo.country || "Unknown",
+      location: cachedGeo.location || "Unknown",
+      device: dev.summary,
+      deviceType: dev.type,
+      screen: dev.screen,
+      startedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastActive: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    currentSessionDocId = docRef.id;
+  } catch (err) {
+    console.warn("Could not create instant session:", err);
+  }
+}
+
+async function updateSilentSession(finalScore, reachedLevel, isFinished = false) {
+  if (!currentSessionDocId) return;
+  try {
+    await db.collection("game_sessions").doc(currentSessionDocId).update({
+      score: finalScore,
+      level: reachedLevel,
+      status: isFinished ? "game_over" : "playing",
+      lastActive: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (err) {
+    console.warn("Could not update session:", err);
+  }
+}
+
+async function submitScore(initials, finalScore) {
+  try {
+    const formattedInitials = initials.toUpperCase().substring(0, 5);
+
+    if (currentSessionDocId) {
+      await db.collection("game_sessions").doc(currentSessionDocId).update({
+        initials: formattedInitials,
+        score: finalScore,
+        status: "submitted",
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
 
-    function triggerCascadeFall(towerId, floor) {
-      structures.forEach(p => {
-        if (p.towerId === towerId && p.floor >= floor && !p.collapsed) {
-          p.collapsed = true;
-          p.vy = 2.4;
-          p.vx = (Math.random() * 2 - 1) * 1.5;
-          p.va = (Math.random() - 0.5) * 0.15;
+    const dev = getDeviceInfo();
+    await db.collection("leaderboard").add({
+      initials: formattedInitials,
+      score: finalScore,
+      difficulty: currentDifficulty,
+      device: dev.summary,
+      deviceType: dev.type,
+      screen: dev.screen,
+      city: cachedGeo.city,
+      country: cachedGeo.country,
+      location: cachedGeo.location,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    await loadLeaderboard();
+  } catch(e) {
+    console.warn("Score submission note:", e);
+  }
+}
+
+async function loadLeaderboard() {
+  const lbLists = [document.getElementById("leaderboardList"), document.getElementById("leaderboardListMid")];
+  try {
+    const snap = await db.collection("leaderboard").orderBy("score", "desc").limit(10).get();
+    cachedTopScores = [];
+    let content = "";
+    let r = 1;
+    snap.forEach(d => {
+      const data = d.data();
+      cachedTopScores.push(data.score);
+      content += `<div class="lb-row"><span>#${r} ${data.initials || "ANON"}</span><span>${data.score}</span></div>`;
+      r++;
+    });
+    if (snap.empty) content = "<div>No scores yet!</div>";
+    lbLists.forEach(el => { if (el) el.innerHTML = content; });
+  } catch(e){
+    lbLists.forEach(el => { if (el) el.innerHTML = "<div>Leaderboard offline</div>"; });
+  }
+}
+loadLeaderboard();
+
+function toggleFullscreen() {
+  const elem = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+    if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+  }
+}
+
+const fsBtn = document.getElementById('fs-btn');
+fsBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); toggleFullscreen(); });
+fsBtn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); toggleFullscreen(); });
+
+document.getElementById('lb-hud-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  loadLeaderboard();
+  document.getElementById('lb-overlay').classList.remove('hidden');
+});
+document.getElementById('close-lb-btn').addEventListener('click', () => {
+  document.getElementById('lb-overlay').classList.add('hidden');
+});
+
+document.getElementById('help-hud-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('help-overlay').classList.remove('hidden');
+});
+document.getElementById('close-help-btn').addEventListener('click', () => {
+  document.getElementById('help-overlay').classList.add('hidden');
+});
+
+// ==================== AUDIO SYSTEM ====================
+let audioCtx = null;
+let musicEnabled = true;
+let sfxEnabled = true;
+const SOUND_PATHS = {
+  stretch: 'stretch.mp3', launch: 'launch.mp3', smash: 'smash.mp3',
+  crunch: 'crunch.mp3', lose: 'lose.mp3', win: 'win.mp3', bgm: 'bgm.mp3'
+};
+
+const bgmAudio = new Audio(SOUND_PATHS.bgm);
+bgmAudio.loop = true;
+bgmAudio.volume = 1.0;
+
+const stretchAudio = new Audio(SOUND_PATHS.stretch);
+stretchAudio.preload = 'auto';
+
+const crunchAudio = new Audio(SOUND_PATHS.crunch);
+crunchAudio.preload = 'auto';
+
+let isStretchPlaying = false;
+
+function initAudioSystem() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  crunchAudio.load();
+}
+
+window.addEventListener('touchstart', function unlockAudio() {
+  initAudioSystem();
+  window.removeEventListener('touchstart', unlockAudio);
+}, { passive: true, once: true });
+
+window.addEventListener('click', function unlockAudioClick() {
+  initAudioSystem();
+  window.removeEventListener('click', unlockAudioClick);
+}, { passive: true, once: true });
+
+function playRubberStretch(pressureRatio) {
+  if (!sfxEnabled || !isAiming || gameState !== 'PLAY' || bigBird.falling) return;
+  stretchAudio.volume = Math.min(0.65, 0.2 + pressureRatio * 0.45);
+  stretchAudio.playbackRate = 0.8 + pressureRatio * 0.8;
+  if (!isStretchPlaying) {
+    isStretchPlaying = true;
+    stretchAudio.currentTime = 0;
+    stretchAudio.play().catch(() => {});
+  }
+}
+function stopRubberStretch() {
+  isStretchPlaying = false;
+  try { stretchAudio.pause(); stretchAudio.currentTime = 0; } catch(e) {}
+}
+function playLaunchAudio() {
+  if (!sfxEnabled) return;
+  const snd = new Audio(SOUND_PATHS.launch);
+  snd.volume = 0.95;
+  snd.play().catch(() => {});
+}
+function playSmashAudio() {
+  if (!sfxEnabled) return;
+  initAudioSystem();
+  const snd = new Audio(SOUND_PATHS.smash);
+  snd.volume = 0.85;
+  snd.play().catch(() => {});
+}
+
+let lastCrunchPlayTime = 0;
+function playBigBirdCrunch() {
+  if (!sfxEnabled) return;
+  initAudioSystem();
+  const now = Date.now();
+  if (now - lastCrunchPlayTime < 140) return;
+  lastCrunchPlayTime = now;
+  const soundClone = crunchAudio.cloneNode();
+  soundClone.volume = 1.0;
+  soundClone.play().catch(() => {
+    crunchAudio.currentTime = 0;
+    crunchAudio.play().catch(() => {});
+  });
+}
+
+function playRoundWinSound() {
+  if (!sfxEnabled) return;
+  bgmAudio.pause();
+  const winSnd = new Audio(SOUND_PATHS.win);
+  winSnd.volume = 1.0;
+  winSnd.play().catch(() => {});
+}
+function playLoseSound() {
+  if (!sfxEnabled) return;
+  bgmAudio.pause();
+  const snd = new Audio(SOUND_PATHS.lose);
+  snd.volume = 0.8;
+  snd.play().catch(() => {});
+}
+
+function startBackgroundMusic() {
+  if (!musicEnabled) return;
+  bgmAudio.volume = 1.0;
+  bgmAudio.play().catch(() => {});
+}
+
+document.getElementById('music-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation(); initAudioSystem();
+  musicEnabled = !musicEnabled;
+  const mBtn = document.getElementById('music-btn');
+  mBtn.innerText = musicEnabled ? '🎵' : '🔇';
+  if (musicEnabled) {
+    mBtn.classList.remove('muted');
+    if (gameState === 'PLAY') startBackgroundMusic();
+  } else {
+    mBtn.classList.add('muted');
+    bgmAudio.pause();
+  }
+});
+
+document.getElementById('sfx-btn').addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation(); initAudioSystem();
+  sfxEnabled = !sfxEnabled;
+  const sBtn = document.getElementById('sfx-btn');
+  sBtn.innerText = sfxEnabled ? '🔊' : '🔈';
+  if (sfxEnabled) sBtn.classList.remove('muted');
+  else { sBtn.classList.add('muted'); stopRubberStretch(); }
+});
+
+// ==================== CONFIGS ====================
+let currentDifficulty = 'normal';
+const DIFFICULTY_CONFIG = {
+  novice: { drainMult: 0.50, label: 'Novice' },
+  normal: { drainMult: 0.85, label: 'Normal' },
+  expert: { drainMult: 1.15, label: 'Expert' }
+};
+
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentDifficulty = btn.dataset.diff;
+    updateHUD();
+  });
+});
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let level = 1;
+let inBonusStage = false;
+let score = 0;
+let energy = 15;
+let isAiming = false;
+let hasFirstFired = false;
+let gameState = 'PLAY';
+let isWinningTransition = false;
+let birdsLeft = 8;
+let screenShake = 0;
+
+let confettiParticles = [];
+
+const EVOLUTIONS = [
+  { name: "Rookie (Reddy)", color: "#E53935", scale: 1.0, power: 0.28 },
+  { name: "Glutton (Bubbles)", color: "#42A5F5", scale: 1.15, power: 0.30 },
+  { name: "Speed (Flash)", color: "#FBC02D", scale: 1.25, power: 0.32 },
+  { name: "Heavy (Boomer)", color: "#37474F", scale: 1.35, power: 0.34 },
+  { name: "King Titan", color: "#FFB300", scale: 1.5, power: 0.37 }
+];
+
+function getCurrentTier() {
+  const index = Math.min(Math.floor((level - 1) / 20), EVOLUTIONS.length - 1);
+  return EVOLUTIONS[index];
+}
+
+const SLING_X = 220;
+const SLING_Y = 385;
+const MAX_DRAG = 85;
+const GROUND_Y = 470;
+
+// Giant Bird Tree Perch Positions
+const BIG_BIRD_BASE_X = 62;
+const BIG_BIRD_BASE_Y = 205;
+
+let bigBird = {
+  x: BIG_BIRD_BASE_X, y: BIG_BIRD_BASE_Y,
+  vx: 0, vy: 0, rotation: 0, falling: false, landed: false
+};
+let chompTimer = 0;
+
+let dragPos = { x: SLING_X, y: SLING_Y };
+let bird = {
+  x: SLING_X, y: SLING_Y, vx: 0, vy: 0, r: 13,
+  inFlight: false, bounces: 0, stoppedFrames: 0, hitBlocksCooldown: {}
+};
+
+let blocks = [];
+let foods = [];
+let foodFlights = [];
+let woodParticles = [];
+
+function spawnDebris(x, y, color) {
+  for (let p = 0; p < 14; p++) {
+    woodParticles.push({
+      x: x + (Math.random() * 20 - 10),
+      y: y + (Math.random() * 20 - 10),
+      vx: (Math.random() * 8 - 4),
+      vy: (Math.random() * -6 - 2),
+      size: Math.random() * 5 + 3,
+      color: color || '#DDAA33',
+      rotation: Math.random() * Math.PI,
+      rotSpeed: (Math.random() - 0.5) * 0.25,
+      life: 30
+    });
+  }
+}
+
+function spawnConfetti() {
+  confettiParticles = [];
+  const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'];
+  for (let i = 0; i < 90; i++) {
+    confettiParticles.push({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 100,
+      vx: (Math.random() - 0.5) * 4,
+      vy: Math.random() * 3 + 2,
+      size: Math.random() * 6 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * Math.PI,
+      rotSpeed: (Math.random() - 0.5) * 0.2,
+      life: 180
+    });
+  }
+}
+
+const FOOD_CONFIGS = [
+  { name: 'Burger', color: '#ff9800', r: 18, pts: 250 },
+  { name: 'Donut', color: '#e91e63', r: 17, pts: 200 },
+  { name: 'Watermelon', color: '#4caf50', r: 19, pts: 300 },
+  { name: 'Strawberry', color: '#f44336', r: 16, pts: 150 }
+];
+
+function isBonusLevel() {
+  return inBonusStage;
+}
+
+// ==================== LEVEL GENERATION ====================
+function initLevel() {
+  blocks = [];
+  foods = [];
+  foodFlights = [];
+  woodParticles = [];
+  hasFirstFired = false;
+  isWinningTransition = false;
+  screenShake = 0;
+  energy = 15;
+  
+  bigBird.x = BIG_BIRD_BASE_X;
+  bigBird.y = BIG_BIRD_BASE_Y;
+  bigBird.vx = 0;
+  bigBird.vy = 0;
+  bigBird.rotation = 0;
+  bigBird.falling = false;
+  bigBird.landed = false;
+
+  if (isBonusLevel()) {
+    birdsLeft = 8;
+    spawnConfetti();
+    const banner = document.getElementById('bonus-banner');
+    if (banner) {
+      banner.classList.add('show');
+      setTimeout(() => banner.classList.remove('show'), 2200);
+    }
+  } else {
+    birdsLeft = (level <= 10) ? 8 : 12;
+  }
+
+  dragPos = { x: SLING_X, y: SLING_Y };
+  stopRubberStretch();
+  resetBird();
+  if (musicEnabled) startBackgroundMusic();
+
+  // SPECIAL BONUS LEVEL: Balanced Metal Bunker
+  if (isBonusLevel()) {
+    const shieldX = 410;
+    const SHIELD_H = 130;
+    
+    blocks.push({
+      id: 'metal_bunker_wall', towerId: 99, floor: 0, isPillar: true, isMetalShield: true,
+      type: 'iron', x: shieldX, y: GROUND_Y - SHIELD_H, w: 22, h: SHIELD_H, vy: 0,
+      hitsLeft: 999, maxHits: 999, color: '#37474F', falling: false, rotation: 0
+    });
+    blocks.push({
+      id: 'metal_bunker_top', towerId: 99, floor: 0, isRoof: true, isMetalShield: true,
+      type: 'iron', x: shieldX - 8, y: GROUND_Y - SHIELD_H - 14, w: 38, h: 14, vy: 0,
+      hitsLeft: 999, maxHits: 999, color: '#263238', falling: false, rotation: 0
+    });
+
+    blocks.push({
+      id: 'target1_stand', towerId: 99, floor: 0, isPillar: true,
+      type: 'wood', x: 555, y: GROUND_Y - 45, w: 20, h: 45, vy: 0,
+      hitsLeft: 1, maxHits: 1, color: '#DDAA33', falling: false, rotation: 0
+    });
+    foods.push({
+      towerId: 99, floor: 0, x: 565, y: GROUND_Y - 65, vy: 0,
+      r: 17, color: '#ff9800', pts: 300, alive: true
+    });
+
+    const tX = 670;
+    const PILLAR_H = 65;
+    const ROOF_H = 14;
+    const pY = GROUND_Y - PILLAR_H;
+    const rY = pY - ROOF_H;
+
+    blocks.push({
+      id: 'bp1', towerId: 100, floor: 0, isPillar: true,
+      type: 'wood', x: tX - 35, y: pY, w: 16, h: PILLAR_H, vy: 0,
+      hitsLeft: 1, maxHits: 1, color: '#DDAA33', falling: false, rotation: 0
+    });
+    blocks.push({
+      id: 'bp2', towerId: 100, floor: 0, isPillar: true,
+      type: 'wood', x: tX + 22, y: pY, w: 16, h: PILLAR_H, vy: 0,
+      hitsLeft: 1, maxHits: 1, color: '#DDAA33', falling: false, rotation: 0
+    });
+    blocks.push({
+      id: 'brf', towerId: 100, floor: 0, isRoof: true,
+      type: 'stone', x: tX - 40, y: rY, w: 82, h: ROOF_H, vy: 0,
+      hitsLeft: 2, maxHits: 2, color: '#4A2E18', falling: false, rotation: 0
+    });
+
+    foods.push({
+      towerId: 100, floor: 0, x: tX, y: pY + (PILLAR_H / 2), vy: 0,
+      r: 18, color: '#ffd700', pts: 400, alive: true
+    });
+
+    updateHUD();
+    return;
+  }
+
+  // REGULAR LEVELS
+  const numTowers = Math.min(2 + Math.floor(level / 5), 3);
+  const towerSpacing = 150;
+  const startX = 530;
+
+  let stoneQuota = 0;
+  let ironQuota = 0;
+
+  if (level >= 6 && level <= 10) {
+    stoneQuota = 1;
+  } else if (level >= 11 && level <= 15) {
+    stoneQuota = 1;
+    ironQuota = 2;
+  } else if (level >= 16) {
+    stoneQuota = 1;
+    ironQuota = 2;
+  }
+
+  for (let t = 0; t < numTowers; t++) {
+    const tX = startX + t * towerSpacing;
+    let floors = 1;
+
+    if (level === 1 || level === 2) {
+      floors = (t === numTowers - 1) ? 2 : 1;
+    } else if (level >= 3 && level <= 5) {
+      floors = (t % 2 === 0) ? 1 : 2;
+    } else {
+      floors = Math.min(3, 2 + (t % 2));
+    }
+
+    const PILLAR_H = 60;
+    const ROOF_H = 14;
+    const FLOOR_TOTAL_H = PILLAR_H + ROOF_H;
+
+    for (let f = 0; f < floors; f++) {
+      const floorBaseY = GROUND_Y - (f * FLOOR_TOTAL_H);
+      const pillarY = floorBaseY - PILLAR_H;
+      const roofY = pillarY - ROOF_H;
+      
+      let pType = 'wood';
+      let pColor = '#DDAA33';
+      let rColor = '#C89620';
+      let hitsNeeded = 1;
+
+      if (f === 0) {
+        if (ironQuota > 0) {
+          pType = 'iron';
+          pColor = '#CFD8DC';
+          rColor = '#B0BEC5';
+          hitsNeeded = 3;
+          ironQuota--;
+        } else if (stoneQuota > 0) {
+          pType = 'stone';
+          pColor = '#4A2E18';
+          rColor = '#3B220F';
+          hitsNeeded = 2;
+          stoneQuota--;
         }
+      }
+
+      blocks.push({
+        id: `p1_${t}_${f}`, towerId: t, floor: f, isPillar: true, side: 'left',
+        type: pType, x: tX - 35, y: pillarY, w: 14, h: PILLAR_H, vy: 0,
+        hitsLeft: hitsNeeded, maxHits: hitsNeeded, color: pColor, falling: false, rotation: 0
+      });
+      blocks.push({
+        id: `p2_${t}_${f}`, towerId: t, floor: f, isPillar: true, side: 'right',
+        type: pType, x: tX + 21, y: pillarY, w: 14, h: PILLAR_H, vy: 0,
+        hitsLeft: hitsNeeded, maxHits: hitsNeeded, color: pColor, falling: false, rotation: 0
       });
 
-      targets.forEach(t => {
-        if (t.towerId === towerId && t.floor >= floor && t.alive) {
-          t.falling = true;
-          t.vy = 2.5;
-          t.vx = (Math.random() * 2 - 1);
-        }
+      blocks.push({
+        id: `rf_${t}_${f}`, towerId: t, floor: f, isRoof: true,
+        type: pType, x: tX - 35, y: roofY, w: 70, h: ROOF_H, vy: 0,
+        hitsLeft: hitsNeeded, maxHits: hitsNeeded, color: rColor, falling: false, rotation: 0
+      });
+
+      const fConfig = FOOD_CONFIGS[(t + f) % FOOD_CONFIGS.length];
+      foods.push({
+        towerId: t, floor: f, x: tX, y: pillarY + (PILLAR_H / 2), vy: 0,
+        r: fConfig.r, color: fConfig.color, pts: fConfig.pts, alive: true
       });
     }
+  }
+  updateHUD();
+}
 
-    function breakStructureNear(hitX, hitY, hitPower) {
-      for (let i = structures.length - 1; i >= 0; i--) {
-        const p = structures[i];
-        const dist = Math.hypot(p.x + p.w / 2 - hitX, p.y + p.h / 2 - hitY);
-        if (dist < 80) {
-          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 14);
-          const tId = p.towerId;
-          const fl = p.floor;
-          structures.splice(i, 1);
-          addScore(100);
-          triggerCascadeFall(tId, fl);
-        }
-      }
+function resetBird() {
+  bird.x = SLING_X; bird.y = SLING_Y; bird.vx = 0; bird.vy = 0;
+  bird.inFlight = false; bird.bounces = 0; bird.stoppedFrames = 0;
+  bird.hitBlocksCooldown = {};
+  dragPos = { x: SLING_X, y: SLING_Y };
+}
 
-      targets.forEach(t => {
-        if (t.alive) {
-          const dist = Math.hypot(t.x - hitX, t.y - hitY);
-          if (dist < 65) {
-            t.alive = false;
-            spawnExplosion(t.x, t.y, t.color, 24);
-            addFloatingScore(t.x, t.y - 20, '+1000');
-            addScore(1000);
-            updateTargetCountHud();
-          }
-        }
-      });
+function onBirdFinishFlight() {
+  const remainingFoods = foods.filter(f => f.alive).length + foodFlights.length;
+  if (birdsLeft <= 0 && remainingFoods > 0) {
+    if (isBonusLevel()) {
+      handleBonusMiss();
+    } else {
+      gameOver('NO_MORE_BIRDS');
     }
+  } else {
+    resetBird();
+  }
+}
 
-    function collapseFloatingPlatform(fp, hitPower = 3) {
-      if (!fp.collapsed) {
-        fp.collapsed = true;
-        fp.vx = (hitPower * 0.4) + (Math.random() * 2 - 1);
-        fp.vy = 2.2;
-        fp.va = (Math.random() * 0.1) - 0.05;
-        spawnExplosion(fp.x, fp.y, '#854d0e', 14);
-        addFloatingScore(fp.x, fp.y - 15, 'Platform Cut!');
-        addScore(250);
+function getCoords(e) {
+  const rect = canvas.getBoundingClientRect();
+  const cx = e.touches ? e.touches[0].clientX : e.clientX;
+  const cy = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (cx - rect.left) * (canvas.width / rect.width),
+    y: (cy - rect.top) * (canvas.height / rect.height)
+  };
+}
 
-        targets.forEach(t => {
-          if (t.platformId === fp.id && t.alive) {
-            t.falling = true;
-            t.vx = fp.vx;
-            t.vy = fp.vy + 1.2;
-          }
-        });
-      }
-    }
+function onDown(pos) {
+  initAudioSystem();
+  if (gameState !== 'PLAY' || bigBird.falling || bird.inFlight || birdsLeft <= 0 || isWinningTransition) return;
+  if (Math.hypot(pos.x - SLING_X, pos.y - SLING_Y) < 75) isAiming = true;
+}
 
-    function checkStructuralIntegrity(groundY) {
-      structures.forEach(piece => {
-        if (!piece.collapsed) {
-          const isOnGround = Math.abs((piece.y + piece.h) - groundY) < 14;
+function onMove(pos) {
+  if (!isAiming || gameState !== 'PLAY' || bigBird.falling || bird.inFlight || isWinningTransition) return;
+  const dx = pos.x - SLING_X;
+  const dy = pos.y - SLING_Y;
+  const dist = Math.hypot(dx, dy);
+  if (dist > MAX_DRAG) {
+    dragPos.x = SLING_X + (dx / dist) * MAX_DRAG;
+    dragPos.y = SLING_Y + (dy / dist) * MAX_DRAG;
+  } else {
+    dragPos.x = pos.x; dragPos.y = pos.y;
+  }
+  const pressureRatio = Math.min(1.0, Math.hypot(SLING_X - dragPos.x, SLING_Y - dragPos.y) / MAX_DRAG);
+  if (pressureRatio > 0.12) playRubberStretch(pressureRatio);
+  else stopRubberStretch();
+}
 
-          if (piece.isRoof) {
-            const hasPillarBelow = structures.some(other => {
-              return other !== piece && !other.collapsed && other.towerId === piece.towerId &&
-                     other.floor === piece.floor && other.isVertical;
-            });
-            if (!hasPillarBelow) {
-              triggerCascadeFall(piece.towerId, piece.floor);
-            }
-          }
-          else if (piece.isVertical && !isOnGround) {
-            const hasSupportBelow = structures.some(other => {
-              return other !== piece && !other.collapsed && other.towerId === piece.towerId &&
-                     other.floor === piece.floor - 1 && other.isRoof;
-            });
-            if (!hasSupportBelow) {
-              triggerCascadeFall(piece.towerId, piece.floor);
-            }
-          }
-        }
-      });
-    }
+function onUp() {
+  if (!isAiming) return;
+  isAiming = false;
+  stopRubberStretch();
+  const pullX = SLING_X - dragPos.x;
+  const pullY = SLING_Y - dragPos.y;
+  if (Math.hypot(pullX, pullY) > 12) {
+    const tier = getCurrentTier();
+    bird.inFlight = true;
+    hasFirstFired = true;
+    birdsLeft--;
+    updateHUD();
+    bird.bounces = 0; bird.stoppedFrames = 0; bird.hitBlocksCooldown = {};
+    bird.x = dragPos.x; bird.y = dragPos.y;
+    bird.vx = pullX * tier.power; bird.vy = pullY * tier.power;
+    playLaunchAudio();
+  } else {
+    dragPos = { x: SLING_X, y: SLING_Y };
+  }
+}
 
-    function drawObstacleNet() {
-      if (!obstacleNet) return;
-      ctx.save();
-      ctx.fillStyle = '#f8fafc';
-      ctx.strokeStyle = '#334155';
-      ctx.lineWidth = 2.5;
-      ctx.fillRect(obstacleNet.x, obstacleNet.y, obstacleNet.w, obstacleNet.h);
-      ctx.strokeRect(obstacleNet.x, obstacleNet.y, obstacleNet.w, obstacleNet.h);
+canvas.addEventListener('mousedown', e => onDown(getCoords(e)));
+window.addEventListener('mousemove', e => onMove(getCoords(e)));
+window.addEventListener('mouseup', onUp);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(getCoords(e)); }, { passive: false });
+window.addEventListener('touchmove', e => { if (isAiming) e.preventDefault(); onMove(getCoords(e)); }, { passive: false });
+window.addEventListener('touchend', onUp);
 
-      ctx.fillStyle = '#facc15';
-      ctx.fillRect(obstacleNet.x - 3, obstacleNet.y, obstacleNet.w + 6, 8);
-
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
-      ctx.lineWidth = 1;
-      for (let y = obstacleNet.y + 12; y < obstacleNet.y + obstacleNet.h; y += 8) {
-        ctx.beginPath();
-        ctx.moveTo(obstacleNet.x, y);
-        ctx.lineTo(obstacleNet.x + obstacleNet.w, y);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    function drawTree(groundY) {
-      const treeX = Math.max(width * 0.065, 55);
-      const branchY = height * 0.44;
-
-      ctx.save();
-      ctx.fillStyle = '#4a2810';
-      ctx.strokeStyle = '#271206';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(0, groundY);
-      ctx.quadraticCurveTo(treeX - 10, groundY - 80, treeX - 4, branchY - 50);
-      ctx.quadraticCurveTo(treeX + 16, branchY - 90, treeX + 28, branchY - 110);
-      ctx.quadraticCurveTo(treeX + 38, branchY - 50, treeX + 22, groundY);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#5c3317';
-      ctx.beginPath();
-      ctx.moveTo(treeX + 8, branchY + 14);
-      ctx.quadraticCurveTo(treeX + 32, branchY + 6, treeX + 70, branchY);
-      ctx.lineTo(treeX + 74, branchY + 6);
-      ctx.quadraticCurveTo(treeX + 34, branchY + 18, treeX + 12, branchY + 24);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#2d6a1b';
-      ctx.beginPath();
-      ctx.arc(treeX + 26, branchY - 110, 36, 0, Math.PI * 2);
-      ctx.arc(treeX - 8, branchY - 85, 28, 0, Math.PI * 2);
-      ctx.arc(treeX + 54, branchY - 95, 26, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#3e8e24';
-      ctx.beginPath();
-      ctx.arc(treeX + 22, branchY - 114, 30, 0, Math.PI * 2);
-      ctx.arc(treeX - 6, branchY - 88, 22, 0, Math.PI * 2);
-      ctx.arc(treeX + 50, branchY - 98, 20, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#48a02a';
-      ctx.beginPath();
-      ctx.arc(treeX + 72, branchY + 8, 10, 0, Math.PI * 2);
-      ctx.arc(treeX + 82, branchY + 4, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function drawBigBird(groundY) {
-      let isCritical = (bigBirdEnergy <= 25 && bigBirdEnergy > 0);
-      let flickerRed = Math.floor(animTick / 6) % 2 === 0;
-
-      let mainColor = '#ef4444';
-      let armorColor = '#991b1b';
-      let eyeColor = '#fef08a';
-
-      if (bigBirdEnergy <= 0) {
-        mainColor = '#475569'; armorColor = '#1e293b'; eyeColor = '#94a3b8';
-      } else if (isCritical) {
-        mainColor = flickerRed ? '#ef4444' : '#475569';
-        armorColor = flickerRed ? '#991b1b' : '#1e293b';
-        eyeColor = flickerRed ? '#fef08a' : '#cbd5e1';
-      } else if (bigBirdEnergy <= 65) {
-        mainColor = '#f97316'; armorColor = '#9a3412'; eyeColor = '#fef08a';
-      }
-
-      const treeX = Math.max(width * 0.065, 55);
-      const branchY = height * 0.44;
-      const tremble = isCritical ? (Math.random() * 2.5 - 1.25) : 0;
-      const cx = (treeX + 38) + tremble;
-      let cy = branchY - 26;
-
-      if (bigBirdFalling) {
-        cy += bigBirdFallY;
-      }
-
-      ctx.save();
-      ctx.fillStyle = armorColor;
-      ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(cx - 8, cy - 24);
-      ctx.lineTo(cx - 34, cy - 42);
-      ctx.lineTo(cx - 18, cy - 14);
-      ctx.lineTo(cx - 40, cy - 20);
-      ctx.lineTo(cx - 14, cy);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = mainColor;
-      ctx.beginPath();
-      ctx.moveTo(cx - 26, cy - 12);
-      ctx.lineTo(cx - 10, cy - 30);
-      ctx.lineTo(cx + 18, cy - 22);
-      ctx.lineTo(cx + 30, cy + 4);
-      ctx.lineTo(cx + 12, cy + 26);
-      ctx.lineTo(cx - 22, cy + 24);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = armorColor;
-      ctx.beginPath();
-      ctx.moveTo(cx - 4, cy - 10);
-      ctx.lineTo(cx + 16, cy - 6);
-      ctx.lineTo(cx + 22, cy + 8);
-      ctx.lineTo(cx + 8, cy + 22);
-      ctx.lineTo(cx - 8, cy + 12);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#f59e0b';
-      ctx.beginPath();
-      ctx.moveTo(cx + 24, cy - 14);
-      ctx.lineTo(cx + 52, cy - 2);
-      ctx.lineTo(cx + 28, cy + 14);
-      ctx.lineTo(cx + 26, cy + 2);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(cx + 26, cy - 2);
-      ctx.lineTo(cx + 44, cy - 1);
-      ctx.stroke();
-
-      if (bigBirdEnergy <= 0) {
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(cx + 8, cy - 16); ctx.lineTo(cx + 16, cy - 8);
-        ctx.moveTo(cx + 16, cy - 16); ctx.lineTo(cx + 8, cy - 8);
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = '#0f172a';
-        ctx.beginPath();
-        ctx.moveTo(cx + 4, cy - 20);
-        ctx.lineTo(cx + 22, cy - 16);
-        ctx.lineTo(cx + 16, cy - 6);
-        ctx.lineTo(cx + 2, cy - 10);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = eyeColor;
-        ctx.beginPath();
-        ctx.moveTo(cx + 8, cy - 16);
-        ctx.lineTo(cx + 19, cy - 13);
-        ctx.lineTo(cx + 13, cy - 8);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      // HEALTH BADGE
-      const bY = branchY + 36;
-      const bVal = Math.max(0, Math.ceil(bigBirdEnergy));
-      let bColor = '#2ed573';
-      if (bVal <= 25) bColor = '#ff4757';
-      else if (bVal <= 60) bColor = '#ffa502';
-
-      ctx.fillStyle = 'rgba(10, 15, 30, 0.94)';
-      ctx.strokeStyle = bColor;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.roundRect(treeX - 16, bY, 96, 46, 12);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = 'bold 8.5px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('BIRD HEALTH', treeX + 32, bY + 13);
-
-      ctx.fillStyle = bColor;
-      ctx.font = '900 22px Courier New, monospace';
-      ctx.fillText(`⚡${bVal}`, treeX + 32, bY + 37);
-
-      ctx.restore();
-    }
-
-    function drawBirdGridDeck(groundY) {
-      birdHitboxes = [];
-      const deckStartX = 10;
-      const boxW = 54;
-      const boxH = 42;
-      const gap = 6;
-      const totalW = (boxW * 2) + gap;
-      const totalH = (boxH * 2) + gap;
-      const gridY = groundY - totalH - 6;
-
-      ctx.save();
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-      ctx.strokeStyle = '#166534';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.rect(deckStartX - 4, gridY - 4, totalW + 8, totalH + 8);
-      ctx.fill();
-      ctx.stroke();
-
-      birdTypes.forEach((b, i) => {
-        const col = i % 2;
-        const row = Math.floor(i / 2);
-        const bx = deckStartX + (col * (boxW + gap));
-        const by = gridY + (row * (boxH + gap));
-        const isSelected = (i === selectedBirdIndex);
-        const isEmpty = (b.count <= 0);
-
-        birdHitboxes.push({ x: bx + (boxW / 2), y: by + (boxH / 2), w: boxW, h: boxH, index: i });
-
-        if (isSelected) {
-          ctx.fillStyle = '#bbf7d0';
-          ctx.strokeStyle = '#f59e0b';
-          ctx.lineWidth = 3;
+// ==================== MAIN GAME LOOP ====================
+function loop() {
+  if (gameState === 'PLAY') {
+    if (hasFirstFired && !isWinningTransition && !bigBird.falling) {
+      const diff = DIFFICULTY_CONFIG[currentDifficulty];
+      const levelDrainFactor = 1.0 + (level * 0.035);
+      energy -= 0.0055 * diff.drainMult * levelDrainFactor;
+      if (energy <= 0) { 
+        energy = 0; 
+        if (isBonusLevel()) {
+          handleBonusMiss();
         } else {
-          ctx.fillStyle = '#dcfce7';
-          ctx.strokeStyle = '#86efac';
-          ctx.lineWidth = 1.5;
+          triggerBigBirdFall(); 
         }
-
-        ctx.beginPath();
-        ctx.rect(bx, by, boxW, boxH);
-        ctx.fill();
-        ctx.stroke();
-
-        const birdCx = bx + 19;
-        const birdCy = by + 24;
-
-        ctx.beginPath();
-        ctx.arc(birdCx, birdCy, b.r, 0, Math.PI * 2);
-        ctx.fillStyle = isEmpty ? '#94a3b8' : b.color;
-        ctx.fill();
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 1.6;
-        ctx.stroke();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(birdCx + 3, birdCy - 3, 2.8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#000000';
-        ctx.beginPath();
-        ctx.arc(birdCx + 4.2, birdCy - 3, 1.3, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#f59e0b';
-        ctx.beginPath();
-        ctx.moveTo(birdCx + b.r - 2, birdCy - 3);
-        ctx.lineTo(birdCx + b.r + 8, birdCy);
-        ctx.lineTo(birdCx + b.r - 2, birdCy + 4);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        const badgeW = 20;
-        const badgeH = 14;
-        const badgeX = bx + boxW - badgeW - 3;
-        const badgeY = by + 3;
-
-        ctx.fillStyle = isSelected ? '#15803d' : '#14532d';
-        ctx.fillRect(badgeX, badgeY, badgeW, badgeH);
-        ctx.strokeStyle = isSelected ? '#f59e0b' : '#166534';
-        ctx.lineWidth = 1.2;
-        ctx.strokeRect(badgeX, badgeY, badgeW, badgeH);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 10px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(`×${b.count}`, badgeX + (badgeW / 2), badgeY + (badgeH / 2) + 0.5);
-      });
-      ctx.restore();
-    }
-
-    function renderBirdAt(bx, by, birdObj, rotation = 0) {
-      ctx.save();
-      ctx.translate(bx, by);
-      if (rotation) ctx.rotate(rotation);
-
-      ctx.beginPath();
-      ctx.arc(0, 0, 15, 0, Math.PI * 2);
-      ctx.fillStyle = birdObj.color;
-      ctx.fill();
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(4, -2, 3.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(5.5, -2, 1.8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#f59e0b';
-      ctx.beginPath();
-      ctx.moveTo(10, -2);
-      ctx.lineTo(19, 1);
-      ctx.lineTo(10, 4);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawTrajectory(anchorX, anchorY, birdX, birdY, groundY) {
-      const vx = (anchorX - birdX) * launchPower;
-      const vy = (anchorY - birdY) * launchPower;
-      let simX = birdX;
-      let simY = birdY;
-      let simVx = vx;
-      let simVy = vy;
-
-      ctx.save();
-      for (let step = 0; step < 30; step++) {
-        simX += simVx;
-        simY += simVy;
-        simVy += gravity;
-        if (simY > groundY) break;
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.15, 0.95 - (step * 0.03))})`;
-        ctx.beginPath();
-        ctx.arc(simX, simY, Math.max(2, 4.5 - (step * 0.08)), 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-    }
-
-    function drawFloatingPlatforms(groundY) {
-      for (let i = floatingPlatforms.length - 1; i >= 0; i--) {
-        const fp = floatingPlatforms[i];
-
-        if (fp.collapsed) {
-          fp.x += fp.vx;
-          fp.y += fp.vy;
-          fp.vy += woodGravity;
-          fp.angle += fp.va;
-
-          if (fp.x + fp.w / 2 >= width - 6) {
-            fp.x = width - 6 - fp.w / 2;
-            fp.vx = -Math.abs(fp.vx) * 0.4;
-          }
-
-          structures.forEach(p => {
-            if (!p.collapsed) {
-              const hitDist = Math.hypot((p.x + p.w / 2) - fp.x, (p.y + p.h / 2) - fp.y);
-              if (hitDist < 45) {
-                spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 12);
-                triggerCascadeFall(p.towerId, p.floor);
-                addScore(100);
-              }
-            }
-          });
-
-          if (fp.y + fp.h >= groundY) {
-            fp.y = groundY - fp.h;
-            fp.vy = -fp.vy * 0.15;
-            fp.vx *= 0.70;
-            fp.va *= 0.60;
-            if (Math.abs(fp.vy) < 0.3) fp.vy = 0;
-            if (Math.abs(fp.vx) < 0.1) fp.vx = 0;
-            if (Math.abs(fp.va) < 0.01) fp.va = 0;
-
-            fp.restTimer++;
-            if (fp.restTimer > 60) {
-              fp.alpha -= 0.035;
-              if (fp.alpha <= 0) {
-                spawnExplosion(fp.x, fp.y, '#854d0e', 6);
-                floatingPlatforms.splice(i, 1);
-                continue;
-              }
-            }
-          }
-        }
-
-        ctx.save();
-        ctx.globalAlpha = fp.alpha;
-
-        if (!fp.collapsed) {
-          ctx.strokeStyle = '#1e293b';
-          ctx.lineWidth = 3.5;
-          ctx.beginPath();
-          ctx.moveTo(fp.x - (fp.w / 2) + 10, 0);
-          ctx.lineTo(fp.x - (fp.w / 2) + 10, fp.y);
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.moveTo(fp.x + (fp.w / 2) - 10, 0);
-          ctx.lineTo(fp.x + (fp.w / 2) - 10, fp.y);
-          ctx.stroke();
-
-          ctx.fillStyle = '#f59e0b';
-          ctx.beginPath();
-          ctx.arc(fp.x - (fp.w / 2) + 10, fp.y, 4, 0, Math.PI * 2);
-          ctx.arc(fp.x + (fp.w / 2) - 10, fp.y, 4, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        ctx.translate(fp.x, fp.y + (fp.h / 2));
-        ctx.rotate(fp.angle);
-        ctx.fillStyle = '#854d0e';
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2.5;
-        ctx.fillRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
-        ctx.strokeRect(-fp.w / 2, -fp.h / 2, fp.w, fp.h);
-        ctx.restore();
       }
     }
 
-    function drawConfetti() {
-      for (let i = confettiList.length - 1; i >= 0; i--) {
-        const c = confettiList[i];
-        c.x += c.vx;
-        c.y += c.vy;
-        c.angle += c.vAngle;
+    if (bigBird.falling && !bigBird.landed) {
+      bigBird.vy += 0.42; bigBird.y += bigBird.vy; bigBird.x += bigBird.vx;
+      bigBird.rotation += 0.06;
+      if (bigBird.y >= GROUND_Y - 14) {
+        bigBird.y = GROUND_Y - 14; bigBird.vy = 0; bigBird.vx = 0; bigBird.landed = true;
+        playSmashAudio();
+        screenShake = 6;
+        setTimeout(() => { gameOver('NO_ENERGY'); }, 700);
+      }
+    }
 
-        ctx.save();
-        ctx.translate(c.x, c.y);
-        ctx.rotate(c.angle);
-        ctx.fillStyle = c.color;
+    if (bird.inFlight) {
+      bird.vy += 0.32;
+      bird.x += bird.vx;
+      bird.y += bird.vy;
 
-        if (c.isStar) {
-          ctx.beginPath();
-          ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
-          ctx.fill();
+      if (bird.y + bird.r >= GROUND_Y) {
+        bird.y = GROUND_Y - bird.r;
+        if (Math.abs(bird.vy) > 1.2 && bird.bounces < 3) {
+          bird.vy = -Math.abs(bird.vy) * 0.72;
+          bird.vx *= 0.72;
+          bird.bounces++;
+          playSmashAudio();
         } else {
-          ctx.fillRect(-c.sizeW / 2, -c.sizeH / 2, c.sizeW, c.sizeH);
-        }
-        ctx.restore();
-
-        if (c.y > height + 20) {
-          confettiList.splice(i, 1);
-        }
-      }
-    }
-
-    function render() {
-      animTick++;
-      ctx.clearRect(0, 0, width, height);
-
-      const groundH = Math.max(height * 0.12, 42);
-      const groundY = height - groundH;
-
-      if (hasFirstFired && !isLevelCompleted) {
-        bigBirdEnergy = Math.max(0, bigBirdEnergy - 0.024);
-        if (bigBirdEnergy <= 0 && !bigBirdFalling) {
-          bigBirdFalling = true;
-          bigBirdFallVy = -3;
-        }
-      }
-
-      if (bigBirdFalling) {
-        bigBirdFallVy += 0.35;
-        bigBirdFallY += bigBirdFallVy;
-        const branchY = height * 0.44;
-        const bBaseY = branchY - 26;
-        if (bBaseY + bigBirdFallY >= groundY - 20) {
-          bigBirdFallY = groundY - 20 - bBaseY;
-          bigBirdFallVy = 0;
-        }
-      }
-
-      // Sky Background
-      ctx.fillStyle = '#89cbf8';
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.fillStyle = '#fef08a';
-      ctx.beginPath();
-      ctx.arc(width * 0.86, height * 0.22, 44, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#9aa0d9';
-      ctx.beginPath();
-      ctx.moveTo(width * 0.20, groundY);
-      ctx.lineTo(width * 0.38, height * 0.44);
-      ctx.lineTo(width * 0.56, groundY);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.fillStyle = '#b3b8eb';
-      ctx.beginPath();
-      ctx.moveTo(width * 0.44, groundY);
-      ctx.lineTo(width * 0.64, height * 0.38);
-      ctx.lineTo(width * 0.84, groundY);
-      ctx.closePath();
-      ctx.fill();
-
-      // Ground
-      ctx.fillStyle = '#42281d';
-      ctx.fillRect(0, groundY, width, groundH);
-      ctx.fillStyle = '#55a234';
-      ctx.fillRect(0, groundY, width, 14);
-
-      // Draw Tree, Big Bird & Deck
-      drawTree(groundY);
-      drawBigBird(groundY);
-      drawBirdGridDeck(groundY);
-
-      // Draw Obstacle Net in Bonus Level
-      drawObstacleNet();
-
-      // Slingshot
-      const treeX = Math.max(width * 0.065, 55);
-      const sx = treeX + 175;
-      const sy = groundY - 105;
-      const leftForkX = sx - 18;
-      const leftForkY = sy - 34;
-      const rightForkX = sx + 18;
-      const rightForkY = sy - 34;
-      const centerAnchorX = sx;
-      const centerAnchorY = sy - 20;
-
-      ctx.strokeStyle = '#3e2316';
-      ctx.lineWidth = 11;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(sx, groundY);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(leftForkX, leftForkY);
-      ctx.stroke();
-
-      const currentBird = birdTypes[selectedBirdIndex];
-      const hasBirds = currentBird && currentBird.count > 0;
-      let birdX = centerAnchorX;
-      let birdY = centerAnchorY;
-
-      if (isDragging) {
-        birdX = dragPos.x;
-        birdY = dragPos.y;
-      } else if (hasBirds) {
-        birdY += Math.sin(animTick * 0.08) * 1.5;
-      }
-
-      if (hasBirds) {
-        ctx.strokeStyle = '#1e1b18';
-        ctx.lineWidth = 4.5;
-        ctx.beginPath();
-        ctx.moveTo(leftForkX, leftForkY);
-        ctx.lineTo(birdX - 6, birdY);
-        ctx.stroke();
-      }
-
-      if (isDragging && hasBirds) {
-        drawTrajectory(centerAnchorX, centerAnchorY, birdX, birdY, groundY);
-      }
-
-      if (hasBirds) {
-        renderBirdAt(birdX, birdY, currentBird);
-      }
-
-      ctx.strokeStyle = '#3e2316';
-      ctx.lineWidth = 11;
-      ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(rightForkX, rightForkY);
-      ctx.stroke();
-
-      if (hasBirds) {
-        ctx.strokeStyle = '#292524';
-        ctx.lineWidth = 4.5;
-        ctx.beginPath();
-        ctx.moveTo(rightForkX, rightForkY);
-        ctx.lineTo(birdX + 6, birdY);
-        ctx.stroke();
-      }
-
-      drawFloatingPlatforms(groundY);
-      checkStructuralIntegrity(groundY);
-
-      // FLYING BIRDS COLLISION
-      for (let i = flyingBirds.length - 1; i >= 0; i--) {
-        const fb = flyingBirds[i];
-        fb.x += fb.vx;
-        fb.y += fb.vy;
-        fb.vy += gravity;
-
-        const angle = Math.atan2(fb.vy, fb.vx);
-        renderBirdAt(fb.x, fb.y, fb, angle);
-
-        let birdExploded = false;
-
-        // Obstacle Net Collision (Bonus Round)
-        if (obstacleNet) {
-          const hitNetX = (fb.x >= obstacleNet.x - 14 && fb.x <= obstacleNet.x + obstacleNet.w + 14);
-          const hitNetY = (fb.y >= obstacleNet.y && fb.y <= groundY);
-          if (hitNetX && hitNetY) {
-            spawnExplosion(fb.x, fb.y, '#f8fafc', 10);
-            fb.vx = -Math.abs(fb.vx) * 0.25;
-            fb.vy = 2.0;
+          bird.vy = 0; 
+          bird.vx *= 0.85; 
+          bird.stoppedFrames++;
+          if (bird.stoppedFrames > 35 || Math.abs(bird.vx) < 0.15) {
+            energy = Math.max(0, energy - 1.2);
+            onBirdFinishFlight();
           }
         }
+      }
 
-        // Targets Collision
-        for (let t of targets) {
-          if (t.alive) {
-            const dist = Math.hypot(fb.x - t.x, fb.y - t.y);
-            if (dist < 15 + t.r) {
-              if (fb.id === 'black') {
-                triggerBombExplosion(fb.x, fb.y);
-                flyingBirds.splice(i, 1);
-                birdExploded = true;
-                break;
+      for (let i = blocks.length - 1; i >= 0; i--) {
+        const b = blocks[i];
+        const closestX = Math.max(b.x, Math.min(bird.x, b.x + b.w));
+        const closestY = Math.max(b.y, Math.min(bird.y, b.y + b.h));
+        const distX = bird.x - closestX;
+        const distY = bird.y - closestY;
+
+        if ((distX * distX + distY * distY) < (bird.r * bird.r)) {
+          if (!bird.hitBlocksCooldown[b.id]) {
+            bird.hitBlocksCooldown[b.id] = true;
+            
+            if (!b.isMetalShield) b.hitsLeft--;
+            score += 25;
+            playSmashAudio();
+            screenShake = b.isMetalShield ? 7 : 5;
+
+            spawnDebris(b.x + b.w/2, b.y + b.h/2, b.color);
+
+            if (b.hitsLeft <= 0 && !b.isMetalShield) {
+              const hitTowerId = b.towerId;
+              const hitFloor = b.floor;
+              blocks.splice(i, 1);
+
+              for (let k = blocks.length - 1; k >= 0; k--) {
+                const target = blocks[k];
+                if (target.towerId === hitTowerId && target.floor === hitFloor && !target.isMetalShield) {
+                  spawnDebris(target.x + target.w/2, target.y + target.h/2, target.color);
+                  blocks.splice(k, 1);
+                  score += 25;
+                }
               }
-
-              t.alive = false;
-              spawnExplosion(t.x, t.y, t.color, 24);
-              addFloatingScore(t.x, t.y - 20, '+1000');
-              addScore(1000);
-              updateTargetCountHud();
-              bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-
-              if (t.platformId) {
-                const plat = floatingPlatforms.find(p => p.id === t.platformId);
-                if (plat) collapseFloatingPlatform(plat, 4);
-              }
-
-              breakStructureNear(t.x, t.y, 4);
-              fb.vx *= 0.7;
-            }
-          }
-        }
-        if (birdExploded) continue;
-
-        // Floating Platforms Collision
-        for (let fp of floatingPlatforms) {
-          if (!fp.collapsed) {
-            const leftRopeX = fp.x - (fp.w / 2) + 10;
-            const rightRopeX = fp.x + (fp.w / 2) - 10;
-
-            const hitLeftRope = Math.abs(fb.x - leftRopeX) < 18 && (fb.y >= 0 && fb.y <= fp.y + fp.h);
-            const hitRightRope = Math.abs(fb.x - rightRopeX) < 18 && (fb.y >= 0 && fb.y <= fp.y + fp.h);
-
-            if (hitLeftRope || hitRightRope) {
-              if (fb.id === 'black') {
-                triggerBombExplosion(fb.x, fb.y);
-                flyingBirds.splice(i, 1);
-                birdExploded = true;
-                break;
-              }
-              collapseFloatingPlatform(fp, Math.abs(fb.vx));
-              spawnExplosion(fb.x, fb.y, '#94a3b8', 12);
-              fb.vx *= -0.3;
-              fb.vy = 1.0;
             }
 
-            const nearestX = Math.max(fp.x - fp.w / 2, Math.min(fb.x, fp.x + fp.w / 2));
-            const nearestY = Math.max(fp.y, Math.min(fb.y, fp.y + fp.h));
-            const dist = Math.hypot(fb.x - nearestX, fb.y - nearestY);
-            if (dist < 18) {
-              if (fb.id === 'black') {
-                triggerBombExplosion(fb.x, fb.y);
-                flyingBirds.splice(i, 1);
-                birdExploded = true;
-                break;
-              }
-              collapseFloatingPlatform(fp, Math.abs(fb.vx));
-              fb.vx *= 0.75;
-            }
-          }
-        }
-        if (birdExploded) continue;
-
-        // Structures Collision
-        for (let k = structures.length - 1; k >= 0; k--) {
-          const p = structures[k];
-          const nearestX = Math.max(p.x, Math.min(fb.x, p.x + p.w));
-          const nearestY = Math.max(p.y, Math.min(fb.y, p.y + p.h));
-          const dist = Math.hypot(fb.x - nearestX, fb.y - nearestY);
-
-          if (dist < 18) {
-            if (fb.id === 'black') {
-              triggerBombExplosion(fb.x, fb.y);
-              flyingBirds.splice(i, 1);
-              birdExploded = true;
-              break;
-            }
-
-            spawnExplosion(nearestX, nearestY, p.color, 14);
-            addScore(150);
-            const tId = p.towerId;
-            const fl = p.floor;
-            structures.splice(k, 1);
-
-            triggerCascadeFall(tId, fl);
-
-            fb.vx *= 0.65;
-            fb.vy = Math.min(fb.vy * 0.5, 1.5);
+            bird.vx = -bird.vx * (b.isMetalShield ? 0.35 : 0.20);
+            bird.vy = Math.min(1.5, bird.vy * 0.5);
             break;
           }
         }
-        if (birdExploded) continue;
-
-        if (fb.y >= groundY - 12) {
-          if (fb.id === 'black') {
-            triggerBombExplosion(fb.x, groundY - 12);
-            flyingBirds.splice(i, 1);
-            continue;
-          }
-          fb.y = groundY - 12;
-          fb.vy = -fb.vy * 0.35;
-          fb.vx *= 0.7;
-          fb.bounces = (fb.bounces || 0) + 1;
-          if (fb.bounces > 4 || Math.abs(fb.vx) < 0.3) {
-            flyingBirds.splice(i, 1);
-          }
-        } else if (fb.x > width + 60) {
-          flyingBirds.splice(i, 1);
-        }
       }
 
-      // Structures Physics
-      for (let i = structures.length - 1; i >= 0; i--) {
-        const p = structures[i];
-
-        if (p.collapsed) {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += woodGravity;
-          p.angle += p.va;
-
-          if (p.x + p.w >= width - 6) {
-            p.x = width - 6 - p.w;
-            p.vx = -Math.abs(p.vx) * 0.3;
-          }
-
-          if (p.y + p.h >= groundY) {
-            p.y = groundY - p.h;
-            p.vy = -p.vy * 0.15;
-            p.vx *= 0.70;
-            p.va *= 0.60;
-            if (Math.abs(p.vy) < 0.3) fp.vy = 0;
-            if (Math.abs(p.vx) < 0.1) p.vx = 0;
-            if (Math.abs(p.va) < 0.01) p.va = 0;
-          }
-
-          p.restTimer++;
-          if (p.restTimer > 45) {
-            p.alpha -= 0.045;
-            if (p.alpha <= 0) {
-              spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 6);
-              structures.splice(i, 1);
-              continue;
-            }
-          }
-
-          for (let t of targets) {
-            if (t.alive) {
-              const dist = Math.hypot(t.x - (p.x + p.w / 2), t.y - (p.y + p.h / 2));
-              if (dist < t.r + 20) {
-                t.alive = false;
-                spawnExplosion(t.x, t.y, t.color, 24);
-                addFloatingScore(t.x, t.y - 20, '+1000');
-                addScore(1000);
-                updateTargetCountHud();
-                bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-              }
-            }
-          }
-        }
-
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
-        ctx.rotate(p.angle);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
-      }
-
-      // Targets Physics
-      for (let t of targets) {
-        if (t.alive) {
-          if (t.falling) {
-            t.x += t.vx;
-            t.y += t.vy;
-            t.vy += woodGravity;
-
-            if (t.y + t.r >= groundY - 4 || t.x + t.r >= width - 12) {
-              t.alive = false;
-              spawnExplosion(Math.min(t.x, width - 20), groundY - 10, t.color, 24);
-              addFloatingScore(Math.min(t.x, width - 30), groundY - 24, '+1000');
-              addScore(1000);
-              updateTargetCountHud();
-              bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
-              continue;
-            }
-          }
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
-          ctx.fillStyle = t.color;
-          ctx.fill();
-          ctx.strokeStyle = '#000000';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-
-          ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          ctx.arc(t.x - 4, t.y - 3, 3.5, 0, Math.PI * 2);
-          ctx.arc(t.x + 4, t.y - 3, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.fillStyle = '#000000';
-          ctx.beginPath();
-          ctx.arc(t.x - 3.5, t.y - 3, 1.8, 0, Math.PI * 2);
-          ctx.arc(t.x + 4.5, t.y - 3, 1.8, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.arc(t.x, t.y + 4, 5, 0, Math.PI);
-          ctx.stroke();
-          ctx.restore();
-        }
-      }
-
-      // Confetti & Celebration rendering
-      drawConfetti();
-
-      // Particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += gravity * 0.4;
-        p.alpha -= p.decay;
-
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-        } else {
-          ctx.save();
-          ctx.globalAlpha = p.alpha;
-          ctx.fillStyle = p.color;
-          ctx.fillRect(p.x, p.y, p.size, p.size);
-          ctx.restore();
-        }
-      }
-
-      // Floating Scores
-      for (let i = floatingScores.length - 1; i >= 0; i--) {
-        const fs = floatingScores[i];
-        fs.y -= 1.2;
-        fs.alpha -= 0.02;
-
-        if (fs.alpha <= 0) {
-          floatingScores.splice(i, 1);
-        } else {
-          ctx.save();
-          ctx.globalAlpha = fs.alpha;
-          ctx.fillStyle = '#fde047';
-          ctx.font = 'bold 18px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(fs.text, fs.x, fs.y);
-          ctx.restore();
-        }
-      }
-
-      checkLevelState();
-      requestAnimationFrame(render);
-    }
-
-    function getCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      const cx = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
-      const cy = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
-      return {
-        x: (cx - rect.left) * (width / rect.width),
-        y: (cy - rect.top) * (height / rect.height)
-      };
-    }
-
-    window.addEventListener('pointerdown', (e) => {
-      if (modal.style.display === 'flex' || bigBirdFalling) return;
-      if (e.target.closest('.hud')) return;
-
-      const pos = getCoords(e);
-      const groundH = Math.max(height * 0.12, 42);
-      const groundY = height - groundH;
-      const treeX = Math.max(width * 0.065, 55);
-      const anchorX = treeX + 175;
-      const anchorY = groundY - 125;
-
-      let gridClicked = false;
-      for (let hb of birdHitboxes) {
-        if (pos.x >= hb.x - (hb.w / 2) && pos.x <= hb.x + (hb.w / 2) &&
-            pos.y >= hb.y - (hb.h / 2) && pos.y <= hb.y + (hb.h / 2)) {
-          gridClicked = true;
-          if (birdTypes[hb.index].count > 0) {
-            selectedBirdIndex = hb.index;
-          }
-          break;
-        }
-      }
-      if (gridClicked) return;
-
-      const distToSling = Math.hypot(pos.x - anchorX, pos.y - anchorY);
-      const currentBird = birdTypes[selectedBirdIndex];
-
-      if (distToSling < 60 && currentBird && currentBird.count > 0) {
-        isDragging = true;
-        dragPos = { x: pos.x, y: pos.y };
-      }
-    });
-
-    window.addEventListener('pointermove', (e) => {
-      if (!isDragging) return;
-
-      const pos = getCoords(e);
-      const groundH = Math.max(height * 0.12, 42);
-      const groundY = height - groundH;
-      const treeX = Math.max(width * 0.065, 55);
-      const anchorX = treeX + 175;
-      const anchorY = groundY - 125;
-
-      const dx = pos.x - anchorX;
-      const dy = pos.y - anchorY;
-      const dist = Math.hypot(dx, dy);
-
-      if (dist > maxDragDist) {
-        const angle = Math.atan2(dy, dx);
-        dragPos.x = anchorX + Math.cos(angle) * maxDragDist;
-        dragPos.y = anchorY + Math.sin(angle) * maxDragDist;
-      } else {
-        dragPos.x = pos.x;
-        dragPos.y = pos.y;
-      }
-    });
-
-    window.addEventListener('pointerup', () => {
-      if (!isDragging) return;
-      isDragging = false;
-
-      const groundH = Math.max(height * 0.12, 42);
-      const groundY = height - groundH;
-      const treeX = Math.max(width * 0.065, 55);
-      const anchorX = treeX + 175;
-      const anchorY = groundY - 125;
-
-      const dx = anchorX - dragPos.x;
-      const dy = anchorY - dragPos.y;
-      const dist = Math.hypot(dx, dy);
-
-      if (dist > 14) {
-        const activeBird = birdTypes[selectedBirdIndex];
-        if (activeBird && activeBird.count > 0) {
-          hasFirstFired = true;
-          flyingBirds.push({
-            id: activeBird.id,
-            x: dragPos.x,
-            y: dragPos.y,
-            vx: dx * launchPower,
-            vy: dy * launchPower,
-            color: activeBird.color,
-            name: activeBird.name
+      foods.forEach(f => {
+        if (f.alive && Math.hypot(bird.x - f.x, bird.y - f.y) < bird.r + f.r) {
+          f.alive = false;
+          score += f.pts;
+          foodFlights.push({
+            startX: f.x, startY: f.y, x: f.x, y: f.y, color: f.color, r: f.r, progress: 0
           });
+        }
+      });
 
-          activeBird.count--;
-          ensureAvailableBirdSelected();
+      if (bird.x > 1150 || bird.x < -150) {
+        energy = Math.max(0, energy - 1.2);
+        onBirdFinishFlight();
+      }
+    }
+
+    for (let i = blocks.length - 1; i >= 0; i--) {
+      const b = blocks[i];
+      if (b.isMetalShield) continue;
+      const bottomY = b.y + b.h;
+
+      if (bottomY < GROUND_Y) {
+        let isSupported = false;
+        for (let other of blocks) {
+          if (other !== b && other.towerId === b.towerId && !other.falling) {
+            const horizontalOverlap = (b.x < other.x + other.w) && (b.x + b.w > other.x);
+            const verticallyTouching = (other.y >= bottomY - 3) && (other.y <= bottomY + 8);
+            if (horizontalOverlap && verticallyTouching) {
+              isSupported = true;
+              break;
+            }
+          }
+        }
+
+        if (!isSupported) {
+          b.falling = true;
+          b.vy = (b.vy || 0) + 0.65;
+          b.y += b.vy;
+          b.rotation = (b.rotation || 0) + 0.04;
+        } else {
+          b.falling = false;
+          b.vy = 0;
+        }
+      }
+
+      if (b.falling && b.y + b.h >= GROUND_Y) {
+        spawnDebris(b.x + b.w/2, GROUND_Y - 5, b.color);
+        blocks.splice(i, 1);
+        score += 35;
+        playSmashAudio();
+        screenShake = 4;
+      }
+    }
+
+    for (let i = woodParticles.length - 1; i >= 0; i--) {
+      const p = woodParticles[i];
+      p.vy += 0.35;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotSpeed;
+      p.life--;
+      if (p.life <= 0 || p.y >= GROUND_Y) {
+        woodParticles.splice(i, 1);
+      }
+    }
+
+    for (let i = confettiParticles.length - 1; i >= 0; i--) {
+      const cp = confettiParticles[i];
+      cp.vy += 0.05;
+      cp.x += cp.vx;
+      cp.y += cp.vy;
+      cp.rotation += cp.rotSpeed;
+      cp.life--;
+      if (cp.life <= 0 || cp.y >= canvas.height) {
+        confettiParticles.splice(i, 1);
+      }
+    }
+
+    foods.forEach(f => {
+      if (f.alive && f.y + f.r < GROUND_Y) {
+        let sup = false;
+        for (let b of blocks) {
+          if (!b.falling && b.towerId === f.towerId && f.x > b.x && f.x < b.x + b.w && b.y >= f.y + f.r - 4 && b.y <= f.y + f.r + 10) {
+            sup = true; f.y = b.y - f.r; f.vy = 0; break;
+          }
+        }
+        if (!sup) {
+          f.vy = (f.vy || 0) + 0.50;
+          f.y += f.vy;
+          if (f.y + f.r >= GROUND_Y) { f.y = GROUND_Y - f.r; f.vy = 0; }
         }
       }
     });
 
-    restartBtn.addEventListener('click', () => {
-      loadLevel(currentLevel, inBonusStage);
-    });
+    for (let i = foodFlights.length - 1; i >= 0; i--) {
+      const fl = foodFlights[i];
+      fl.progress += 0.05;
+      const targetX = bigBird.x + 26;
+      const targetY = bigBird.y - 4;
+      fl.x += (targetX - fl.x) * 0.15;
+      fl.y += (targetY - fl.y) * 0.15;
 
-    resizeCanvas();
-    render();
-  </script>
+      if (fl.progress >= 0.95 || Math.hypot(fl.x - targetX, fl.y - targetY) < 18) {
+        energy = Math.min(15, energy + 4.5);
+        chompTimer = 25;
+        playBigBirdCrunch();
+        foodFlights.splice(i, 1);
+        checkAllFoodFinished();
+      }
+    }
+    if (chompTimer > 0) chompTimer--;
+  }
+
+  updateHUD();
+  drawScene();
+  requestAnimationFrame(loop);
+}
+
+function triggerBigBirdFall() {
+  if (bigBird.falling) return;
+  bigBird.falling = true;
+  bigBird.landed = false;
+  bigBird.vx = 1.8; bigBird.vy = -2.0;
+  stopRubberStretch();
+  playLoseSound();
+}
+
+function animateStars(containerId, starCount) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "";
+  if (starCount <= 0) return;
+
+  for (let s = 0; s < starCount; s++) {
+    const starSpan = document.createElement("span");
+    starSpan.className = "star-item";
+    starSpan.innerText = "⭐";
+    starSpan.style.animationDelay = `${s * 0.18}s`;
+    container.appendChild(starSpan);
+  }
+}
+
+function checkAllFoodFinished() {
+  const left = foods.filter(f => f.alive).length;
+  if (left === 0 && foodFlights.length === 0 && !isWinningTransition) {
+    isWinningTransition = true;
+    stopRubberStretch();
+    setTimeout(() => {
+      playRoundWinSound();
+
+      const earnedStars = birdsLeft;
+      const starBonusPts = isBonusLevel() ? (earnedStars * 500) : (earnedStars * 100);
+      score += Math.floor(energy * 30) + starBonusPts;
+
+      updateSilentSession(score, level, false);
+
+      const milestoneBadge = document.getElementById('win-milestone-badge');
+      if (milestoneBadge) milestoneBadge.style.display = 'none';
+
+      const winCoin = document.getElementById('win-coin');
+      const winTitle = document.getElementById('win-title');
+      const winMsg = document.getElementById('win-msg');
+      const nextBtn = document.getElementById('next-level-btn');
+
+      // IF WON BONUS ROUND
+      if (isBonusLevel()) {
+        gameState = 'WIN';
+        winTitle.innerText = "Bonus";
+        winCoin.style.display = 'block';
+        animateStars("win-stars", 0);
+        
+        // Glossy Subtitle on top + Huge Bold Points below coin
+        winMsg.innerHTML = `<span class="bonus-subtitle-glossy">Remaining Birds Bonus</span><span class="bonus-score-huge">+${starBonusPts}</span>`;
+        
+        nextBtn.innerText = "Continue to Next Level ➔";
+        document.getElementById('win-overlay').classList.remove('hidden');
+        return;
+      }
+
+      winCoin.style.display = 'none';
+      nextBtn.innerText = "Next Level";
+
+      // AFTER LEVEL 5 CLEAR -> TRIGGER BONUS STAGE
+      if (level === 5) {
+        gameState = 'WIN';
+        winTitle.innerText = "Level 5 Cleared! 🎉";
+        animateStars("win-stars", earnedStars);
+        winMsg.innerText = "Bonus Challenge Unlocked!";
+        nextBtn.innerText = "Play Bonus Round ➔";
+        document.getElementById('win-overlay').classList.remove('hidden');
+        return;
+      }
+
+      if (level % 20 === 0) {
+        gameState = 'EVOLVE';
+        score += 5000;
+        const nextTier = EVOLUTIONS[Math.min(Math.floor(level / 20), EVOLUTIONS.length - 1)];
+        animateStars("evolve-stars", earnedStars);
+        document.getElementById('evolve-msg').innerText = `MASTER STAGE CLEAR!\nGiant Bird evolved to: ${nextTier.name}\n⭐ ${earnedStars}-Star Accuracy Bonus: +${starBonusPts} pts!`;
+        document.getElementById('evolve-overlay').classList.remove('hidden');
+      } else {
+        gameState = 'WIN';
+        winTitle.innerText = "LEVEL COMPLETED!";
+        animateStars("win-stars", earnedStars);
+
+        let winText = `Level ${level} complete!\n⭐ ${earnedStars}-Star Accuracy Bonus: +${starBonusPts} pts!`;
+
+        if (level === 10) {
+          if (milestoneBadge) {
+            milestoneBadge.innerText = "🎉 MILESTONE UNLOCKED: 12 BIRDS PER LEVEL!";
+            milestoneBadge.style.display = 'block';
+          }
+          winText += `\nNext Level Upgraded: 12 Birds Available Per Level!`;
+        }
+        
+        winMsg.innerText = winText;
+        document.getElementById('win-overlay').classList.remove('hidden');
+      }
+    }, 600);
+  }
+}
+
+// BONUS MISS HANDLER
+function handleBonusMiss() {
+  stopRubberStretch();
+  gameState = 'BONUS_LOSS';
+  document.getElementById('bonusLossOverlay').style.display = 'flex';
+}
+
+// Bonus Loss -> Goes directly to regular Level 6
+document.getElementById('bonusContinueBtn').onclick = () => {
+  document.getElementById('bonusLossOverlay').style.display = 'none';
+  inBonusStage = false;
+  level = 6;
+  gameState = 'PLAY';
+  initLevel();
+};
+
+// Next Level Handler (Win Screen)
+document.getElementById('next-level-btn').onclick = () => {
+  document.getElementById('win-overlay').classList.add('hidden');
+  
+  if (level === 5 && !inBonusStage) {
+    inBonusStage = true;
+  } else if (inBonusStage) {
+    inBonusStage = false;
+    level = 6;
+  } else {
+    level++;
+  }
+  
+  gameState = 'PLAY'; 
+  initLevel();
+};
+
+// ==================== DYNAMIC GRAPHIC GAME OVER LOGIC ====================
+function gameOver(reason) {
+  if (isWinningTransition) return;
+  stopRubberStretch();
+  gameState = 'LOSE';
+
+  updateSilentSession(score, level, true);
+
+  const bannerImg = document.getElementById('gameOverImg');
+  if (reason === 'NO_ENERGY') {
+    bannerImg.src = 'noenergy.jpeg';
+  } else {
+    bannerImg.src = 'nobirds.jpg';
+  }
+
+  document.getElementById('playerInitials').value = '';
+  document.getElementById('saveScoreBtn').disabled = false;
+  document.getElementById('saveScoreBtn').innerText = 'Save Score';
+  document.getElementById('gameOverModal').style.display = 'flex';
+}
+
+function restartGame() {
+  initAudioSystem(); 
+  level = 1; 
+  inBonusStage = false;
+  score = 0; 
+  incrementGlobalPlayCount();
+  startSilentSession();
+  
+  document.getElementById('gameOverModal').style.display = 'none';
+  gameState = 'PLAY';
+  initLevel();
+}
+
+function updateHUD() {
+  const diffLabel = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+  if (isBonusLevel()) {
+    document.getElementById('level-display').innerHTML = `<span style="color:#ffd700; animation:pulseAlert 1s infinite alternate;">🌟 BONUS ROUND</span>`;
+  } else {
+    document.getElementById('level-display').innerText = `Lv ${level} • ${diffLabel}`;
+  }
+  document.getElementById('shots-left-display').innerText = birdsLeft;
+  document.getElementById('score-display').innerText = score;
+  
+  const clockEl = document.getElementById('bird-energy-clock');
+  const energyEl = document.getElementById('energy-digits');
+  const currentEnergyVal = Math.max(0, Math.ceil(energy));
+
+  if (clockEl) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = rect.width / canvas.width;
+    const scaleY = rect.height / canvas.height;
+    
+    const clockCanvasX = bigBird.x + 8;
+    const clockCanvasY = bigBird.y + 72;
+    
+    clockEl.style.left = `${rect.left + clockCanvasX * scaleX}px`;
+    clockEl.style.top = `${rect.top + clockCanvasY * scaleY}px`;
+    
+    if (currentEnergyVal <= 4) {
+      clockEl.className = 'warning';
+    } else {
+      clockEl.className = '';
+    }
+  }
+
+  if (energyEl) {
+    energyEl.innerText = currentEnergyVal;
+  }
+}
+
+function drawSlingshotBack() {
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.lineWidth = 12; ctx.strokeStyle = '#2d1810';
+  ctx.beginPath(); ctx.moveTo(SLING_X - 6, SLING_Y + 16); ctx.lineTo(SLING_X - 18, SLING_Y - 14); ctx.stroke();
+  ctx.lineWidth = 6; ctx.strokeStyle = '#532d1f';
+  ctx.beginPath(); ctx.moveTo(SLING_X - 5, SLING_Y + 14); ctx.lineTo(SLING_X - 16, SLING_Y - 12); ctx.stroke();
+  ctx.fillStyle = '#1a0d07';
+  ctx.beginPath(); ctx.roundRect(SLING_X - 22, SLING_Y - 18, 9, 8, 2); ctx.fill();
+  ctx.restore();
+}
+
+function drawSlingshotFront() {
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.lineWidth = 16; ctx.strokeStyle = '#2d1810';
+  ctx.beginPath(); ctx.moveTo(SLING_X - 1, SLING_Y + 14); ctx.lineTo(SLING_X + 2, GROUND_Y); ctx.stroke();
+  ctx.lineWidth = 9; ctx.strokeStyle = '#633928';
+  ctx.beginPath(); ctx.moveTo(SLING_X - 2, SLING_Y + 16); ctx.lineTo(SLING_X + 1, GROUND_Y); ctx.stroke();
+
+  ctx.fillStyle = '#3a1f14';
+  ctx.beginPath(); ctx.arc(SLING_X - 1, SLING_Y + 16, 7, 0, Math.PI * 2); ctx.fill();
+
+  ctx.lineWidth = 13; ctx.strokeStyle = '#2d1810';
+  ctx.beginPath(); ctx.moveTo(SLING_X - 1, SLING_Y + 16); ctx.lineTo(SLING_X + 18, SLING_Y - 14); ctx.stroke();
+  ctx.lineWidth = 7; ctx.strokeStyle = '#7c4632';
+  ctx.beginPath(); ctx.moveTo(SLING_X, SLING_Y + 15); ctx.lineTo(SLING_X + 17, SLING_Y - 12); ctx.stroke();
+
+  ctx.fillStyle = '#1a0d07';
+  ctx.beginPath(); ctx.roundRect(SLING_X + 14, SLING_Y - 18, 9, 8, 2); ctx.fill();
+  ctx.fillStyle = '#ffb300';
+  ctx.beginPath(); ctx.arc(SLING_X + 18.5, SLING_Y - 14, 1.8, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+// NATURAL TREE TRUNK, PERCH BRANCH & LUSH GREEN TOP CANOPY
+function drawTreeBranch() {
+  ctx.save();
+
+  // 1. Lush Green Top Foliage in Upper Left Corner
+  ctx.fillStyle = '#2E7D32';
+  ctx.beginPath(); ctx.arc(-10, 45, 65, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(48, 30, 48, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(88, 70, 42, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = '#388E3C';
+  ctx.beginPath(); ctx.arc(22, 65, 52, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(62, 85, 36, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = '#4CAF50';
+  ctx.beginPath(); ctx.arc(32, 50, 32, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(75, 75, 24, 0, Math.PI * 2); ctx.fill();
+
+  // 2. Main Tree Trunk rising smoothly from ground to top
+  ctx.fillStyle = '#3E2723';
+  ctx.beginPath();
+  ctx.moveTo(0, 110);
+  ctx.quadraticCurveTo(24, 160, 20, 220);
+  ctx.quadraticCurveTo(28, 330, 36, GROUND_Y);
+  ctx.lineTo(0, GROUND_Y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Bark Bark Highlight
+  ctx.fillStyle = '#4E342E';
+  ctx.beginPath();
+  ctx.moveTo(0, 125);
+  ctx.quadraticCurveTo(18, 175, 15, 225);
+  ctx.quadraticCurveTo(20, 320, 26, GROUND_Y);
+  ctx.lineTo(0, GROUND_Y);
+  ctx.closePath();
+  ctx.fill();
+
+  // 3. Sturdy Perch Branch extending directly under the Giant Bird
+  ctx.fillStyle = '#4E342E';
+  ctx.beginPath();
+  ctx.moveTo(18, 230);
+  ctx.quadraticCurveTo(60, 235, 108, 242);
+  ctx.quadraticCurveTo(118, 248, 106, 256);
+  ctx.quadraticCurveTo(52, 250, 19, 258);
+  ctx.closePath();
+  ctx.fill();
+
+  // Upper Branch Bark line
+  ctx.fillStyle = '#5D4037';
+  ctx.beginPath();
+  ctx.moveTo(22, 232);
+  ctx.quadraticCurveTo(62, 236, 104, 243);
+  ctx.quadraticCurveTo(62, 240, 22, 238);
+  ctx.fill();
+
+  // 4. Vibrant Leaves Sprouting Around the Perch Tip
+  ctx.fillStyle = '#2E7D32';
+  ctx.beginPath(); ctx.arc(104, 244, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(116, 248, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#4CAF50';
+  ctx.beginPath(); ctx.arc(98, 240, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(112, 246, 5, 0, Math.PI * 2); ctx.fill();
+
+  ctx.restore();
+}
+
+function drawScene() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  if (screenShake > 0) {
+    const sX = (Math.random() - 0.5) * screenShake;
+    const sY = (Math.random() - 0.5) * screenShake;
+    ctx.translate(sX, sY);
+    screenShake *= 0.82;
+    if (screenShake < 0.3) screenShake = 0;
+  }
+
+  ctx.fillStyle = "#87CEEB";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#FFF9C4";
+  ctx.beginPath(); ctx.arc(820, 90, 45, 0, Math.PI * 2); ctx.fill();
+
+  // Mountain Background
+  ctx.fillStyle = "#7986CB";
+  ctx.beginPath(); ctx.moveTo(150, GROUND_Y); ctx.lineTo(340, 240); ctx.lineTo(520, GROUND_Y); ctx.fill();
+  ctx.fillStyle = "#9FA8DA";
+  ctx.beginPath(); ctx.moveTo(420, GROUND_Y); ctx.lineTo(620, 200); ctx.lineTo(820, GROUND_Y); ctx.fill();
+
+  // Draw Natural Tree Trunk, Branch and Lush Top Foliage
+  drawTreeBranch();
+
+  // Ground Line
+  ctx.fillStyle = '#4E342E';
+  ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
+  ctx.fillStyle = '#689F38';
+  ctx.fillRect(0, GROUND_Y, canvas.width, 14);
+
+  drawGiantBird();
+  drawSlingshotBack();
+
+  const tier = getCurrentTier();
+  const groundQueueCount = Math.max(0, birdsLeft - 1);
+  const queueSpacing = (groundQueueCount > 8) ? 12 : 15;
+
+  for (let q = 0; q < groundQueueCount; q++) {
+    const qX = SLING_X - 35 - (q * queueSpacing);
+    const qY = GROUND_Y - 10;
+    ctx.fillStyle = tier.color;
+    ctx.beginPath(); ctx.arc(qX, qY, 7.5, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(qX + 2, qY - 2, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#FF9800";
+    ctx.beginPath(); ctx.arc(qX + 4, qY, 1.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  const bX = bird.inFlight ? bird.x : (isAiming ? dragPos.x : SLING_X);
+  const bY = bird.inFlight ? bird.y : (isAiming ? dragPos.y : SLING_Y);
+
+  if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
+    ctx.strokeStyle = '#2b1408'; ctx.lineWidth = 4.5;
+    ctx.beginPath(); ctx.moveTo(SLING_X - 17, SLING_Y - 14); ctx.lineTo(bX - 4, bY); ctx.stroke();
+
+    if (isAiming) {
+      let pX = (SLING_X - dragPos.x) * tier.power;
+      let pY = (SLING_Y - dragPos.y) * tier.power;
+      let sX = dragPos.x, sY = dragPos.y, sVY = pY;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      for (let i = 0; i < 14; i++) {
+        sX += pX; sVY += 0.32; sY += sVY;
+        ctx.beginPath(); ctx.arc(sX, sY, 3, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+
+  if (birdsLeft > 0 || bird.inFlight) {
+    ctx.fillStyle = tier.color;
+    ctx.beginPath(); ctx.arc(bX, bY, bird.r, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(bX + 4, bY - 3, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.beginPath(); ctx.arc(bX + 5, bY - 3, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#FF9800";
+    ctx.beginPath(); ctx.moveTo(bX + 7, bY - 1); ctx.lineTo(bX + 14, bY + 2); ctx.lineTo(bX + 7, bY + 5); ctx.fill();
+  }
+
+  if ((isAiming || !bird.inFlight) && birdsLeft > 0) {
+    ctx.strokeStyle = '#42200f'; ctx.lineWidth = 4.5;
+    ctx.beginPath(); ctx.moveTo(bX + 4, bY); ctx.lineTo(SLING_X + 18, SLING_Y - 14); ctx.stroke();
+  }
+
+  drawSlingshotFront();
+
+  // Draw Blocks / Metal Bunker
+  blocks.forEach(b => {
+    ctx.save();
+    if (b.rotation) {
+      ctx.translate(b.x + b.w/2, b.y + b.h/2);
+      ctx.rotate(b.rotation);
+      ctx.fillStyle = b.color;
+      ctx.fillRect(-b.w/2, -b.h/2, b.w, b.h);
+      ctx.strokeStyle = b.isMetalShield ? '#102027' : ((b.type === 'iron') ? '#546E7A' : '#222');
+      ctx.lineWidth = b.isMetalShield ? 2.5 : 1.5;
+      ctx.strokeRect(-b.w/2, -b.h/2, b.w, b.h);
+    } else {
+      ctx.fillStyle = b.color;
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+      ctx.strokeStyle = b.isMetalShield ? '#102027' : ((b.type === 'iron') ? '#546E7A' : '#222');
+      ctx.lineWidth = b.isMetalShield ? 2.5 : 1.5;
+      ctx.strokeRect(b.x, b.y, b.w, b.h);
+    }
+
+    // Metal Rivets Detail for Bunker
+    if (b.isMetalShield) {
+      ctx.fillStyle = '#CFD8DC';
+      for (let rY = b.y + 12; rY < b.y + b.h - 6; rY += 28) {
+        ctx.beginPath(); ctx.arc(b.x + b.w/2, rY, 2.5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    if (b.hitsLeft < b.maxHits && !b.isMetalShield) {
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.65)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(b.x + 3, b.y + 4);
+      ctx.lineTo(b.x + b.w - 4, b.y + b.h - 6);
+      ctx.stroke();
+    }
+    ctx.restore();
+  });
+
+  // Draw Debris Particles
+  woodParticles.forEach(p => {
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+    ctx.restore();
+  });
+
+  // Draw Confetti
+  confettiParticles.forEach(cp => {
+    ctx.save();
+    ctx.translate(cp.x, cp.y);
+    ctx.rotate(cp.rotation);
+    ctx.fillStyle = cp.color;
+    ctx.fillRect(-cp.size/2, -cp.size/2, cp.size, cp.size * 1.5);
+    ctx.restore();
+  });
+
+  // Draw Foods
+  foods.forEach(f => {
+    if (f.alive) {
+      ctx.fillStyle = f.color;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+  });
+
+  // Food Flights
+  foodFlights.forEach(fl => {
+    ctx.fillStyle = fl.color;
+    ctx.beginPath(); ctx.arc(fl.x, fl.y, fl.r * 0.75, 0, Math.PI * 2); ctx.fill();
+  });
+
+  ctx.restore();
+}
+
+function drawGiantBird() {
+  const tier = getCurrentTier();
+  ctx.save();
+  ctx.translate(bigBird.x, bigBird.y);
+  ctx.rotate(bigBird.rotation);
+  ctx.scale(tier.scale, tier.scale);
+  
+  ctx.fillStyle = tier.color;
+  ctx.beginPath(); ctx.ellipse(0, 0, 36, 32, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  ctx.fillStyle = '#FFF8DC';
+  ctx.beginPath(); ctx.ellipse(10, 4, 20, 18, 0, 0, Math.PI * 2); ctx.fill();
+
+  if (bigBird.falling) {
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(11, -17); ctx.lineTo(19, -9);
+    ctx.moveTo(19, -17); ctx.lineTo(11, -9);
+    ctx.stroke();
+  } else {
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(14, -14, 9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(17, -14, 4, 0, Math.PI * 2); ctx.fill();
+  }
+
+  ctx.fillStyle = '#FF9800';
+  ctx.beginPath();
+  if (chompTimer > 0) {
+    ctx.moveTo(25, -16); ctx.lineTo(52, -26); ctx.lineTo(34, -4); ctx.lineTo(52, 14); ctx.lineTo(25, 4);
+  } else {
+    ctx.moveTo(25, -10); ctx.lineTo(44, -4); ctx.lineTo(25, 3);
+  }
+  ctx.fill();
+  ctx.restore();
+}
+
+// ==================== BUTTON EVENTS ====================
+document.getElementById('start-game-btn').onclick = () => {
+  initAudioSystem(); 
+  startBackgroundMusic(); 
+  incrementGlobalPlayCount();
+  startSilentSession();
+  
+  document.getElementById('start-overlay').classList.add('hidden');
+  gameState = 'PLAY';
+  level = 1;
+  inBonusStage = false;
+  score = 0;
+  initLevel();
+};
+
+// Try Again Handlers (Hotspot on image & secondary button)
+document.getElementById('imgTryAgainHotspot').onclick = restartGame;
+document.getElementById('customRestartBtn').onclick = restartGame;
+
+document.getElementById('evolve-btn').onclick = () => {
+  level++; 
+  document.getElementById('evolve-overlay').classList.add('hidden');
+  gameState = 'PLAY'; 
+  initLevel();
+};
+
+document.getElementById('saveScoreBtn').onclick = async () => {
+  const inp = document.getElementById('playerInitials');
+  let initials = inp.value.trim() || "AAA";
+  const btn = document.getElementById('saveScoreBtn');
+  btn.disabled = true; 
+  btn.innerText = "Saving...";
+  await submitScore(initials, score);
+  btn.innerText = "Saved!";
+};
+
+initLevel();
+drawScene();
+requestAnimationFrame(loop);
+</script>
 </body>
 </html>
