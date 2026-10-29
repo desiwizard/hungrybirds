@@ -7,7 +7,9 @@
   <!-- SEO & Standard Meta Tags -->
   <meta name="description" content="Feed the giant bird by launching birds with your slingshot! Play multi-stage physics action and boss fights free in your browser.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <link rel="canonical" href="https://desiwizard.github.io/hungrybirds/">
+  
+  <!-- Canonical URL (Exact match with scanner without trailing slash) -->
+  <link rel="canonical" href="https://desiwizard.github.io/hungrybirds">
   
   <meta name="theme-color" content="#87CEEB">
   <meta name="mobile-web-app-capable" content="yes">
@@ -19,7 +21,7 @@
   <meta property="og:site_name" content="Hungry Bird">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
-  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/">
+  <meta property="og:url" content="https://desiwizard.github.io/hungrybirds">
   <meta property="og:title" content="Hungry Bird: Energy Feast">
   <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play multi-stage physics action and boss fights free in your browser.">
   <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
@@ -30,8 +32,9 @@
   <meta property="og:image:alt" content="Hungry Bird Game Artwork">
   <meta property="fb:app_id" content="966242223397117">
 
-  <!-- Twitter / X Meta Tags -->
+  <!-- Twitter / X Meta Tags (Fixed twitter:site tip) -->
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@desiwizard">
   <meta name="twitter:title" content="Hungry Bird: Energy Feast">
   <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
   <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
@@ -57,7 +60,7 @@
     "description": "Feed the giant bird by launching birds with your slingshot! Play multi-stage physics action and boss fights free in your browser.",
     "playPlatform": "Web Browser",
     "applicationCategory": "Game",
-    "url": "https://desiwizard.github.io/hungrybirds/",
+    "url": "https://desiwizard.github.io/hungrybirds",
     "image": "https://desiwizard.github.io/hungrybirds/bird.jpeg"
   }
   </script>
@@ -216,7 +219,13 @@
       overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
     .overlay.hidden { display: none !important; }
-    .overlay h1 { font-size: 20px; margin-bottom: 4px; color: #ffeb3b; text-shadow: 2px 2px #d32f2f; }
+    .overlay h1, .overlay h2.modal-title { 
+      font-size: 20px; 
+      margin-bottom: 4px; 
+      color: #ffeb3b; 
+      text-shadow: 2px 2px #d32f2f;
+      font-weight: bold;
+    }
     .overlay p { font-size: 13px; margin-bottom: 8px; color: #eee; white-space: pre-line; }
     
     .start-content-grid {
@@ -500,7 +509,7 @@
 
 <div id="rotate-device-overlay">
   <div class="phone-anim-box"></div>
-  <h1 style="color: #ffeb3b; font-size: 22px; margin-bottom: 8px;">ROTATE YOUR PHONE</h1>
+  <h2 class="modal-title" style="font-size: 22px; margin-bottom: 8px;">ROTATE YOUR PHONE</h2>
   <p style="color: #cbd5e1; font-size: 14px; max-width: 300px; line-height: 1.5;">
     Please rotate your phone sideways into <b>Landscape</b> mode to start playing.
   </p>
@@ -540,7 +549,7 @@
     </div>
   </div>
 
-  <!-- START OVERLAY -->
+  <!-- START OVERLAY (SINGLE MAIN H1 FOR SEO) -->
   <div id="start-overlay" class="overlay">
     <h1>HUNGRY BIRD: ENERGY FEAST</h1>
     <div class="start-content-grid">
@@ -622,7 +631,7 @@
 
   <!-- LEADERBOARD OVERLAY -->
   <div id="lb-overlay" class="overlay hidden">
-    <h1>LEADERBOARD</h1>
+    <h2 class="modal-title">LEADERBOARD</h2>
     <div id="leaderboard" style="margin-bottom: 14px; max-width: 360px;">
       <h3>GLOBAL TOP 10</h3>
       <div id="leaderboardListMid" class="leaderboard-scroll" style="max-height: 220px;">Loading...</div>
@@ -632,7 +641,7 @@
 
   <!-- HELP OVERLAY -->
   <div id="help-overlay" class="overlay hidden">
-    <h1 style="margin-bottom: 4px;">HOW TO PLAY</h1>
+    <h2 class="modal-title" style="margin-bottom: 4px;">HOW TO PLAY</h2>
     <div class="visual-guide-container">
       <svg class="visual-guide-svg" viewBox="0 0 540 100">
         <g transform="translate(10, 0)">
@@ -712,14 +721,14 @@
 
   <!-- BONUS LOSS OVERLAY -->
   <div id="bonusLossOverlay">
-    <h1 style="color: #ffeb3b; font-size: 26px; margin-bottom: 6px;">So Close!</h1>
+    <h2 class="modal-title" style="color: #ffeb3b; font-size: 26px; margin-bottom: 6px;">So Close!</h2>
     <p id="bonusLossSubtext" style="color: #eee; font-size: 15px; margin-bottom: 16px;">Better luck next time!</p>
     <button class="btn" id="bonusContinueBtn" style="padding: 8px 28px; font-size: 15px;">Continue to Next Level ➔</button>
   </div>
 
   <!-- WIN OVERLAY -->
   <div id="win-overlay" class="overlay hidden">
-    <h1 id="win-title">LEVEL COMPLETED!</h1>
+    <h2 class="modal-title" id="win-title">LEVEL COMPLETED!</h2>
     <div id="win-coin" class="spinning-coin"></div>
     <div id="win-stars" class="stars-container"></div>
     <div id="win-milestone-badge" class="milestone-badge"></div>
@@ -729,7 +738,7 @@
 
   <!-- EVOLVE OVERLAY -->
   <div id="evolve-overlay" class="overlay hidden">
-    <h1>CHARACTER EVOLVED!</h1>
+    <h2 class="modal-title">CHARACTER EVOLVED!</h2>
     <div id="evolve-stars" class="stars-container"></div>
     <p id="evolve-msg">Your Giant Bird has grown bigger and stronger!</p>
     <button class="btn" id="evolve-btn" style="background:#00bcd4; box-shadow:0 4px #008ba3;">Claim Power</button>
@@ -852,7 +861,7 @@ function getDeviceInfo() {
   let browser = "Unknown Browser";
   if (/SamsungBrowser/i.test(ua)) browser = "Samsung Browser";
   else if (/Edg/i.test(ua)) browser = "Edge";
-  else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Chrome";
+  else if (/Chrome/i.test(ua)) browser = "Chrome";
   else if (/Safari/i.test(ua)) browser = "Safari";
   else if (/Firefox/i.test(ua)) browser = "Firefox";
   else if (/OPR|Opera/i.test(ua)) browser = "Opera";
@@ -1184,7 +1193,7 @@ const ctx = canvas.getContext('2d');
 
 let level = 1;
 let inBonusStage = false;
-let bonusType = 'bunker'; // 'bunker' (Lv 5) or 'boss_eagle' (Lv 10)
+let bonusType = 'bunker';
 let score = 0;
 let energy = 15;
 let isAiming = false;
@@ -1235,7 +1244,6 @@ let foods = [];
 let foodFlights = [];
 let woodParticles = [];
 
-// GUARDIAN EAGLE BOSS ENTITY
 let bossEagle = null;
 
 function spawnDebris(x, y, color) {
@@ -1321,10 +1329,8 @@ function initLevel() {
   resetBird();
   if (musicEnabled) startBackgroundMusic();
 
-  // BONUS ROUND LOGIC
   if (isBonusLevel()) {
     if (bonusType === 'boss_eagle') {
-      // LEVEL 10 BONUS: GUARDIAN EAGLE BOSS FIGHT
       bossEagle = {
         x: 480,
         baseY: 260,
@@ -1340,7 +1346,6 @@ function initLevel() {
         angle: 0
       };
 
-      // Guarded Target Tower behind Boss Eagle
       const tX = 720;
       const PILLAR_H = 65;
       const ROOF_H = 14;
@@ -1368,7 +1373,6 @@ function initLevel() {
         r: 20, color: '#ffd700', pts: 800, alive: true
       });
 
-      // Upper Snack Platform
       blocks.push({
         id: 'eagle_top_stand', towerId: 102, floor: 0, isPillar: true,
         type: 'wood', x: 585, y: GROUND_Y - 50, w: 20, h: 50, vy: 0,
@@ -1380,17 +1384,16 @@ function initLevel() {
       });
 
     } else {
-      // LEVEL 5 BONUS: METAL BUNKER / NET CHALLENGE
       const shieldX = 410;
       const SHIELD_H = 130;
       
       blocks.push({
-        id: 'metal_bunker_wall', towerId: 99, floor: 0, isPillar: true, isMetalShield: true,
+        id: 'metal_bunker_wall', towerId: 99, floor: 0, isPillar: true,
         type: 'iron', x: shieldX, y: GROUND_Y - SHIELD_H, w: 22, h: SHIELD_H, vy: 0,
         hitsLeft: 999, maxHits: 999, color: '#37474F', falling: false, rotation: 0
       });
       blocks.push({
-        id: 'metal_bunker_top', towerId: 99, floor: 0, isRoof: true, isMetalShield: true,
+        id: 'metal_bunker_top', towerId: 99, floor: 0, isRoof: true,
         type: 'iron', x: shieldX - 8, y: GROUND_Y - SHIELD_H - 14, w: 38, h: 14, vy: 0,
         hitsLeft: 999, maxHits: 999, color: '#263238', falling: false, rotation: 0
       });
@@ -1437,7 +1440,6 @@ function initLevel() {
     return;
   }
 
-  // REGULAR LEVELS
   const numTowers = Math.min(2 + Math.floor(level / 5), 3);
   const towerSpacing = 150;
   const startX = 530;
@@ -1633,11 +1635,9 @@ function loop() {
       }
     }
 
-    // GUARDIAN EAGLE BOSS UPDATE
     if (bossEagle) {
       if (bossEagle.hitCooldown > 0) bossEagle.hitCooldown--;
       if (bossEagle.alive) {
-        // Floating Sine Wave Motion
         bossEagle.y = bossEagle.baseY + Math.sin(gameTick * 0.045) * 42;
       } else if (bossEagle.defeated && bossEagle.y < GROUND_Y + 100) {
         bossEagle.vy += 0.45;
@@ -1652,7 +1652,6 @@ function loop() {
       bird.x += bird.vx;
       bird.y += bird.vy;
 
-      // BOSS EAGLE COLLISION
       if (bossEagle && bossEagle.alive) {
         const distBoss = Math.hypot(bird.x - bossEagle.x, bird.y - bossEagle.y);
         if (distBoss < bird.r + bossEagle.r && bossEagle.hitCooldown <= 0) {
@@ -1900,7 +1899,6 @@ function checkAllFoodFinished() {
       const winMsg = document.getElementById('win-msg');
       const nextBtn = document.getElementById('next-level-btn');
 
-      // IF WON BONUS ROUND
       if (isBonusLevel()) {
         gameState = 'WIN';
         winTitle.innerText = (bonusType === 'boss_eagle') ? "Boss Defeated! 🦅" : "Bonus Cleared! 🌟";
@@ -1917,7 +1915,6 @@ function checkAllFoodFinished() {
       winCoin.style.display = 'none';
       nextBtn.innerText = "Next Level";
 
-      // AFTER LEVEL 5 -> TRIGGER BUNKER BONUS
       if (level === 5) {
         gameState = 'WIN';
         winTitle.innerText = "Level 5 Cleared! 🎉";
@@ -1928,7 +1925,6 @@ function checkAllFoodFinished() {
         return;
       }
 
-      // AFTER LEVEL 10 -> TRIGGER BOSS EAGLE BONUS
       if (level === 10) {
         gameState = 'WIN';
         winTitle.innerText = "Level 10 Cleared! 👑";
@@ -1959,7 +1955,6 @@ function checkAllFoodFinished() {
   }
 }
 
-// BONUS MISS HANDLER
 function handleBonusMiss() {
   stopRubberStretch();
   gameState = 'BONUS_LOSS';
@@ -1970,7 +1965,6 @@ function handleBonusMiss() {
   document.getElementById('bonusLossOverlay').style.display = 'flex';
 }
 
-// Bonus Loss -> Goes directly to next normal Level
 document.getElementById('bonusContinueBtn').onclick = () => {
   document.getElementById('bonusLossOverlay').style.display = 'none';
   if (inBonusStage) {
@@ -1985,7 +1979,6 @@ document.getElementById('bonusContinueBtn').onclick = () => {
   initLevel();
 };
 
-// Next Level Handler (Win Screen)
 document.getElementById('next-level-btn').onclick = () => {
   document.getElementById('win-overlay').classList.add('hidden');
   
@@ -2010,7 +2003,6 @@ document.getElementById('next-level-btn').onclick = () => {
   initLevel();
 };
 
-// GAME OVER LOGIC
 function gameOver(reason) {
   if (isWinningTransition) return;
   stopRubberStretch();
@@ -2176,22 +2168,18 @@ function drawTreeBranch() {
   ctx.restore();
 }
 
-// DRAW GUARDIAN EAGLE BOSS
 function drawGuardianEagleBoss() {
   if (!bossEagle) return;
   ctx.save();
   ctx.translate(bossEagle.x, bossEagle.y);
   ctx.rotate(bossEagle.angle);
 
-  // Wing Flap Motion
   const wingAngle = Math.sin(gameTick * 0.15) * 0.45;
 
-  // Left & Right Wings
   ctx.fillStyle = '#374151';
   ctx.strokeStyle = '#111827';
   ctx.lineWidth = 2.5;
 
-  // Left Wing
   ctx.save();
   ctx.rotate(-wingAngle);
   ctx.beginPath();
@@ -2200,7 +2188,6 @@ function drawGuardianEagleBoss() {
   ctx.stroke();
   ctx.restore();
 
-  // Right Wing
   ctx.save();
   ctx.rotate(wingAngle);
   ctx.beginPath();
@@ -2209,27 +2196,23 @@ function drawGuardianEagleBoss() {
   ctx.stroke();
   ctx.restore();
 
-  // Eagle Body
   ctx.fillStyle = (bossEagle.hitCooldown > 0) ? '#f87171' : '#1f2937';
   ctx.beginPath();
   ctx.ellipse(0, 0, 28, 34, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 
-  // Eagle Chest Feathers
   ctx.fillStyle = '#f8fafc';
   ctx.beginPath();
   ctx.ellipse(0, 6, 16, 20, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Head
   ctx.fillStyle = '#f8fafc';
   ctx.beginPath();
   ctx.arc(0, -22, 18, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 
-  // Crown / Fierce Crest
   ctx.fillStyle = '#d97706';
   ctx.beginPath();
   ctx.moveTo(-10, -36); ctx.lineTo(-4, -48); ctx.lineTo(0, -38);
@@ -2238,7 +2221,6 @@ function drawGuardianEagleBoss() {
   ctx.fill();
   ctx.stroke();
 
-  // Fierce Eyes
   ctx.fillStyle = '#ef4444';
   ctx.beginPath();
   ctx.arc(-6, -24, 4.5, 0, Math.PI * 2);
@@ -2250,7 +2232,6 @@ function drawGuardianEagleBoss() {
   ctx.arc(6, -24, 2, 0, Math.PI * 2);
   ctx.fill();
 
-  // Hook Beak
   ctx.fillStyle = '#f59e0b';
   ctx.beginPath();
   ctx.moveTo(-6, -16);
@@ -2260,7 +2241,6 @@ function drawGuardianEagleBoss() {
   ctx.fill();
   ctx.stroke();
 
-  // BOSS HEALTH BAR (ABOVE EAGLE HEAD)
   if (bossEagle.alive) {
     const barW = 60;
     const barH = 9;
@@ -2303,7 +2283,6 @@ function drawScene() {
   ctx.fillStyle = "#FFF9C4";
   ctx.beginPath(); ctx.arc(820, 90, 45, 0, Math.PI * 2); ctx.fill();
 
-  // Mountains
   ctx.fillStyle = "#7986CB";
   ctx.beginPath(); ctx.moveTo(150, GROUND_Y); ctx.lineTo(340, 240); ctx.lineTo(520, GROUND_Y); ctx.fill();
   ctx.fillStyle = "#9FA8DA";
@@ -2311,7 +2290,6 @@ function drawScene() {
 
   drawTreeBranch();
 
-  // Ground
   ctx.fillStyle = '#4E342E';
   ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
   ctx.fillStyle = '#689F38';
@@ -2372,11 +2350,8 @@ function drawScene() {
   }
 
   drawSlingshotFront();
-
-  // Draw Guardian Eagle Boss
   drawGuardianEagleBoss();
 
-  // Draw Blocks / Metal Bunker
   blocks.forEach(b => {
     ctx.save();
     if (b.rotation) {
@@ -2413,7 +2388,6 @@ function drawScene() {
     ctx.restore();
   });
 
-  // Debris Particles
   woodParticles.forEach(p => {
     ctx.save();
     ctx.translate(p.x, p.y);
@@ -2423,7 +2397,6 @@ function drawScene() {
     ctx.restore();
   });
 
-  // Confetti
   confettiParticles.forEach(cp => {
     ctx.save();
     ctx.translate(cp.x, cp.y);
@@ -2433,7 +2406,6 @@ function drawScene() {
     ctx.restore();
   });
 
-  // Foods
   foods.forEach(f => {
     if (f.alive) {
       ctx.fillStyle = f.color;
@@ -2442,7 +2414,6 @@ function drawScene() {
     }
   });
 
-  // Food Flights
   foodFlights.forEach(fl => {
     ctx.fillStyle = fl.color;
     ctx.beginPath(); ctx.arc(fl.x, fl.y, fl.r * 0.75, 0, Math.PI * 2); ctx.fill();
