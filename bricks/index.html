@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Portrait Tetris</title>
+<title>Portrait Tetris with Control Position Choice</title>
 <style>
   :root { --bg:#0e0f12; --panel:#161922; --text:#e9ecf1; --muted:#aab3c5; }
   html, body {
@@ -59,26 +59,133 @@
   }
   button:active { transform: translateY(1px); }
   .hint { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.25; }
+
+  /* Control buttons container */
+  .control-buttons {
+    position: fixed;
+    top: 12px;
+    right: 12px; /* default top-right */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(20, 24, 35, 0.85);
+    padding: 10px;
+    border-radius: 12px;
+    z-index: 9999;
+    user-select: none;
+  }
+  .control-buttons.left {
+    right: auto;
+    left: 12px;
+  }
+  .control-buttons button {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    background: #2b7cff;
+    color: white;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .control-buttons button:active {
+    background: #1a52cc;
+    transform: translateY(1px);
+  }
+
+  /* Toggle position button */
+  #btnTogglePosition {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: #444;
+    color: white;
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 10000;
+    user-select: none;
+  }
+  #btnTogglePosition.left {
+    right: auto;
+    left: 12px;
+  }
+
+  /* Modal styles */
+  #controlChoiceModal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    display: flex; justify-content: center; align-items: center; z-index: 100000;
+  }
+  #controlChoiceModal.hidden {
+    display: none;
+  }
+  #controlChoiceModal > div {
+    background: #222; padding: 24px 32px; border-radius: 16px; max-width: 320px; text-align: center; color: white;
+  }
+  #controlChoiceModal h2 {
+    margin-top: 0;
+  }
+  #controlChoiceModal button {
+    margin: 12px;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #2b7cff;
+    border: none;
+    color: white;
+    font-weight: 700;
+  }
+  #controlChoiceModal button:active {
+    background: #1a52cc;
+    transform: translateY(1px);
+  }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <canvas id="game" aria-label="Tetris game"></canvas>
 
-    <div class="bar">
-      <div class="card">
-        Score: <span id="score">0</span><br/>
-        Lines: <span id="lines">0</span><br/>
-        Level: <span id="level">1</span>
-        <div class="hint">Tap = rotate, swipe L/R move, swipe down drop</div>
-      </div>
-    </div>
+<!-- Modal for control position choice -->
+<div id="controlChoiceModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+  <div>
+    <h2 id="modalTitle">Choose Controls Position</h2>
+    <p id="modalDesc">Where do you want the control buttons?</p>
+    <button id="chooseLeft">Top Left</button>
+    <button id="chooseRight">Top Right</button>
+  </div>
+</div>
 
-    <div class="controls">
-      <button id="btnPause">Pause</button>
-      <button id="btnRestart">Restart</button>
+<!-- On-screen control buttons -->
+<div id="controlButtons" class="control-buttons" aria-label="Game controls">
+  <button id="btnLeft" aria-label="Move Left">←</button>
+  <button id="btnRight" aria-label="Move Right">→</button>
+  <button id="btnRotate" aria-label="Rotate">⟳</button>
+  <button id="btnDrop" aria-label="Hard Drop">↓</button>
+</div>
+
+<!-- Toggle position button -->
+<button id="btnTogglePosition" aria-label="Toggle Controls Position" title="Toggle Controls Position">Top Left</button>
+
+<!-- Main game container -->
+<div class="wrap" aria-label="Tetris game container">
+  <canvas id="game" aria-label="Tetris game"></canvas>
+
+  <div class="bar">
+    <div class="card">
+      Score: <span id="score">0</span><br/>
+      Lines: <span id="lines">0</span><br/>
+      Level: <span id="level">1</span>
+      <div class="hint">Tap = rotate, swipe L/R move, swipe down drop</div>
     </div>
   </div>
+
+  <div class="controls">
+    <button id="btnPause">Pause</button>
+    <button id="btnRestart">Restart</button>
+  </div>
+</div>
 
 <script>
 const canvas = document.getElementById("game");
@@ -89,6 +196,17 @@ const linesEl = document.getElementById("lines");
 const levelEl = document.getElementById("level");
 const btnPause = document.getElementById("btnPause");
 const btnRestart = document.getElementById("btnRestart");
+
+const btnLeft = document.getElementById("btnLeft");
+const btnRight = document.getElementById("btnRight");
+const btnRotate = document.getElementById("btnRotate");
+const btnDrop = document.getElementById("btnDrop");
+const controlButtons = document.getElementById("controlButtons");
+const btnTogglePosition = document.getElementById("btnTogglePosition");
+
+const modal = document.getElementById("controlChoiceModal");
+const btnChooseLeft = document.getElementById("chooseLeft");
+const btnChooseRight = document.getElementById("chooseRight");
 
 const COLS = 10, ROWS = 20;
 
@@ -111,7 +229,6 @@ let lastTime = 0;
 let paused = false;
 
 function resizeGameCanvas(){
-  // Portrait fit: choose a comfortable width, keep exact 10x20 grid size
   const targetCssW = Math.min(window.innerWidth * 0.92, 360);
   BLOCK = Math.floor(targetCssW / COLS);
 
@@ -125,10 +242,8 @@ function resizeGameCanvas(){
   canvas.width = Math.floor(cssW * dpr);
   canvas.height = Math.floor(cssH * dpr);
 
-  // Draw using CSS pixels
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
-window.addEventListener("resize", resizeGameCanvas);
 
 function resetGame(){
   board = Array.from({length: ROWS}, () => Array(COLS).fill(null));
@@ -249,7 +364,7 @@ function lockPiece(){
   clearLines();
   piece = newPiece();
   if(collide(piece)){
-    resetGame(); // simple restart on game over
+    resetGame();
   }
 }
 
@@ -314,6 +429,88 @@ canvas.addEventListener("pointerup", (e)=>{
   touchStart = null;
 });
 
+// On-screen buttons handlers
+btnLeft.addEventListener("touchstart", e => { e.preventDefault(); move(-1); });
+btnRight.addEventListener("touchstart", e => { e.preventDefault(); move(1); });
+btnRotate.addEventListener("touchstart", e => { e.preventDefault(); tryRotate(); });
+btnDrop.addEventListener("touchstart", e => { e.preventDefault(); hardDrop(); });
+
+btnLeft.addEventListener("click", () => move(-1));
+btnRight.addEventListener("click", () => move(1));
+btnRotate.addEventListener("click", tryRotate);
+btnDrop.addEventListener("click", hardDrop);
+
+// Toggle position button handler
+btnTogglePosition.addEventListener("click", () => {
+  if(controlButtons.classList.contains("left")){
+    controlButtons.classList.remove("left");
+    btnTogglePosition.classList.remove("left");
+    btnTogglePosition.textContent = "Top Left";
+    localStorage.setItem("controlPosition", "right");
+  } else {
+    controlButtons.classList.add("left");
+    btnTogglePosition.classList.add("left");
+    btnTogglePosition.textContent = "Top Right";
+    localStorage.setItem("controlPosition", "left");
+  }
+});
+
+// Modal buttons handlers
+btnChooseLeft.onclick = () => {
+  setControlPosition("left");
+  hideModal();
+  startGame();
+};
+
+btnChooseRight.onclick = () => {
+  setControlPosition("right");
+  hideModal();
+  startGame();
+};
+
+function setControlPosition(pos){
+  if(pos === "left"){
+    controlButtons.classList.add("left");
+    btnTogglePosition.classList.add("left");
+    btnTogglePosition.textContent = "Top Right";
+  } else {
+    controlButtons.classList.remove("left");
+    btnTogglePosition.classList.remove("left");
+    btnTogglePosition.textContent = "Top Left";
+  }
+  localStorage.setItem("controlPosition", pos);
+}
+
+function showModal(){
+  modal.classList.remove("hidden");
+}
+
+function hideModal(){
+  modal.classList.add("hidden");
+}
+
+function startGame(){
+  resizeGameCanvas();
+  resetGame();
+  update();
+}
+
+// On page load check saved preference
+window.addEventListener("load", () => {
+  const savedPos = localStorage.getItem("controlPosition");
+  if(savedPos){
+    setControlPosition(savedPos);
+    hideModal();
+    startGame();
+  } else {
+    showModal();
+  }
+});
+
+window.addEventListener("resize", () => {
+  resizeGameCanvas();
+});
+
 btnPause.addEventListener("click", ()=>{
   paused = !paused;
   btnPause.textContent = paused ? "Resume" : "Pause";
@@ -330,11 +527,6 @@ function update(t=0){
   if(dropCounter > dropInterval()) softDrop();
   draw();
 }
-
-// start
-resizeGameCanvas();
-resetGame();
-update();
 </script>
 </body>
 </html>
