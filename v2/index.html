@@ -3,34 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Hungry Birds v2 - Multi Levels</title>
+  
+  <meta name="description" content="Feed the giant bird by launching birds with your slingshot! Enjoy multi-level physics action and bonus rounds free in browser.">
+  <link rel="canonical" href="https://desiwizard.github.io/hungrybirds/v2/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#89cbf8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Hungry Bird V2">
-  <meta name="theme-color" content="#89cbf8">
 
-  <!-- ==================== WHATSAPP & SOCIAL MEDIA META TAGS ==================== -->
   <meta property="og:site_name" content="Hungry Birds v2">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
   <meta property="og:url" content="https://desiwizard.github.io/hungrybirds/v2/">
   <meta property="og:title" content="Hungry Birds v2 - Multi Levels">
-  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Play free in browser.">
-
-  <!-- WhatsApp Image Tags (Absolute HTTPS URLs) -->
+  <meta property="og:description" content="Feed the giant bird by launching birds with your slingshot! Enjoy multi-level physics action and bonus rounds free in browser.">
   <meta property="og:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
   <meta property="og:image:secure_url" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Hungry Birds v2 Slingshot Game Artwork">
 
-  <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@desiwizard">
   <meta name="twitter:title" content="Hungry Birds v2 - Multi Levels">
   <meta name="twitter:description" content="Feed the giant bird by launching birds with your slingshot!">
   <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/v2/v2.jpg">
 
-  <!-- Favicons & Manifest -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Hungry Birds v2 - Multi Levels",
+    "description": "Feed the giant bird by launching birds with your slingshot! Enjoy multi-level physics action free in your browser.",
+    "playPlatform": "Web Browser",
+    "applicationCategory": "Game",
+    "url": "https://desiwizard.github.io/hungrybirds/v2/",
+    "image": "https://desiwizard.github.io/hungrybirds/v2/v2.jpg"
+  }
+  </script>
+
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -146,7 +160,6 @@
       #rotate-device-overlay:not(.dismissed) { display: flex !important; }
     }
 
-    /* TOP HUD */
     .hud {
       position: absolute; 
       top: calc(8px + env(safe-area-inset-top, 0px)); 
@@ -209,7 +222,6 @@
       to { text-shadow: 0 0 14px #facc15, 0 0 24px #ca8a04; transform: scale(1.08); }
     }
 
-    /* Celebration Banner */
     #celebration-banner {
       display: none;
       position: absolute;
@@ -242,7 +254,6 @@
       transform: translate(-50%, -80%) scale(0.9);
     }
 
-    /* Modals */
     #level-modal {
       display: none;
       position: absolute;
@@ -277,7 +288,6 @@
       color: #facc15;
     }
 
-    /* 3D Spinning Gold Coin */
     .coin-anim-wrap {
       perspective: 1000px;
       margin: 8px 0;
@@ -387,7 +397,6 @@
     const modalActionBtn = document.getElementById('modal-action-btn');
     const coinWrap = document.getElementById('coin-wrap');
 
-    // ROTATE BUTTON HANDLER (Fix for phone orientation)
     const forceRotateBtn = document.getElementById("force-rotate-btn");
     const rotateOverlay = document.getElementById("rotate-device-overlay");
 
@@ -431,6 +440,7 @@
     let width = window.innerWidth;
     let height = window.innerHeight;
 
+    let animId = null;
     let animTick = 0;
     let score = 0;
     let currentLevel = 1;
@@ -444,7 +454,7 @@
     const maxDragDist = 100;
     const launchPower = 0.32;
     const gravity = 0.30;
-    const woodGravity = 0.58;
+    const woodGravity = 0.50;
 
     let isDragging = false;
     let dragPos = { x: 0, y: 0 };
@@ -482,7 +492,7 @@
     }
 
     function ensureAvailableBirdSelected() {
-      if (birdTypes[selectedBirdIndex].count <= 0) {
+      if (birdTypes[selectedBirdIndex] && birdTypes[selectedBirdIndex].count <= 0) {
         const nextIdx = birdTypes.findIndex(b => b.count > 0);
         if (nextIdx !== -1) selectedBirdIndex = nextIdx;
       }
@@ -494,7 +504,7 @@
     }
 
     function updateTargetCountHud() {
-      const aliveCount = targets.filter(t => t.alive).length;
+      const aliveCount = targets.filter(t => t && t.alive).length;
       if (targetCountEl) targetCountEl.textContent = aliveCount;
     }
 
@@ -517,12 +527,12 @@
     function launchBonusCelebration() {
       confettiList = [];
       const colors = ['#fde047', '#38bdf8', '#ec4899', '#22c55e', '#f97316', '#a855f7', '#ffffff'];
-      for (let i = 0; i < 90; i++) {
+      for (let i = 0; i < 60; i++) {
         confettiList.push({
           x: Math.random() * width,
-          y: Math.random() * -height * 0.6,
-          vx: (Math.random() - 0.5) * 3.5,
-          vy: Math.random() * 3 + 2.2,
+          y: Math.random() * -height * 0.5,
+          vx: (Math.random() - 0.5) * 3,
+          vy: Math.random() * 3 + 2,
           sizeW: Math.random() * 8 + 5,
           sizeH: Math.random() * 5 + 3,
           color: colors[Math.floor(Math.random() * colors.length)],
@@ -543,17 +553,23 @@
         celebrationBanner.classList.add('fade-banner');
         setTimeout(() => {
           celebrationBanner.style.display = 'none';
-        }, 500);
-      }, 2300);
+        }, 400);
+      }, 2000);
     }
 
     function loadLevel(lvl, isBonus = false) {
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+
       currentLevel = lvl;
       inBonusStage = isBonus;
       isLevelReady = false;
       isLevelCompleted = false;
-      modal.style.display = 'none';
-      coinWrap.style.display = 'none';
+
+      if (modal) modal.style.display = 'none';
+      if (coinWrap) coinWrap.style.display = 'none';
 
       if (inBonusStage) {
         levelLabelWrap.innerHTML = `<span class="bonus-pulse">BONUS 🌟</span>`;
@@ -572,18 +588,19 @@
       particles = [];
       confettiList = [];
       floatingScores = [];
+      isDragging = false;
+      hasFirstFired = false;
+      bigBirdFalling = false;
+      bigBirdFallY = 0;
+      bigBirdFallVy = 0;
+      bigBirdEnergy = 100;
+
       resetBirdsForLevel(inBonusStage);
 
       if (inBonusStage) {
-        // BONUS ROUND LAYOUT
         const netX = width * 0.50;
         const netH = 135;
-        obstacleNet = {
-          x: netX,
-          y: groundY - netH,
-          w: 16,
-          h: netH
-        };
+        obstacleNet = { x: netX, y: groundY - netH, w: 16, h: netH };
 
         const bx1 = width * 0.72;
         structures.push(createPiece('bn_1', 0, bx1 - 22, groundY - 46, 10, 46, true, '#d99a38'));
@@ -604,7 +621,6 @@
 
         launchBonusCelebration();
       } else {
-        // REGULAR PATTERN (1-5 Cycle)
         const cycle = ((lvl - 1) % 5) + 1;
 
         if (cycle === 1) {
@@ -625,8 +641,9 @@
           structures.push(createPiece('t2', 1, t2X - 26, groundY - 112, 52, 10, false, '#b45309', true));
           targets.push({ towerId: 't2', floor: 1, x: t2X, y: groundY - 74, vx: 0, vy: 0, r: 17, color: '#22c55e', alive: true, falling: false });
 
-          floatingPlatforms.push({ id: 'p1', x: width * 0.60, y: height * 0.35, w: 100, h: 14, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p1', x: width * 0.60, y: height * 0.35 - 16, vx: 0, vy: 0, r: 16, color: '#38bdf8', alive: true, falling: false });
+          // Hanging Jhoola
+          floatingPlatforms.push({ id: 'p1', x: width * 0.60, y: height * 0.35, w: 100, h: 14, collapsed: false, settled: false, hitDone: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p1', towerId: null, x: width * 0.60, y: height * 0.35 - 16, vx: 0, vy: 0, r: 16, color: '#38bdf8', alive: true, falling: false });
 
         } else if (cycle === 2) {
           const fx = width * 0.76;
@@ -640,11 +657,11 @@
           structures.push(createPiece('f1', 1, fx - 42, groundY - 120, 84, 10, false, '#b45309', true));
           targets.push({ towerId: 'f1', floor: 1, x: fx - 5, y: groundY - 80, vx: 0, vy: 0, r: 16, color: '#eab308', alive: true, falling: false });
 
-          floatingPlatforms.push({ id: 'p2_1', x: width * 0.52, y: height * 0.38, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p2_1', x: width * 0.52, y: height * 0.38 - 14, vx: 0, vy: 0, r: 14, color: '#a855f7', alive: true, falling: false });
+          floatingPlatforms.push({ id: 'p2_1', x: width * 0.52, y: height * 0.38, w: 80, h: 12, collapsed: false, settled: false, hitDone: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p2_1', towerId: null, x: width * 0.52, y: height * 0.38 - 14, vx: 0, vy: 0, r: 14, color: '#a855f7', alive: true, falling: false });
 
-          floatingPlatforms.push({ id: 'p2_2', x: width * 0.63, y: height * 0.22, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p2_2', x: width * 0.63, y: height * 0.22 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
+          floatingPlatforms.push({ id: 'p2_2', x: width * 0.63, y: height * 0.22, w: 80, h: 12, collapsed: false, settled: false, hitDone: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p2_2', towerId: null, x: width * 0.63, y: height * 0.22 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
 
         } else if (cycle === 3) {
           const sx = width * 0.80;
@@ -659,8 +676,8 @@
           const wallX = width * 0.68;
           structures.push(createPiece('wall', 0, wallX, groundY - 60, 16, 60, true, '#78350f'));
 
-          floatingPlatforms.push({ id: 'p3_1', x: width * 0.50, y: height * 0.30, w: 90, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p3_1', x: width * 0.50, y: height * 0.30 - 14, vx: 0, vy: 0, r: 15, color: '#f59e0b', alive: true, falling: false });
+          floatingPlatforms.push({ id: 'p3_1', x: width * 0.50, y: height * 0.30, w: 90, h: 12, collapsed: false, settled: false, hitDone: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p3_1', towerId: null, x: width * 0.50, y: height * 0.30 - 14, vx: 0, vy: 0, r: 15, color: '#f59e0b', alive: true, falling: false });
 
         } else if (cycle === 4) {
           const q1X = width * 0.72;
@@ -678,8 +695,8 @@
             targets.push({ towerId: `tw_${idx}`, floor: 1, x: tx - 4, y: groundY - 76, vx: 0, vy: 0, r: 15, color: '#ec4899', alive: true, falling: false });
           });
 
-          floatingPlatforms.push({ id: 'p4_1', x: width * 0.52, y: height * 0.28, w: 85, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p4_1', x: width * 0.52, y: height * 0.28 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
+          floatingPlatforms.push({ id: 'p4_1', x: width * 0.52, y: height * 0.28, w: 85, h: 12, collapsed: false, settled: false, hitDone: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p4_1', towerId: null, x: width * 0.52, y: height * 0.28 - 14, vx: 0, vy: 0, r: 14, color: '#06b6d4', alive: true, falling: false });
 
         } else if (cycle === 5) {
           const cx = width * 0.78;
@@ -694,28 +711,27 @@
           structures.push(createPiece('shield', 0, cx - 58, groundY - 65, 14, 65, true, '#78350f'));
           structures.push(createPiece('shield', 0, cx + 46, groundY - 65, 14, 65, true, '#78350f'));
 
-          floatingPlatforms.push({ id: 'p5_1', x: width * 0.56, y: height * 0.24, w: 80, h: 12, collapsed: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
-          targets.push({ platformId: 'p5_1', x: width * 0.56, y: height * 0.24 - 14, vx: 0, vy: 0, r: 14, color: '#22c55e', alive: true, falling: false });
+          floatingPlatforms.push({ id: 'p5_1', x: width * 0.56, y: height * 0.24, w: 80, h: 12, collapsed: false, settled: false, hitDone: false, vx: 0, vy: 0, angle: 0, va: 0, alpha: 1, restTimer: 0 });
+          targets.push({ platformId: 'p5_1', towerId: null, x: width * 0.56, y: height * 0.24 - 14, vx: 0, vy: 0, r: 14, color: '#22c55e', alive: true, falling: false });
         }
       }
 
       updateTargetCountHud();
-      setTimeout(() => { isLevelReady = true; }, 400);
+      isLevelReady = true;
+      render();
     }
 
     function checkLevelState() {
       if (!isLevelReady || isLevelCompleted) return;
 
-      const remainingTargets = targets.filter(t => t.alive).length;
+      const remainingTargets = targets.filter(t => t && t.alive).length;
       const totalBirds = birdTypes.reduce((sum, b) => sum + b.count, 0);
 
-      // VICTORY
       if (targets.length > 0 && remainingTargets === 0) {
         isLevelCompleted = true;
 
         setTimeout(() => {
           if (inBonusStage) {
-            // BONUS ROUND WON
             const leftoverBirds = totalBirds;
             const bonusReward = leftoverBirds * 500;
             addScore(bonusReward);
@@ -723,78 +739,83 @@
             coinWrap.style.display = 'block';
             modalTitle.textContent = `Bonus Cleared! 🌟`;
             modalDesc.innerHTML = `
-              <b>${leftoverBirds}</b> Birds Remaining × 500 = <span style="color:#facc15; font-size:18px; font-weight:900;">+${bonusReward} BONUS PTS!</span><br>
+              <b>${leftoverBirds}</b> Birds Left = <span style="color:#facc15; font-size:18px; font-weight:900;">+${bonusReward} PTS!</span><br>
               Total Score: <b>${score}</b>
             `;
             if (currentLevel < maxGameLevels) {
-              modalActionBtn.textContent = `Next Level ${currentLevel + 1} ➔`;
-              modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
+              modalActionBtn.textContent = `Level ${currentLevel + 1} ➔`;
+              modalActionBtn.onclick = () => {
+                modal.style.display = 'none';
+                loadLevel(currentLevel + 1, false);
+              };
             } else {
               modalActionBtn.textContent = 'Restart Game 🔄';
-              modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1, false); };
+              modalActionBtn.onclick = () => {
+                modal.style.display = 'none';
+                score = 0;
+                addScore(0);
+                loadLevel(1, false);
+              };
             }
           }
           else if (currentLevel % 5 === 0) {
-            // TRIGGER PERIODIC BONUS (Every 5 levels)
             coinWrap.style.display = 'none';
             modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
             modalDesc.textContent = `Get ready for the Bonus Challenge!`;
             modalActionBtn.textContent = 'Play Bonus Round ➔';
-            modalActionBtn.onclick = () => loadLevel(currentLevel, true);
+            modalActionBtn.onclick = () => {
+              modal.style.display = 'none';
+              loadLevel(currentLevel, true);
+            };
           }
           else if (currentLevel < maxGameLevels) {
             coinWrap.style.display = 'none';
             modalTitle.textContent = `Level ${currentLevel} Cleared! 🎉`;
             modalDesc.textContent = `Ready for Level ${currentLevel + 1}?`;
             modalActionBtn.textContent = 'Next Level ➔';
-            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
+            modalActionBtn.onclick = () => {
+              modal.style.display = 'none';
+              loadLevel(currentLevel + 1, false);
+            };
           } else {
             coinWrap.style.display = 'none';
             modalTitle.textContent = `Champion! All Levels Won! 🏆`;
             modalDesc.textContent = `Final Score: ${score}`;
             modalActionBtn.textContent = 'Play Again 🔄';
-            modalActionBtn.onclick = () => { score = 0; addScore(0); loadLevel(1, false); };
+            modalActionBtn.onclick = () => {
+              modal.style.display = 'none';
+              score = 0;
+              addScore(0);
+              loadLevel(1, false);
+            };
           }
           modal.style.display = 'flex';
-        }, 1000);
+        }, 500);
       }
-      // GIANT BIRD STARVED
-      else if (bigBirdEnergy <= 0 && !isLevelCompleted) {
+      else if ((bigBirdEnergy <= 0 || (totalBirds === 0 && flyingBirds.length === 0 && remainingTargets > 0)) && !isLevelCompleted) {
         isLevelCompleted = true;
+
         setTimeout(() => {
           coinWrap.style.display = 'none';
           if (inBonusStage) {
             modalTitle.textContent = `So Close!`;
             modalDesc.textContent = `Better luck next time!`;
             modalActionBtn.textContent = `Continue to Level ${currentLevel + 1} ➔`;
-            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
+            modalActionBtn.onclick = () => {
+              modal.style.display = 'none';
+              loadLevel(currentLevel + 1, false);
+            };
           } else {
-            modalTitle.textContent = `Giant Bird Starved! 💀`;
-            modalDesc.textContent = `Energy depleted! Keep the giant bird fed.`;
+            modalTitle.textContent = (bigBirdEnergy <= 0) ? `Giant Bird Starved! 💀` : `Level Failed! 😢`;
+            modalDesc.textContent = (bigBirdEnergy <= 0) ? `Energy depleted! Keep the giant bird fed.` : `${remainingTargets} targets remained unbroken.`;
             modalActionBtn.textContent = 'Retry Level 🔄';
-            modalActionBtn.onclick = () => loadLevel(currentLevel, false);
+            modalActionBtn.onclick = () => {
+              modal.style.display = 'none';
+              loadLevel(currentLevel, false);
+            };
           }
           modal.style.display = 'flex';
-        }, 1200);
-      }
-      // OUT OF BIRDS
-      else if (totalBirds === 0 && flyingBirds.length === 0 && remainingTargets > 0) {
-        isLevelCompleted = true;
-        setTimeout(() => {
-          coinWrap.style.display = 'none';
-          if (inBonusStage) {
-            modalTitle.textContent = `So Close!`;
-            modalDesc.textContent = `Better luck next time!`;
-            modalActionBtn.textContent = `Continue to Level ${currentLevel + 1} ➔`;
-            modalActionBtn.onclick = () => loadLevel(currentLevel + 1, false);
-          } else {
-            modalTitle.textContent = `Level Failed! 😢`;
-            modalDesc.textContent = `${remainingTargets} targets remained unbroken.`;
-            modalActionBtn.textContent = 'Retry Level 🔄';
-            modalActionBtn.onclick = () => loadLevel(currentLevel, false);
-          }
-          modal.style.display = 'flex';
-        }, 1200);
+        }, 500);
       }
     }
 
@@ -803,19 +824,21 @@
       height = window.innerHeight;
       canvas.width = width;
       canvas.height = height;
-      loadLevel(currentLevel, inBonusStage);
+      if (!isLevelCompleted) {
+        loadLevel(currentLevel, inBonusStage);
+      }
     }
     window.addEventListener('resize', resizeCanvas);
 
-    function spawnExplosion(x, y, color, count = 18) {
+    function spawnExplosion(x, y, color, count = 12) {
       for (let i = 0; i < count; i++) {
-        const speed = Math.random() * 5 + 1.5;
+        const speed = Math.random() * 3.5 + 1.2;
         const angle = Math.random() * Math.PI * 2;
         particles.push({
           x, y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed - 1,
-          size: Math.random() * 4 + 2,
+          size: Math.random() * 3 + 2,
           color,
           alpha: 1,
           decay: Math.random() * 0.04 + 0.02
@@ -828,17 +851,17 @@
     }
 
     function triggerBombExplosion(bombX, bombY) {
-      const blastRadius = 140;
+      const blastRadius = 130;
 
-      for (let i = 0; i < 48; i++) {
-        const speed = Math.random() * 9 + 2;
+      for (let i = 0; i < 35; i++) {
+        const speed = Math.random() * 7 + 2;
         const angle = Math.random() * Math.PI * 2;
         particles.push({
           x: bombX,
           y: bombY,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed - 2,
-          size: Math.random() * 8 + 4,
+          size: Math.random() * 6 + 3,
           color: (i % 3 === 0) ? '#f97316' : ((i % 3 === 1) ? '#ef4444' : '#1e293b'),
           alpha: 1,
           decay: Math.random() * 0.03 + 0.015
@@ -851,18 +874,19 @@
         const p = structures[i];
         const dist = Math.hypot((p.x + p.w / 2) - bombX, (p.y + p.h / 2) - bombY);
         if (dist < blastRadius) {
-          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 16);
+          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 10);
           structures.splice(i, 1);
           addScore(150);
         }
       }
 
       targets.forEach(t => {
-        if (t.alive) {
+        if (t && t.alive) {
           const dist = Math.hypot(t.x - bombX, t.y - bombY);
           if (dist < blastRadius) {
             t.alive = false;
-            spawnExplosion(t.x, t.y, t.color, 28);
+            t.falling = false;
+            spawnExplosion(t.x, t.y, t.color, 16);
             addFloatingScore(t.x, t.y - 20, '+1000');
             addScore(1000);
             updateTargetCountHud();
@@ -875,13 +899,14 @@
         if (!fp.collapsed) {
           const distPlat = Math.hypot(fp.x - bombX, fp.y - bombY);
           if (distPlat < blastRadius + 20) {
-            collapseFloatingPlatform(fp, 5);
+            collapseFloatingPlatform(fp, 4);
           }
         }
       });
     }
 
     function triggerCascadeFall(towerId, floor) {
+      if (!towerId) return;
       structures.forEach(p => {
         if (p.towerId === towerId && p.floor >= floor && !p.collapsed) {
           p.collapsed = true;
@@ -892,7 +917,7 @@
       });
 
       targets.forEach(t => {
-        if (t.towerId === towerId && t.floor >= floor && t.alive) {
+        if (t && t.towerId && t.towerId === towerId && t.floor >= floor && t.alive) {
           t.falling = true;
           t.vy = 2.5;
           t.vx = (Math.random() * 2 - 1);
@@ -904,8 +929,8 @@
       for (let i = structures.length - 1; i >= 0; i--) {
         const p = structures[i];
         const dist = Math.hypot(p.x + p.w / 2 - hitX, p.y + p.h / 2 - hitY);
-        if (dist < 80) {
-          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 14);
+        if (dist < 75) {
+          spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 10);
           const tId = p.towerId;
           const fl = p.floor;
           structures.splice(i, 1);
@@ -915,11 +940,12 @@
       }
 
       targets.forEach(t => {
-        if (t.alive) {
+        if (t && t.alive) {
           const dist = Math.hypot(t.x - hitX, t.y - hitY);
-          if (dist < 65) {
+          if (dist < 60) {
             t.alive = false;
-            spawnExplosion(t.x, t.y, t.color, 24);
+            t.falling = false;
+            spawnExplosion(t.x, t.y, t.color, 16);
             addFloatingScore(t.x, t.y - 20, '+1000');
             addScore(1000);
             updateTargetCountHud();
@@ -929,27 +955,30 @@
     }
 
     function collapseFloatingPlatform(fp, hitPower = 3) {
-      if (!fp.collapsed) {
-        fp.collapsed = true;
-        fp.vx = (hitPower * 0.4) + (Math.random() * 2 - 1);
-        fp.vy = 2.2;
-        fp.va = (Math.random() * 0.1) - 0.05;
-        spawnExplosion(fp.x, fp.y, '#854d0e', 14);
-        addFloatingScore(fp.x, fp.y - 15, 'Platform Cut!');
-        addScore(250);
+      if (!fp || fp.collapsed) return;
+      fp.collapsed = true;
+      fp.settled = false;
+      fp.hitDone = false;
+      fp.vx = (hitPower * 0.3) + (Math.random() * 1.5 - 0.75);
+      fp.vy = 2.0;
+      fp.va = (Math.random() * 0.08) - 0.04;
+      spawnExplosion(fp.x, fp.y, '#854d0e', 10);
+      addFloatingScore(fp.x, fp.y - 15, 'Platform Hit!');
+      addScore(250);
 
-        targets.forEach(t => {
-          if (t.platformId === fp.id && t.alive) {
-            t.falling = true;
-            t.vx = fp.vx;
-            t.vy = fp.vy + 1.2;
-          }
-        });
-      }
+      targets.forEach(t => {
+        if (t && t.platformId === fp.id && t.alive) {
+          t.falling = true;
+          t.vx = fp.vx * 0.6;
+          t.vy = 2.2;
+        }
+      });
     }
 
     function checkStructuralIntegrity(groundY) {
-      structures.forEach(piece => {
+      if (animTick % 6 !== 0) return;
+      for (let i = 0; i < structures.length; i++) {
+        const piece = structures[i];
         if (!piece.collapsed) {
           const isOnGround = Math.abs((piece.y + piece.h) - groundY) < 14;
 
@@ -972,7 +1001,7 @@
             }
           }
         }
-      });
+      }
     }
 
     function drawObstacleNet() {
@@ -989,7 +1018,7 @@
 
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
       ctx.lineWidth = 1;
-      for (let y = obstacleNet.y + 12; y < obstacleNet.y + obstacleNet.h; y += 8) {
+      for (let y = obstacleNet.y + 12; y < obstacleNet.y + obstacleNet.h; y += 10) {
         ctx.beginPath();
         ctx.moveTo(obstacleNet.x, y);
         ctx.lineTo(obstacleNet.x + obstacleNet.w, y);
@@ -1153,7 +1182,6 @@
         ctx.fill();
       }
 
-      // HEALTH BADGE
       const bY = branchY + 36;
       const bVal = Math.max(0, Math.ceil(bigBirdEnergy));
       let bColor = '#2ed573';
@@ -1319,63 +1347,82 @@
       let simVy = vy;
 
       ctx.save();
-      for (let step = 0; step < 30; step++) {
+      for (let step = 0; step < 26; step++) {
         simX += simVx;
         simY += simVy;
         simVy += gravity;
         if (simY > groundY) break;
 
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.15, 0.95 - (step * 0.03))})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.15, 0.95 - (step * 0.035))})`;
         ctx.beginPath();
-        ctx.arc(simX, simY, Math.max(2, 4.5 - (step * 0.08)), 0, Math.PI * 2);
+        ctx.arc(simX, simY, Math.max(2, 4.2 - (step * 0.09)), 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.restore();
     }
 
+    // 100% STABLE FLOATING PLATFORMS (JHOOLA)
     function drawFloatingPlatforms(groundY) {
       for (let i = floatingPlatforms.length - 1; i >= 0; i--) {
         const fp = floatingPlatforms[i];
 
-        if (fp.collapsed) {
+        if (fp.collapsed && !fp.settled) {
           fp.x += fp.vx;
           fp.y += fp.vy;
           fp.vy += woodGravity;
           fp.angle += fp.va;
 
+          // Side wall bounce
           if (fp.x + fp.w / 2 >= width - 6) {
             fp.x = width - 6 - fp.w / 2;
-            fp.vx = -Math.abs(fp.vx) * 0.4;
+            fp.vx = -Math.abs(fp.vx) * 0.3;
           }
 
-          structures.forEach(p => {
-            if (!p.collapsed) {
-              const hitDist = Math.hypot((p.x + p.w / 2) - fp.x, (p.y + p.h / 2) - fp.y);
-              if (hitDist < 45) {
-                spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 12);
-                triggerCascadeFall(p.towerId, p.floor);
-                addScore(100);
+          // SAFE IMPACT ON BOXES
+          if (!fp.hitDone) {
+            const fpCx = fp.x;
+            const fpCy = fp.y + fp.h / 2;
+
+            for (let sIdx = 0; sIdx < structures.length; sIdx++) {
+              const p = structures[sIdx];
+              if (!p.collapsed) {
+                const pCx = p.x + p.w / 2;
+                const pCy = p.y + p.h / 2;
+
+                if (Math.abs(fpCx - pCx) < (fp.w / 2 + p.w / 2) &&
+                    Math.abs(fpCy - pCy) < (fp.h / 2 + p.h / 2 + 8)) {
+                  
+                  fp.hitDone = true;
+                  p.collapsed = true;
+                  p.vy = 3.0;
+                  p.vx = (Math.random() - 0.5) * 3;
+                  spawnExplosion(pCx, pCy, p.color, 12);
+                  addScore(150);
+                  triggerCascadeFall(p.towerId, p.floor);
+
+                  fp.vy *= 0.4;
+                  break;
+                }
               }
             }
-          });
+          }
 
+          // Ground Impact
           if (fp.y + fp.h >= groundY) {
             fp.y = groundY - fp.h;
-            fp.vy = -fp.vy * 0.15;
-            fp.vx *= 0.70;
-            fp.va *= 0.60;
-            if (Math.abs(fp.vy) < 0.3) fp.vy = 0;
-            if (Math.abs(fp.vx) < 0.1) fp.vx = 0;
-            if (Math.abs(fp.va) < 0.01) fp.va = 0;
-
-            fp.restTimer++;
-            if (fp.restTimer > 60) {
-              fp.alpha -= 0.035;
-              if (fp.alpha <= 0) {
-                spawnExplosion(fp.x, fp.y, '#854d0e', 6);
-                floatingPlatforms.splice(i, 1);
-                continue;
-              }
+            fp.settled = true;
+            fp.vx = 0;
+            fp.vy = 0;
+            fp.va = 0;
+            spawnExplosion(fp.x, groundY - 6, '#854d0e', 6);
+          }
+        } else if (fp.settled) {
+          fp.restTimer++;
+          if (fp.restTimer > 35) {
+            fp.alpha -= 0.04;
+            if (fp.alpha <= 0) {
+              floatingPlatforms.splice(i, 1);
+              continue;
             }
           }
         }
@@ -1467,7 +1514,6 @@
         }
       }
 
-      // Sky Background
       ctx.fillStyle = '#89cbf8';
       ctx.fillRect(0, 0, width, height);
 
@@ -1492,21 +1538,16 @@
       ctx.closePath();
       ctx.fill();
 
-      // Ground
       ctx.fillStyle = '#42281d';
       ctx.fillRect(0, groundY, width, groundH);
       ctx.fillStyle = '#55a234';
       ctx.fillRect(0, groundY, width, 14);
 
-      // Draw Tree, Big Bird & Deck
       drawTree(groundY);
       drawBigBird(groundY);
       drawBirdGridDeck(groundY);
-
-      // Draw Obstacle Net in Bonus Level
       drawObstacleNet();
 
-      // Slingshot
       const treeX = Math.max(width * 0.065, 55);
       const sx = treeX + 175;
       const sy = groundY - 105;
@@ -1590,12 +1631,11 @@
 
         let birdExploded = false;
 
-        // Obstacle Net Collision (Bonus Round)
         if (obstacleNet) {
           const hitNetX = (fb.x >= obstacleNet.x - 14 && fb.x <= obstacleNet.x + obstacleNet.w + 14);
           const hitNetY = (fb.y >= obstacleNet.y && fb.y <= groundY);
           if (hitNetX && hitNetY) {
-            spawnExplosion(fb.x, fb.y, '#f8fafc', 10);
+            spawnExplosion(fb.x, fb.y, '#f8fafc', 8);
             fb.vx = -Math.abs(fb.vx) * 0.25;
             fb.vy = 2.0;
           }
@@ -1603,7 +1643,7 @@
 
         // Targets Collision
         for (let t of targets) {
-          if (t.alive) {
+          if (t && t.alive) {
             const dist = Math.hypot(fb.x - t.x, fb.y - t.y);
             if (dist < 15 + t.r) {
               if (fb.id === 'black') {
@@ -1614,7 +1654,8 @@
               }
 
               t.alive = false;
-              spawnExplosion(t.x, t.y, t.color, 24);
+              t.falling = false;
+              spawnExplosion(t.x, t.y, t.color, 16);
               addFloatingScore(t.x, t.y - 20, '+1000');
               addScore(1000);
               updateTargetCountHud();
@@ -1622,7 +1663,7 @@
 
               if (t.platformId) {
                 const plat = floatingPlatforms.find(p => p.id === t.platformId);
-                if (plat) collapseFloatingPlatform(plat, 4);
+                if (plat) collapseFloatingPlatform(plat, 3);
               }
 
               breakStructureNear(t.x, t.y, 4);
@@ -1649,7 +1690,7 @@
                 break;
               }
               collapseFloatingPlatform(fp, Math.abs(fb.vx));
-              spawnExplosion(fb.x, fb.y, '#94a3b8', 12);
+              spawnExplosion(fb.x, fb.y, '#94a3b8', 10);
               fb.vx *= -0.3;
               fb.vy = 1.0;
             }
@@ -1686,7 +1727,7 @@
               break;
             }
 
-            spawnExplosion(nearestX, nearestY, p.color, 14);
+            spawnExplosion(nearestX, nearestY, p.color, 10);
             addScore(150);
             const tId = p.towerId;
             const fl = p.floor;
@@ -1719,7 +1760,7 @@
         }
       }
 
-      // Structures Physics
+      // FIXED: STRUCTURES PHYSICS (CRASH FREE SETTLING)
       for (let i = structures.length - 1; i >= 0; i--) {
         const p = structures[i];
 
@@ -1739,27 +1780,30 @@
             p.vy = -p.vy * 0.15;
             p.vx *= 0.70;
             p.va *= 0.60;
-            if (Math.abs(p.vy) < 0.3) fp.vy = 0;
+            
+            // CORRECTED: 'p' used instead of undefined 'fp'
+            if (Math.abs(p.vy) < 0.3) p.vy = 0;
             if (Math.abs(p.vx) < 0.1) p.vx = 0;
             if (Math.abs(p.va) < 0.01) p.va = 0;
           }
 
           p.restTimer++;
-          if (p.restTimer > 45) {
+          if (p.restTimer > 40) {
             p.alpha -= 0.045;
             if (p.alpha <= 0) {
-              spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 6);
+              spawnExplosion(p.x + p.w / 2, p.y + p.h / 2, p.color, 4);
               structures.splice(i, 1);
               continue;
             }
           }
 
           for (let t of targets) {
-            if (t.alive) {
+            if (t && t.alive) {
               const dist = Math.hypot(t.x - (p.x + p.w / 2), t.y - (p.y + p.h / 2));
-              if (dist < t.r + 20) {
+              if (dist < t.r + 18) {
                 t.alive = false;
-                spawnExplosion(t.x, t.y, t.color, 24);
+                t.falling = false;
+                spawnExplosion(t.x, t.y, t.color, 16);
                 addFloatingScore(t.x, t.y - 20, '+1000');
                 addScore(1000);
                 updateTargetCountHud();
@@ -1781,18 +1825,21 @@
         ctx.restore();
       }
 
-      // Targets Physics
+      // TARGETS (FOOD) PHYSICS
       for (let t of targets) {
-        if (t.alive) {
+        if (t && t.alive) {
           if (t.falling) {
             t.x += t.vx;
             t.y += t.vy;
             t.vy += woodGravity;
 
-            if (t.y + t.r >= groundY - 4 || t.x + t.r >= width - 12) {
+            if (t.y + t.r >= groundY - 4 || t.x + t.r >= width - 10) {
               t.alive = false;
-              spawnExplosion(Math.min(t.x, width - 20), groundY - 10, t.color, 24);
-              addFloatingScore(Math.min(t.x, width - 30), groundY - 24, '+1000');
+              t.falling = false;
+              const hitX = Math.min(Math.max(t.x, 20), width - 20);
+              const hitY = groundY - 10;
+              spawnExplosion(hitX, hitY, t.color, 16);
+              addFloatingScore(hitX, hitY - 20, '+1000');
               addScore(1000);
               updateTargetCountHud();
               bigBirdEnergy = Math.min(100, bigBirdEnergy + 25);
@@ -1828,15 +1875,13 @@
         }
       }
 
-      // Confetti & Celebration rendering
       drawConfetti();
 
-      // Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += gravity * 0.4;
+        p.vy += gravity * 0.35;
         p.alpha -= p.decay;
 
         if (p.alpha <= 0) {
@@ -1850,7 +1895,6 @@
         }
       }
 
-      // Floating Scores
       for (let i = floatingScores.length - 1; i >= 0; i--) {
         const fs = floatingScores[i];
         fs.y -= 1.2;
@@ -1870,7 +1914,7 @@
       }
 
       checkLevelState();
-      requestAnimationFrame(render);
+      animId = requestAnimationFrame(render);
     }
 
     function getCoords(e) {
@@ -1899,7 +1943,7 @@
         if (pos.x >= hb.x - (hb.w / 2) && pos.x <= hb.x + (hb.w / 2) &&
             pos.y >= hb.y - (hb.h / 2) && pos.y <= hb.y + (hb.h / 2)) {
           gridClicked = true;
-          if (birdTypes[hb.index].count > 0) {
+          if (birdTypes[hb.index] && birdTypes[hb.index].count > 0) {
             selectedBirdIndex = hb.index;
           }
           break;
@@ -1978,8 +2022,12 @@
       loadLevel(currentLevel, inBonusStage);
     });
 
-    resizeCanvas();
-    render();
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    loadLevel(1, false);
   </script>
 </body>
 </html>
