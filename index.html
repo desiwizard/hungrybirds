@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +7,7 @@
   <meta name="description" content="Feed the giant bird by launching birds with your slingshot! Play multi-stage physics action and boss fights free in your browser.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
-  <!-- Canonical URL (Exact match with scanner without trailing slash) -->
+  <!-- Canonical URL (Matched without trailing slash) -->
   <link rel="canonical" href="https://desiwizard.github.io/hungrybirds">
   
   <meta name="theme-color" content="#87CEEB">
@@ -32,7 +31,7 @@
   <meta property="og:image:alt" content="Hungry Bird Game Artwork">
   <meta property="fb:app_id" content="966242223397117">
 
-  <!-- Twitter / X Meta Tags (Fixed twitter:site tip) -->
+  <!-- Twitter / X Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@desiwizard">
   <meta name="twitter:title" content="Hungry Bird: Energy Feast">
@@ -40,7 +39,7 @@
   <meta name="twitter:image" content="https://desiwizard.github.io/hungrybirds/bird.jpeg">
   <meta name="twitter:image:alt" content="Hungry Bird Game Artwork">
 
-  <!-- Favicons & Manifest (SVG Tip 100% Fixed) -->
+  <!-- Favicons & Manifest -->
   <link rel="icon" type="image/svg+xml" href="https://desiwizard.github.io/hungrybirds/favicon.svg">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -73,8 +72,20 @@
       overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       touch-action: none; position: fixed; inset: 0;
     }
-    #game-container { position: relative; width: 100vw; height: 100vh; background: #87CEEB; overflow: hidden; }
-    canvas { width: 100%; height: 100%; display: block; touch-action: none; background-color: #87CEEB; }
+        #game-container { 
+      position: relative; 
+      width: 100vw; 
+      height: 100vh; 
+      background: #87CEEB; 
+      overflow: hidden; 
+    }
+    canvas { 
+      width: 100vw; 
+      height: 100vh; 
+      display: block; 
+      touch-action: none; 
+      background-color: #87CEEB; 
+    }
     
     .hud {
       position: absolute; 
@@ -102,7 +113,6 @@
       border: 1px solid rgba(255,255,255,0.18);
     }
 
-    /* HIGH-CONTRAST GLOWING HEALTH BADGE */
     #bird-energy-clock {
       position: absolute;
       top: 50%;
@@ -306,7 +316,6 @@
       display: none;
     }
 
-    /* BONUS BANNER & COIN ANIMATION */
     #bonus-banner {
       position: absolute;
       top: 24%;
@@ -527,6 +536,7 @@
   </div>
 
   <div id="bonus-banner">★ BONUS ROUND UNLOCKED! ★</div>
+  <div id="friendly-fire-banner">⚠️ OUCH! FRIENDLY FIRE!<br><span style="font-size:16px; color:#fff;">-50% ENERGY</span></div>
 
   <button id="fs-btn" title="Toggle Fullscreen">⛶</button>
 
@@ -608,7 +618,7 @@
 
         <div class="rules-card" style="margin-bottom: 6px;">
           🎯 <b>How to Play:</b> Drag bird back on slingshot, aim & release to smash towers!<br>
-          🦅 <b>Boss Challenge:</b> Defeat the 3-HP Guardian Eagle at Level 10 Bonus!<br>
+          🦅 <b>Boss Challenge:</b> Defeat the 4-HP Guardian Eagle at Level 10 Bonus!<br>
           ⭐ <b>Star Bonus:</b> Earn Stars (+100 pts / +500 pts Bonus) for unused birds!
         </div>
 
@@ -694,7 +704,7 @@
 
     <div class="rules-card" style="max-width: 580px; margin-bottom: 10px; font-size: 11px; line-height: 1.45;">
       🪵 <b>Materials:</b> Wood (1 Hit) • Stone (2 Hits) • Iron (3 Hits)<br>
-      🦅 <b>Boss Challenge:</b> Hit Giant Guardian Eagle 3 times to break shield!<br>
+      🦅 <b>Boss Challenge:</b> Hit Giant Guardian Eagle 4 times to break shield!<br>
       🍔 <b>Objective:</b> Drag bird on slingshot and clear all food into Giant Bird's mouth!
     </div>
 
@@ -861,7 +871,7 @@ function getDeviceInfo() {
   let browser = "Unknown Browser";
   if (/SamsungBrowser/i.test(ua)) browser = "Samsung Browser";
   else if (/Edg/i.test(ua)) browser = "Edge";
-  else if (/Chrome/i.test(ua)) browser = "Chrome";
+  else if (/Chrome/i.test(ua) && !/Chromium/i.test(ua)) browser = "Chrome";
   else if (/Safari/i.test(ua)) browser = "Safari";
   else if (/Firefox/i.test(ua)) browser = "Firefox";
   else if (/OPR|Opera/i.test(ua)) browser = "Opera";
@@ -1219,7 +1229,7 @@ function getCurrentTier() {
   return EVOLUTIONS[index];
 }
 
-const SLING_X = 220;
+const SLING_X = 175;
 const SLING_Y = 385;
 const MAX_DRAG = 85;
 const GROUND_Y = 470;
@@ -1311,6 +1321,7 @@ function initLevel() {
   bigBird.falling = false;
   bigBird.landed = false;
 
+  // Level 10 Boss Round remains 8 birds; Level 11 onwards gets 12 birds
   if (isBonusLevel()) {
     birdsLeft = 8;
     spawnConfetti();
@@ -1333,13 +1344,13 @@ function initLevel() {
     if (bonusType === 'boss_eagle') {
       bossEagle = {
         x: 480,
-        baseY: 260,
-        y: 260,
+        baseY: 275,
+        y: 275,
         vx: 0,
         vy: 0,
         r: 34,
-        maxHp: 3,
-        hp: 3,
+        maxHp: 4,
+        hp: 4,
         hitCooldown: 0,
         alive: true,
         defeated: false,
@@ -1388,12 +1399,12 @@ function initLevel() {
       const SHIELD_H = 130;
       
       blocks.push({
-        id: 'metal_bunker_wall', towerId: 99, floor: 0, isPillar: true,
+        id: 'metal_bunker_wall', towerId: 99, floor: 0, isPillar: true, isMetalShield: true,
         type: 'iron', x: shieldX, y: GROUND_Y - SHIELD_H, w: 22, h: SHIELD_H, vy: 0,
         hitsLeft: 999, maxHits: 999, color: '#37474F', falling: false, rotation: 0
       });
       blocks.push({
-        id: 'metal_bunker_top', towerId: 99, floor: 0, isRoof: true,
+        id: 'metal_bunker_top', towerId: 99, floor: 0, isRoof: true, isMetalShield: true,
         type: 'iron', x: shieldX - 8, y: GROUND_Y - SHIELD_H - 14, w: 38, h: 14, vy: 0,
         hitsLeft: 999, maxHits: 999, color: '#263238', falling: false, rotation: 0
       });
@@ -1535,7 +1546,8 @@ function resetBird() {
 
 function onBirdFinishFlight() {
   const remainingFoods = foods.filter(f => f.alive).length + foodFlights.length;
-  if (birdsLeft <= 0 && remainingFoods > 0) {
+  const isBossStillAlive = (isBonusLevel() && bonusType === 'boss_eagle' && bossEagle && bossEagle.alive);
+  if (birdsLeft <= 0 && (remainingFoods > 0 || isBossStillAlive)) {
     if (isBonusLevel()) {
       handleBonusMiss();
     } else {
@@ -1548,8 +1560,8 @@ function onBirdFinishFlight() {
 
 function getCoords(e) {
   const rect = canvas.getBoundingClientRect();
-  const cx = e.touches ? e.touches[0].clientX : e.clientX;
-  const cy = e.touches ? e.touches[0].clientY : e.clientY;
+  const cx = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+  const cy = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
   return {
     x: (cx - rect.left) * (canvas.width / rect.width),
     y: (cy - rect.top) * (canvas.height / rect.height)
@@ -1635,10 +1647,11 @@ function loop() {
       }
     }
 
+    // GUARDIAN EAGLE BOSS UPDATE (FAST TIMED OBSTRUCTION MOTION)
     if (bossEagle) {
       if (bossEagle.hitCooldown > 0) bossEagle.hitCooldown--;
       if (bossEagle.alive) {
-        bossEagle.y = bossEagle.baseY + Math.sin(gameTick * 0.045) * 42;
+        bossEagle.y = bossEagle.baseY + Math.sin(gameTick * 0.12) * 145;
       } else if (bossEagle.defeated && bossEagle.y < GROUND_Y + 100) {
         bossEagle.vy += 0.45;
         bossEagle.y += bossEagle.vy;
@@ -1652,6 +1665,7 @@ function loop() {
       bird.x += bird.vx;
       bird.y += bird.vy;
 
+      // BOSS EAGLE COLLISION (4 HITS)
       if (bossEagle && bossEagle.alive) {
         const distBoss = Math.hypot(bird.x - bossEagle.x, bird.y - bossEagle.y);
         if (distBoss < bird.r + bossEagle.r && bossEagle.hitCooldown <= 0) {
@@ -1670,10 +1684,30 @@ function loop() {
             score += 1500;
             spawnDebris(bossEagle.x, bossEagle.y, '#e11d48');
             spawnDebris(bossEagle.x, bossEagle.y, '#facc15');
+            setTimeout(checkAllFoodFinished, 400);
           }
 
           bird.vx = -bird.vx * 0.45;
           bird.vy = Math.min(2.0, bird.vy * 0.5);
+        }
+      }
+
+      
+      // FRIENDLY FIRE COLLISION (Reverse Shot into Big Bird)
+      if (bird.vx < 0 && !bigBird.falling) {
+        const distBigBird = Math.hypot(bird.x - bigBird.x, bird.y - bigBird.y);
+        if (distBigBird < bird.r + 32) {
+          energy = Math.max(0, energy * 0.5);
+          showFriendlyFireAlert();
+          screenShake = 10;
+          playSmashAudio();
+          spawnDebris(bigBird.x, bigBird.y, '#e53935');
+          bird.inFlight = false;
+          if (energy <= 0) {
+            triggerBigBirdFall();
+          } else {
+            onBirdFinishFlight();
+          }
         }
       }
 
@@ -1853,6 +1887,18 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+
+let ffTimer = null;
+function showFriendlyFireAlert() {
+  const banner = document.getElementById('friendly-fire-banner');
+  if (!banner) return;
+  banner.classList.add('show');
+  if (ffTimer) clearTimeout(ffTimer);
+  ffTimer = setTimeout(() => {
+    banner.classList.remove('show');
+  }, 1600);
+}
+
 function triggerBigBirdFall() {
   if (bigBird.falling) return;
   bigBird.falling = true;
@@ -1879,15 +1925,29 @@ function animateStars(containerId, starCount) {
 
 function checkAllFoodFinished() {
   const left = foods.filter(f => f.alive).length;
-  if (left === 0 && foodFlights.length === 0 && !isWinningTransition) {
+  const isBossStillAlive = (isBonusLevel() && bonusType === 'boss_eagle' && bossEagle && bossEagle.alive);
+  if (left === 0 && foodFlights.length === 0 && !isBossStillAlive && !isWinningTransition) {
     isWinningTransition = true;
     stopRubberStretch();
     setTimeout(() => {
       playRoundWinSound();
 
       const earnedStars = birdsLeft;
-      const starBonusPts = isBonusLevel() ? (earnedStars * 500) : (earnedStars * 100);
-      score += Math.floor(energy * 30) + starBonusPts;
+      let starBonusPts = 0;
+
+      // FIXED SCORING LOGIC FOR BOSS ROUND
+      if (isBonusLevel() && bonusType === 'boss_eagle') {
+        const fixedBossReward = 5000;
+        const extraBirdPts = earnedStars * 500;
+        starBonusPts = fixedBossReward + extraBirdPts;
+        score += Math.floor(energy * 30) + starBonusPts;
+      } else if (isBonusLevel()) {
+        starBonusPts = earnedStars * 500;
+        score += Math.floor(energy * 30) + starBonusPts;
+      } else {
+        starBonusPts = earnedStars * 100;
+        score += Math.floor(energy * 30) + starBonusPts;
+      }
 
       updateSilentSession(score, level, false);
 
@@ -1901,13 +1961,19 @@ function checkAllFoodFinished() {
 
       if (isBonusLevel()) {
         gameState = 'WIN';
-        winTitle.innerText = (bonusType === 'boss_eagle') ? "Boss Defeated! 🦅" : "Bonus Cleared! 🌟";
         winCoin.style.display = 'block';
         animateStars("win-stars", 0);
         
-        winMsg.innerHTML = `<span class="bonus-subtitle-glossy">Remaining Birds Bonus</span><span class="bonus-score-huge">+${starBonusPts}</span>`;
+        if (bonusType === 'boss_eagle') {
+          winTitle.innerText = "Boss Defeated! 🦅";
+          winMsg.innerHTML = `<span class="bonus-subtitle-glossy">GUARDIAN VICTORY + BIRDS BONUS</span><span class="bonus-score-huge">+${starBonusPts}</span>`;
+          nextBtn.innerText = "Continue to Level 11 ➔";
+        } else {
+          winTitle.innerText = "Bonus Cleared! 🌟";
+          winMsg.innerHTML = `<span class="bonus-subtitle-glossy">Remaining Birds Bonus</span><span class="bonus-score-huge">+${starBonusPts}</span>`;
+          nextBtn.innerText = "Continue to Next Level ➔";
+        }
         
-        nextBtn.innerText = "Continue to Next Level ➔";
         document.getElementById('win-overlay').classList.remove('hidden');
         return;
       }
@@ -1925,11 +1991,12 @@ function checkAllFoodFinished() {
         return;
       }
 
+      // LEVEL 10 CLEAR: Trigger Boss Round (keeps 8 birds)
       if (level === 10) {
         gameState = 'WIN';
         winTitle.innerText = "Level 10 Cleared! 👑";
         animateStars("win-stars", earnedStars);
-        winMsg.innerText = "🚨 BOSS ALERT: Giant Guardian Eagle Ahead!";
+        winMsg.innerText = "🚨 BOSS ALERT: Giant Guardian Eagle Ahead! (4 Hits to Defeat)";
         nextBtn.innerText = "Fight Guardian Eagle ➔";
         document.getElementById('win-overlay').classList.remove('hidden');
         return;
@@ -1960,7 +2027,7 @@ function handleBonusMiss() {
   gameState = 'BONUS_LOSS';
   const subText = document.getElementById('bonusLossSubtext');
   if (subText) {
-    subText.innerText = (bonusType === 'boss_eagle') ? "The Guardian Eagle escaped! Proceeding forward." : "Better luck next time!";
+    subText.innerText = (bonusType === 'boss_eagle') ? "The Guardian Eagle escaped! Proceeding to Level 11." : "Better luck next time!";
   }
   document.getElementById('bonusLossOverlay').style.display = 'flex';
 }
@@ -2054,17 +2121,17 @@ function updateHUD() {
   const energyEl = document.getElementById('energy-digits');
   const currentEnergyVal = Math.max(0, Math.ceil(energy));
 
-  if (clockEl) {
+    if (clockEl) {
     const rect = canvas.getBoundingClientRect();
     const scaleX = rect.width / canvas.width;
     const scaleY = rect.height / canvas.height;
-    
+
     const clockCanvasX = bigBird.x + 8;
     const clockCanvasY = bigBird.y + 72;
-    
+
     clockEl.style.left = `${rect.left + clockCanvasX * scaleX}px`;
     clockEl.style.top = `${rect.top + clockCanvasY * scaleY}px`;
-    
+
     if (currentEnergyVal <= 4) {
       clockEl.className = 'warning';
     } else {
@@ -2168,13 +2235,14 @@ function drawTreeBranch() {
   ctx.restore();
 }
 
+// FAST WING & GLIDE MOTION ON GUARDIAN EAGLE (4 HP)
 function drawGuardianEagleBoss() {
   if (!bossEagle) return;
   ctx.save();
   ctx.translate(bossEagle.x, bossEagle.y);
   ctx.rotate(bossEagle.angle);
 
-  const wingAngle = Math.sin(gameTick * 0.15) * 0.45;
+  const wingAngle = Math.sin(gameTick * 0.38) * 0.65;
 
   ctx.fillStyle = '#374151';
   ctx.strokeStyle = '#111827';
@@ -2254,13 +2322,13 @@ function drawGuardianEagleBoss() {
     ctx.strokeRect(barX - 2, barY - 2, barW + 4, barH + 4);
 
     const fillRatio = Math.max(0, bossEagle.hp / bossEagle.maxHp);
-    ctx.fillStyle = (bossEagle.hp === 1) ? '#ef4444' : '#22c55e';
+    ctx.fillStyle = (bossEagle.hp <= 1) ? '#ef4444' : '#22c55e';
     ctx.fillRect(barX, barY, barW * fillRatio, barH);
 
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 8px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`GUARDIAN: ${bossEagle.hp}/3 HP`, 0, barY - 5);
+    ctx.fillText(`GUARDIAN: ${bossEagle.hp}/4 HP`, 0, barY - 5);
   }
 
   ctx.restore();
