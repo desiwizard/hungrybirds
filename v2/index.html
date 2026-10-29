@@ -1076,6 +1076,9 @@
       ctx.restore();
     }
 
+    // ==========================================
+    // GLOWING CYBER-NEON HEALTH BADGE & TIMER
+    // ==========================================
     function drawBigBird(groundY) {
       let isCritical = (bigBirdEnergy <= 25 && bigBirdEnergy > 0);
       let flickerRed = Math.floor(animTick / 6) % 2 === 0;
@@ -1182,28 +1185,53 @@
         ctx.fill();
       }
 
+      // =====================================
+      // HIGH-VOLTAGE GLOWING NEON HEALTH HUD
+      // =====================================
       const bY = branchY + 36;
       const bVal = Math.max(0, Math.ceil(bigBirdEnergy));
-      let bColor = '#2ed573';
-      if (bVal <= 25) bColor = '#ff4757';
-      else if (bVal <= 60) bColor = '#ffa502';
+      
+      let neonGlow = '#00ff66';
+      let neonText = '#69ff94';
+      if (bVal <= 25) {
+        neonGlow = (Math.floor(animTick / 6) % 2 === 0) ? '#ff0055' : '#ff3366';
+        neonText = '#ff80a0';
+      } else if (bVal <= 60) {
+        neonGlow = '#ffb703';
+        neonText = '#ffd166';
+      }
 
-      ctx.fillStyle = 'rgba(10, 15, 30, 0.94)';
-      ctx.strokeStyle = bColor;
-      ctx.lineWidth = 3;
+      // Dark Tech Glass Box
+      ctx.fillStyle = 'rgba(5, 10, 20, 0.96)';
+      ctx.strokeStyle = neonGlow;
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = neonGlow;
+      ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.roundRect(treeX - 16, bY, 96, 46, 12);
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = 'bold 8.5px sans-serif';
+      // Glowing "BIRD HEALTH" Title
+      ctx.shadowColor = neonGlow;
+      ctx.shadowBlur = 6;
+      ctx.fillStyle = neonText;
+      ctx.font = '900 9px -apple-system, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('BIRD HEALTH', treeX + 32, bY + 13);
+      ctx.letterSpacing = '1px';
+      ctx.fillText('⚡ BIRD HEALTH ⚡', treeX + 32, bY + 14);
 
-      ctx.fillStyle = bColor;
-      ctx.font = '900 22px Courier New, monospace';
-      ctx.fillText(`⚡${bVal}`, treeX + 32, bY + 37);
+      // Glowing Neon Digit (Digital Arcade Clock Vibe)
+      ctx.shadowColor = neonGlow;
+      ctx.shadowBlur = 16;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 24px "Courier New", monospace';
+      ctx.fillText(`${bVal}%`, treeX + 32, bY + 38);
+
+      // Second overlay pass for extreme brightness
+      ctx.shadowBlur = 4;
+      ctx.fillStyle = neonGlow;
+      ctx.fillText(`${bVal}%`, treeX + 32, bY + 38);
 
       ctx.restore();
     }
@@ -1760,7 +1788,7 @@
         }
       }
 
-      // FIXED: STRUCTURES PHYSICS (CRASH FREE SETTLING)
+      // Structures Physics
       for (let i = structures.length - 1; i >= 0; i--) {
         const p = structures[i];
 
@@ -1781,7 +1809,6 @@
             p.vx *= 0.70;
             p.va *= 0.60;
             
-            // CORRECTED: 'p' used instead of undefined 'fp'
             if (Math.abs(p.vy) < 0.3) p.vy = 0;
             if (Math.abs(p.vx) < 0.1) p.vx = 0;
             if (Math.abs(p.va) < 0.01) p.va = 0;
